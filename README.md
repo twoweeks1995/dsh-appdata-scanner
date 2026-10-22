@@ -19,6 +19,33 @@
 - **按需联网**：对未知目录可联网检索 + 模型总结，给出结论与带摘要的来源
 - **按需加载**：不点图标就不扫描、不发请求，不打扰
 
+## 联网查询：只能用 API key
+
+这是框架层面的限制，不是配置疏漏。
+
+插件里的 HTTP 路由**无法使用 DeepSeek 账号登录态**检索。原因在 `dsh-web-search-deepseek` 的实现：
+
+```js
+resolveAccountToken: async (endpoint) => {
+  if (ctx.get("agents")?.currentInitiator()?.session.requestContext()?.provider !== ACCOUNT_PROVIDER)
+    return void 0;
+  return await ctx.get("deepseekAccount")?.resolveToken(endpoint);
+}
+```
+
+账号模式要求调用方**正处在一次 agent 调用链里**（`currentInitiator()` 非空）。
+插件的 HTTP 路由是裸请求、不在任何调用链上，所以永远走不到账号模式，只能回落到 API key。
+
+| 部署情况 | 行为 |
+|---|---|
+| 配置了 `DEEPSEEK_API_KEY` | 检索 + 模型总结，返回结论与带摘要的来源 |
+| 未配置 | 自动降级：把查询串复制到剪贴板，供你粘到对话里询问 |
+| 没有 `web` 服务 | 同样降级为复制查询串 |
+
+按钮文案会随能力自动变化：「❓ 查一下」或「📋 生成查询」。
+
+**降级不是错误。** 缺凭据时接口返回 200 + 查询串，不是 500。
+
 ## 安装
 
 ### 作为 DSH 插件
@@ -84,8 +111,6 @@ test/          node:test 自测
 - 「在资源管理器中打开」依赖 `explorer.exe`，仅 Windows 可用（扫描与判定本身跨平台）
 - 首次打开面板需完整扫描一次（约 18~25 秒）才能给出精确体积，之后走缓存
 - 单个目录统计有 5 秒预算，超大目录会返回部分结果并标注「统计中断」
-- 插件内的 HTTP 路由无法使用 DeepSeek **账号**登录态检索（框架要求调用方处于 agent 调用链内），
-  只能走 API key；未配置时自动降级为「生成查询串」
 
 ## 许可
 
