@@ -1,0 +1,6 @@
+# dsh-appdata-scanner 的 bundle patch：把插件行插入 web 插件名册。
+# 一行同时挂载 host 半（/api/appdata-scanner/* 只读 JSON 接口）
+# 与 client 半（右侧面板标签页「AppData Scanner」）。
+- insert:
+    - id: appdata-scanner
+      name: 'dsh-appdata-scanner'

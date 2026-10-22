@@ -1,0 +1,1758 @@
+[
+  {
+    "match": "Microsoft",
+    "owner": "Microsoft（Windows / Edge / Office / OneDrive / 新版 Outlook）",
+    "purpose": "微软自家组件的每用户数据总目录，是 Local 下最大的一级目录；其中 Edge 浏览器 User Data 920MB、OneDrive 561MB、Windows 266MB、Olk 109MB、FontCache 100MB、Office 64MB",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "high",
+    "ifDeleted": "整删会一次性丢掉 Edge 书签/保存的密码/登录态、OneDrive 登录与同步状态、凭据管理器条目、Office 未保存文档与配置，且 Crypto 下的 DPAPI 主密钥一旦删除，所有用 DPAPI 加密的程序数据永久无法解密；只有下面列出的缓存子目录可以安全删",
+    "children": [
+      {
+        "match": "Edge\\User Data\\component_crx_cache",
+        "safety": "safe",
+        "purpose": "Edge 组件包(规则库/词典)下载缓存，185MB / 23 文件",
+        "ifDeleted": "Edge 下次启动按需重新下载组件"
+      },
+      {
+        "match": "Edge\\User Data\\extensions_crx_cache",
+        "safety": "safe",
+        "purpose": "扩展安装包缓存，10MB",
+        "ifDeleted": "已装扩展不受影响，重新从商店下载时才用"
+      },
+      {
+        "match": "Edge\\User Data\\*\\Cache",
+        "safety": "safe",
+        "purpose": "网页资源缓存，Default\\Cache 76MB / 424 文件",
+        "ifDeleted": "网页与图片重新下载，首屏变慢"
+      },
+      {
+        "match": "Edge\\User Data\\*\\Code Cache",
+        "safety": "safe",
+        "purpose": "JS 字节码缓存，Default\\Code Cache 36MB / 725 文件",
+        "ifDeleted": "网页脚本重新编译，页面加载变慢"
+      },
+      {
+        "match": "Edge\\User Data\\*\\GPUCache",
+        "safety": "safe",
+        "purpose": "GPU 着色器缓存，Default\\GPUCache 6MB",
+        "ifDeleted": "显卡重新编译着色器，页面滚动/动画首次变卡"
+      },
+      {
+        "match": "Edge\\User Data\\*\\old_GPUCache_*",
+        "safety": "safe",
+        "purpose": "旧版本遗留的 GPU 缓存，Default\\old_GPUCache_000 12MB",
+        "ifDeleted": "纯残留，不回填也无影响"
+      },
+      {
+        "match": "Edge\\User Data\\*\\Service Worker\\CacheStorage",
+        "safety": "safe",
+        "purpose": "Service Worker 离线资源缓存，Default\\Service Worker 32MB / 323 文件",
+        "ifDeleted": "网站离线资源重新拉取"
+      },
+      {
+        "match": "Edge\\User Data\\WidevineCdm",
+        "safety": "safe",
+        "purpose": "Widevine DRM 解密组件，44MB",
+        "ifDeleted": "受保护视频(Netflix 等)暂时无法播放，Edge 自动重新下载该组件"
+      },
+      {
+        "match": "Edge\\User Data\\Snapshots",
+        "safety": "safe",
+        "purpose": "浏览会话快照缓存，23MB / 129 文件",
+        "ifDeleted": "崩溃恢复的会话快照丢失，Edge 重启后不提供恢复上次标签页"
+      },
+      {
+        "match": "Edge\\User Data\\Edge Wallet",
+        "safety": "safe",
+        "purpose": "钱包优惠与卡片元数据缓存，14MB / 204 文件",
+        "ifDeleted": "Edge 重新拉取钱包组件数据"
+      },
+      {
+        "match": "Edge\\User Data\\Typosquatting",
+        "safety": "safe",
+        "purpose": "误拼域名提示库，14MB / 20 文件",
+        "ifDeleted": "重新下载该词典，期间不提示错拼域名"
+      },
+      {
+        "match": "Edge\\User Data\\Subresource Filter",
+        "safety": "safe",
+        "purpose": "广告过滤规则库，12MB",
+        "ifDeleted": "重新下载规则，期间广告拦截规则较旧"
+      },
+      {
+        "match": "Edge\\User Data\\Default\\Login Data",
+        "safety": "never",
+        "purpose": "Edge 保存的网站密码，192KB",
+        "ifDeleted": "所有保存的密码丢失，无云同步时不可恢复"
+      },
+      {
+        "match": "Edge\\User Data\\*",
+        "safety": "never",
+        "purpose": "浏览器 profile：Bookmarks 39KB、History 3.5MB、Web Data、Cookies、Extensions 69MB、Local Storage 全在这个目录",
+        "ifDeleted": "书签、历史、Cookie 登录态、扩展与其本地数据全部丢失，需重新登录所有网站"
+      },
+      {
+        "match": "Edge",
+        "safety": "never",
+        "purpose": "Edge 浏览器全部每用户数据(920MB)",
+        "ifDeleted": "Edge 回到出厂状态，等同卸载重装并清空用户数据"
+      },
+      {
+        "match": "FontCache",
+        "safety": "safe",
+        "purpose": "系统与 Office 的字体缓存，100MB / 19 个 ttf",
+        "ifDeleted": "系统下次渲染文字时自动重建，仅首次打开程序略慢"
+      },
+      {
+        "match": "Windows\\INetCache",
+        "safety": "safe",
+        "purpose": "IE / 系统组件 / 部分第三方程序的网络缓存，86MB / 1111 文件",
+        "ifDeleted": "自动重建，相关程序首次联网变慢"
+      },
+      {
+        "match": "Windows\\Explorer",
+        "safety": "safe",
+        "purpose": "资源管理器缩略图与图标缓存，40MB / 23 文件",
+        "ifDeleted": "图片/视频缩略图重新生成，首次浏览文件夹变慢"
+      },
+      {
+        "match": "Windows\\Notifications",
+        "safety": "safe",
+        "purpose": "通知中心历史缓存，4MB",
+        "ifDeleted": "通知历史清空"
+      },
+      {
+        "match": "Windows\\WebCache",
+        "safety": "never",
+        "purpose": "WebCacheV01.dat 数据库：IE 与资源管理器的历史、Cookie 与搜索索引，81MB",
+        "ifDeleted": "历史记录与搜索索引损坏且无法重建，文件被系统占用也无法干净删除"
+      },
+      {
+        "match": "Windows",
+        "safety": "never",
+        "purpose": "含 UsrClass.dat 注册表 hive(13MB) 及 .LOG1/.LOG2、主题、壁纸备份",
+        "ifDeleted": "用户级注册表被破坏，开始菜单/文件关联大面积异常，需重建用户配置文件"
+      },
+      {
+        "match": "Credentials",
+        "safety": "never",
+        "purpose": "凭据管理器保存的账户条目，46 个文件",
+        "ifDeleted": "网络共享与站点的已保存凭据丢失，需逐个重新输入密码"
+      },
+      {
+        "match": "Vault",
+        "safety": "never",
+        "purpose": "Windows Vault 凭据保险库，96 个文件",
+        "ifDeleted": "保险库中的证书与凭据丢失，依赖它们的登录与签名全部失效"
+      },
+      {
+        "match": "Crypto",
+        "safety": "never",
+        "purpose": "DPAPI 主密钥与 RSA 密钥容器",
+        "ifDeleted": "所有用当前账户 DPAPI 加密的数据(浏览器密码、凭据、证书私钥、部分应用配置)永久无法解密"
+      },
+      {
+        "match": "OneDrive\\logs",
+        "safety": "safe",
+        "purpose": "OneDrive 同步日志，232MB / 3182 文件",
+        "ifDeleted": "仅丢失同步排错记录，OneDrive 继续同步"
+      },
+      {
+        "match": "OneDrive\\EBWebView",
+        "safety": "safe",
+        "purpose": "OneDrive 内嵌网页(状态面板/设置页)缓存，20MB",
+        "ifDeleted": "界面重新下载，OneDrive 设置面板首次打开变慢"
+      },
+      {
+        "match": "OneDrive\\ListSync",
+        "safety": "never",
+        "purpose": "同步清单与占位文件状态，271MB / 34 文件",
+        "ifDeleted": "OneDrive 会重新全量比对云端，可能触发大批文件重新下载与占位符重建"
+      },
+      {
+        "match": "OneDrive",
+        "safety": "never",
+        "purpose": "OneDrive 每用户数据(561MB)：登录态、同步数据库、设置",
+        "ifDeleted": "需重新登录并重新选择同步文件夹，历史同步状态与按需文件状态丢失"
+      },
+      {
+        "match": "Olk",
+        "safety": "never",
+        "purpose": "新版 Outlook(Olk) 的数据：EBWebView 109MB 内含账户 Cookie、缓存与登录令牌",
+        "ifDeleted": "新版 Outlook 需重新登录全部邮件账户，本地缓存邮件需重新下载"
+      },
+      {
+        "match": "Office",
+        "safety": "never",
+        "purpose": "Office 每用户数据(64MB)：16.0 配置、OTele、未保存文档(UnsavedFiles)",
+        "ifDeleted": "Office 恢复默认设置，未保存文档丢失，需重新激活登录"
+      },
+      {
+        "match": "Outlook",
+        "safety": "never",
+        "purpose": "经典 Outlook 本地数据(48MB)：配置文件、缓存与索引",
+        "ifDeleted": "Outlook 需重建配置文件并重新同步所有邮箱，本地未同步内容丢失"
+      },
+      {
+        "match": "Internet Explorer",
+        "safety": "safe",
+        "purpose": "IE 缓存与历史，19MB / 64 文件",
+        "ifDeleted": "IE/内嵌 IE 控件重新缓存，历史记录清空"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "其余微软组件目录(Teams、Vault 之外的 OneAuth、TokenBroker、Device Stage 等)含账户令牌与配置",
+        "ifDeleted": "相关微软组件需重新登录或恢复默认配置"
+      }
+    ],
+    "evidence": "实测 AppData\\Local\\Microsoft 共 66 个子目录。Edge\\User Data 920MB/5412 文件，内含 component_crx_cache(185MB)、Default/Cache(76MB,424f)、Default/Code Cache(36MB,725f)、Default/Extensions(69MB,2017f)、ProvenanceData(169MB)、WidevineCdm(44MB)、Default/Login Data(192KB)、Default/Bookmarks(39KB)、Default/History(3552KB)。OneDrive/{ListSync 271MB, logs 232MB, EBWebView 20MB, settings 33MB}。Windows/{INetCache 86MB/1111f, Explorer 40MB, WebCache 81MB, UsrClass.dat 13MB, Themes 12MB, WallpaperBackup 12MB}。FontCache 100MB/21f。Credentials 46 文件、Vault 96 文件、Crypto 14 文件、Protect 22 文件。Olk/EBWebView 109MB/1589f。Office/16.0 59MB。Outlook 48MB。"
+  },
+  {
+    "match": "Packages",
+    "owner": "Microsoft Store / UWP 应用（每用户 AppData 容器）",
+    "purpose": "所有 UWP/Store 应用的每用户数据容器，一个包一个目录；每个容器统一含 AC/AppData/LocalCache/LocalState/RoamingState/Settings/SystemAppData/TempState 八个子目录，共 797MB / 5886 文件",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "high",
+    "ifDeleted": "整删等于重置全部 UWP 应用的本地状态：Xbox app 的账户与主机配对、邮件与日历账户、照片库索引、小组件资讯都要重建，部分已下载内容需重新下载",
+    "children": [
+      {
+        "match": "*\\LocalCache",
+        "safety": "safe",
+        "purpose": "UWP 应用的本地缓存目录",
+        "ifDeleted": "应用下次启动自动重建"
+      },
+      {
+        "match": "*\\TempState",
+        "safety": "safe",
+        "purpose": "UWP 应用的临时状态目录",
+        "ifDeleted": "应用下次启动自动重建"
+      },
+      {
+        "match": "MicrosoftWindows.Client.WebExperience_*\\LocalState",
+        "safety": "safe",
+        "purpose": "Windows 小组件/资讯流缓存，238MB / 2045 文件",
+        "ifDeleted": "小组件下次打开重新拉取资讯"
+      },
+      {
+        "match": "Microsoft.Windows.Photos_*\\LocalState",
+        "safety": "safe",
+        "purpose": "照片应用的媒体库索引，57MB / 446 文件",
+        "ifDeleted": "重新扫描图片库，首次打开照片应用明显变慢"
+      },
+      {
+        "match": "Microsoft.GamingApp_*\\LocalState",
+        "safety": "never",
+        "purpose": "Xbox app 的账户、主机配对与云存档元数据，137MB / 316 文件",
+        "ifDeleted": "Xbox app 需重新登录，已配对主机与本地存档元数据丢失"
+      },
+      {
+        "match": "microsoft.windowscommunicationsapps_*\\LocalState",
+        "safety": "never",
+        "purpose": "邮件和日历的账户与本地邮件缓存，76MB / 399 文件",
+        "ifDeleted": "邮件账户需重新添加，未同步到服务器的本地邮件不可恢复"
+      },
+      {
+        "match": "MicrosoftWindows.Client.CBS_*",
+        "safety": "never",
+        "purpose": "Windows Shell 核心组件数据(搜索/开始菜单)，142MB / 1499 文件",
+        "ifDeleted": "开始菜单与搜索索引重建，期间搜索功能异常"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "其余 UWP 容器的 LocalState 含登录令牌、SQLite/ESE 数据库与用户设置",
+        "ifDeleted": "对应 UWP 应用被重置，需重新登录并丢失本地保存内容"
+      }
+    ],
+    "evidence": "实测 AppData\\Local\\Packages 797MB / 5886 文件、200+ 个包目录。最大的 5 个：MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy 239MB(LocalState 238MB/2045f)、MicrosoftWindows.Client.CBS_cw5n1h2txyewy 142MB(LocalState 112MB、AppData 29MB)、Microsoft.GamingApp_8wekyb3d8bbwe 137MB(LocalState 137MB)、microsoft.windowscommunicationsapps_8wekyb3d8bbwe 77MB(LocalState 76MB)、Microsoft.Windows.Photos_8wekyb3d8bbwe 59MB(LocalState 57MB)。每个容器都整齐含 AC/AppData/LocalCache/LocalState/RoamingState/Settings/SystemAppData/TempState。另有 6 个 cr.sb.odm* 空残留目录。"
+  },
+  {
+    "match": "Mozilla Firefox",
+    "owner": "Mozilla Firefox（程序安装目录 + 更新暂存）",
+    "purpose": "Firefox 的 per-user 安装目录：根下直接是 firefox.exe 与全部 dll，updated/ 里是已下载待应用的完整更新包",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "high",
+    "ifDeleted": "整删等于卸掉当前用户的 Firefox：开始菜单与桌面快捷方式失效，下次点击会重新下载安装；书签、密码、历史保存在 Roaming\\Mozilla 里不受影响",
+    "children": [
+      {
+        "match": "updated",
+        "safety": "safe",
+        "purpose": "已下载待应用的更新包，357MB / 92 文件(35 个 dll + 14 个 exe)",
+        "ifDeleted": "Firefox 下次更新时重新下载"
+      },
+      {
+        "match": "tobedeleted",
+        "safety": "safe",
+        "purpose": "版本切换后待删除的旧文件，1MB",
+        "ifDeleted": "纯残留，无影响"
+      },
+      {
+        "match": "uninstall",
+        "safety": "never",
+        "purpose": "卸载程序相关文件(exe + ini + log + update)，1MB",
+        "ifDeleted": "无法用官方卸载器卸载，需手动删目录"
+      },
+      {
+        "match": "browser",
+        "safety": "never",
+        "purpose": "程序内置资源：omni.ja 55MB、内置 PDF 阅读器",
+        "ifDeleted": "Firefox 启动失败，必须重装"
+      },
+      {
+        "match": "defaults",
+        "safety": "never",
+        "purpose": "默认配置与首选项定义",
+        "ifDeleted": "Firefox 无法读取默认配置，启动异常"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "程序本体：firefox.exe(1MB)、dxcompiler.dll(23MB)、gkcodecs.dll(10MB)、firefox.exe.sig 等",
+        "ifDeleted": "Firefox 无法启动，必须重新安装"
+      }
+    ],
+    "evidence": "实测 AppData\\Local\\Mozilla Firefox 708MB / 183 文件。根目录平铺 firefox.exe、firefox.exe.sig、crashreporter.exe、crashhelper.exe、default-browser-agent.exe、dxcompiler.dll(23MB)、gkcodecs.dll(10MB)、AccessibleMarshal.dll、application.ini、install.log。子目录：updated/357MB(92 文件：dll 35、exe 14、ini 7、xpi 6)、browser/55MB(omni.ja 55MB + blank.pdf + VisualElements)、uninstall/1MB、tobedeleted/1MB、fonts/1MB、gmp-clearkey/、distribution/、installation_dir_layout/。"
+  },
+  {
+    "match": "Mozilla",
+    "owner": "Mozilla Firefox（本地缓存层）",
+    "purpose": "Firefox 的每用户缓存层：Profiles 下只有 cache2、startupCache、jumpListCache、thumbnails、safebrowsing 与 activity-stream 订阅缓存，没有 cookies.sqlite / places.sqlite / logins.json",
+    "category": "cache",
+    "safety": "safe",
+    "confidence": "high",
+    "ifDeleted": "Firefox 首屏、新标签页与网页加载会明显变慢一次，缓存随即自动重建；书签、密码、历史、Cookie 都在 Roaming\\Mozilla\\Firefox 下，完全不受影响",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\Mozilla 184MB / 2520 文件，只有一个子目录 Firefox\\Profiles。profile 0fa4voc1.default-release 内仅有 cache2/(主占用)、startupCache/、jumpListCache/、thumbnails/、safebrowsing/、settings/ 以及 activity-stream.*.json 系列缓存文件。对照 AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\0fa4voc1.default-release 才看到 cookies.sqlite、cert9.db、places 相关库——证明 Local 这一份只是缓存。"
+  },
+  {
+    "match": "Temp",
+    "owner": "Windows / 各程序的共享临时目录",
+    "purpose": "全机共享的临时文件目录，645MB / 5478 文件；堆满 UUID 命名的 .tmp.js/.tmp.css，以及各程序自建的子目录",
+    "category": "temp",
+    "safety": "safe",
+    "confidence": "high",
+    "ifDeleted": "正在运行的程序占用的临时文件会被跳过删除；Windows 与各软件立刻重建。唯一实际代价是正在进行的安装/编译会失败，正在使用的临时数据会丢",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\Temp 645MB / 5478 文件。子目录：Diagnostics/(162MB，14 个 .log)、node-gyp-tmp-IdHkDV/(60MB，2808 个 .h)、node-compile-cache/(5MB)、Outlook Logging/(12 个 .etl)、dsh-acl-locks/、dsh-ssh-uploads/、dsh-subprocess-*/、quark-agent/、Thunder Network/(5 个 ini)、mozilla-temp-files/、nsl3490.tmp 等 4 个 .tmp dll 残留。根目录数千个 UUID 命名 .tmp.js/.tmp.css。"
+  },
+  {
+    "match": "NVIDIA",
+    "owner": "NVIDIA 显卡驱动",
+    "purpose": "驱动的着色器与内核缓存：DXCache 566MB(.nvph)、GLCache 10MB(bin+toc)、OptixCache 5MB(1 个 .db 内核缓存)",
+    "category": "cache",
+    "safety": "safe",
+    "confidence": "high",
+    "ifDeleted": "下次运行 3D 程序/游戏时驱动重新编译着色器，首次进入场景会明显卡顿几分钟；OptiX 光线追踪渲染首次运行变慢。无功能缺失",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\NVIDIA 581MB / 184 文件，只有 3 个子目录：DXCache/566MB(155 个 .nvph)、GLCache/10MB(14 个 .bin + 14 个 .toc)、OptixCache/5MB(1 个 .db，即 OptiX 内核缓存，非用户数据库)。"
+  },
+  {
+    "match": "NVIDIA Corporation",
+    "owner": "NVIDIA app / NVIDIA Overlay（游戏内覆盖层），均为 CEF 界面",
+    "purpose": "NVIDIA app 与覆盖层的每用户数据 243MB。实测是两半：NVIDIA app 107.9MB（CefCache 49.6MB 是界面页面的 CEF 资源，NvBackend 53.9MB 是游戏识别与优化档案库），NVIDIA Overlay 135.1MB（CefCache 116.4MB 是覆盖层的 CEF profile，AppConfigs 与 ShareSettings/GallerySettings 是用户设置）",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "high",
+    "ifDeleted": "整删会让 NVIDIA app 丢掉游戏与应用识别库（NvBackend 53.9MB，含两份 fingerprint.db）、账号登录态（NvAccount）、以及覆盖层的分享与相册设置（ShareSettings.json / GallerySettings.json）与 AppConfigs，结果是必须重新登录、重新扫描已装游戏、重设覆盖层与分享选项；不过下面列出的 GPU/网页/组件缓存子目录可以单独删，约可回收 134MB",
+    "children": [
+      {
+        "match": "NVIDIA app\\CefCache\\component_crx_cache",
+        "safety": "safe",
+        "purpose": "CEF 组件包缓存，14.1MB / 2 文件",
+        "ifDeleted": "按需重新下载组件"
+      },
+      {
+        "match": "NVIDIA app\\CefCache\\WidevineCdm",
+        "safety": "safe",
+        "purpose": "Widevine DRM 组件，18.5MB / 6 文件",
+        "ifDeleted": "受保护视频暂时不可播，自动重新下载"
+      },
+      {
+        "match": "NVIDIA app\\CefCache\\Service Worker",
+        "safety": "safe",
+        "purpose": "Service Worker 离线缓存，2.7MB / 77 文件",
+        "ifDeleted": "重新拉取离线资源"
+      },
+      {
+        "match": "NVIDIA app\\CefCache\\Cache",
+        "safety": "safe",
+        "purpose": "网页缓存(当前为空)",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "NVIDIA app\\CefCache\\Code Cache",
+        "safety": "safe",
+        "purpose": "JS 字节码缓存(当前为空)",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "NVIDIA app\\CefCache\\GPUCache",
+        "safety": "safe",
+        "purpose": "GPU 着色器缓存(当前为空)",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "NVIDIA app\\CefCache\\GraphiteDawnCache",
+        "safety": "safe",
+        "purpose": "WebGPU 缓存(当前为空)",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "NVIDIA app\\CefCache\\GrShaderCache",
+        "safety": "safe",
+        "purpose": "GPU 着色器缓存(当前为空)",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "NVIDIA app\\CefCache\\ShaderCache",
+        "safety": "safe",
+        "purpose": "着色器缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "NVIDIA app\\CefCache\\Visited Links",
+        "safety": "safe",
+        "purpose": "访问过的链接表，128KB",
+        "ifDeleted": "链接变灰，重新浏览后重建"
+      },
+      {
+        "match": "NVIDIA Overlay\\CefCache\\component_crx_cache",
+        "safety": "safe",
+        "purpose": "CEF 组件包缓存，26.7MB / 19 文件",
+        "ifDeleted": "按需重新下载组件"
+      },
+      {
+        "match": "NVIDIA Overlay\\CefCache\\CertificateRevocation",
+        "safety": "safe",
+        "purpose": "证书吊销列表(CRL)缓存，15.9MB / 65 文件",
+        "ifDeleted": "联网重新下载 CRL，期间证书校验略慢"
+      },
+      {
+        "match": "NVIDIA Overlay\\CefCache\\WidevineCdm",
+        "safety": "safe",
+        "purpose": "Widevine DRM 组件，18.5MB / 6 文件",
+        "ifDeleted": "受保护视频暂时不可播，自动重新下载"
+      },
+      {
+        "match": "NVIDIA Overlay\\CefCache\\OnDeviceHeadSuggestModel",
+        "safety": "safe",
+        "purpose": "端侧输入联想模型，7.6MB / 4 文件",
+        "ifDeleted": "按需重新下载"
+      },
+      {
+        "match": "NVIDIA Overlay\\CefCache\\Cache",
+        "safety": "safe",
+        "purpose": "网页缓存，4.6MB / 5 文件",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "NVIDIA Overlay\\CefCache\\GrShaderCache",
+        "safety": "safe",
+        "purpose": "GPU 着色器缓存，4.6MB / 5 文件",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "NVIDIA Overlay\\CefCache\\Code Cache",
+        "safety": "safe",
+        "purpose": "JS 字节码缓存，9 文件",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "NVIDIA Overlay\\CefCache\\GPUCache",
+        "safety": "safe",
+        "purpose": "GPU 着色器缓存，0.5MB / 5 文件",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "NVIDIA Overlay\\CefCache\\GraphiteDawnCache",
+        "safety": "safe",
+        "purpose": "WebGPU 缓存，0.5MB / 5 文件",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "NVIDIA Overlay\\CefCache\\OptimizationHints",
+        "safety": "safe",
+        "purpose": "页面优化提示库，3.3MB / 24 文件",
+        "ifDeleted": "重新下载"
+      },
+      {
+        "match": "NVIDIA Overlay\\CefCache\\Crowd Deny",
+        "safety": "safe",
+        "purpose": "骚扰弹窗拦截列表，1.2MB / 16 文件",
+        "ifDeleted": "重新下载"
+      },
+      {
+        "match": "NVIDIA Overlay\\CefCache\\PKIMetadata",
+        "safety": "safe",
+        "purpose": "PKI 元数据，1.2MB / 21 文件",
+        "ifDeleted": "重新下载"
+      },
+      {
+        "match": "NVIDIA Overlay\\CefCache\\hyphen-data",
+        "safety": "safe",
+        "purpose": "断词词典，1.7MB / 55 文件",
+        "ifDeleted": "重新下载"
+      },
+      {
+        "match": "NVIDIA Overlay\\CefCache\\ZxcvbnData",
+        "safety": "safe",
+        "purpose": "密码强度词典，1.6MB / 10 文件",
+        "ifDeleted": "重新下载"
+      },
+      {
+        "match": "NVIDIA Overlay\\CefCache\\Subresource Filter",
+        "safety": "safe",
+        "purpose": "广告过滤规则，0.4MB / 6 文件",
+        "ifDeleted": "重新下载"
+      },
+      {
+        "match": "NVIDIA Overlay\\CefCache\\AutofillStates",
+        "safety": "safe",
+        "purpose": "表单自动填充状态库，0.2MB / 228 文件",
+        "ifDeleted": "重新下载"
+      },
+      {
+        "match": "NVIDIA Overlay\\CefCache\\SafetyTips",
+        "safety": "safe",
+        "purpose": "安全提示文案，0.3MB / 8 文件",
+        "ifDeleted": "重新下载"
+      },
+      {
+        "match": "NVIDIA Overlay\\CefCache\\SSLErrorAssistant",
+        "safety": "safe",
+        "purpose": "SSL 错误提示文案，4 文件",
+        "ifDeleted": "重新下载"
+      },
+      {
+        "match": "NVIDIA Overlay\\CefCache\\MEIPreload",
+        "safety": "safe",
+        "purpose": "MEI 预加载组件，4 文件",
+        "ifDeleted": "重新下载"
+      },
+      {
+        "match": "NVIDIA app\\NvBackend",
+        "safety": "never",
+        "purpose": "游戏与应用识别/优化档案库，53.9MB / 179 文件：DAO\\<sha>\\fingerprint.db(3.7MB) 与 ApplicationOntology\\data\\fingerprint.db(3.7MB)",
+        "ifDeleted": "已装游戏与本机应用的识别结果、适配与优化档案丢失，NVIDIA app 需要重新扫描全部已装程序并重新生成指纹库"
+      },
+      {
+        "match": "NVIDIA app\\NvAccount",
+        "safety": "never",
+        "purpose": "NVIDIA app 的账号登录态，1 个文件",
+        "ifDeleted": "需重新登录 NVIDIA 账号"
+      },
+      {
+        "match": "NVIDIA app\\UXD",
+        "safety": "never",
+        "purpose": "NVIDIA app 的 UXD 数据，1 个文件 0.1MB(无自述文件可判定用途)",
+        "ifDeleted": "用途无标识，按不可重建处理，删除可能导致 NVIDIA app 首次启动重置"
+      },
+      {
+        "match": "NVIDIA Overlay\\AppConfigs",
+        "safety": "never",
+        "purpose": "覆盖层的每应用配置(AppConfigs\\v2)，1 个文件",
+        "ifDeleted": "每个游戏单独设置的覆盖层开关与选项回到默认，需逐游戏重设"
+      },
+      {
+        "match": "NVIDIA Overlay\\ShareSettings.json",
+        "safety": "never",
+        "purpose": "覆盖层的分享/录屏设置，1KB",
+        "ifDeleted": "分享、录制与截图相关的自定义设置丢失，需重设"
+      },
+      {
+        "match": "NVIDIA Overlay\\GallerySettings.json",
+        "safety": "never",
+        "purpose": "覆盖层相册设置",
+        "ifDeleted": "相册的显示与筛选设置回到默认"
+      },
+      {
+        "match": "NVIDIA app\\CefCache",
+        "safety": "never",
+        "purpose": "NVIDIA app 的 CEF profile，49.6MB / 422 文件：Default/ 9.4MB/292f、Local Storage、Local State、LocalPrefs.json、Network/Cookies",
+        "ifDeleted": "NVIDIA app 内嵌页的登录态与界面偏好丢失，需重新登录并重设窗口位置"
+      },
+      {
+        "match": "NVIDIA Overlay\\CefCache",
+        "safety": "never",
+        "purpose": "覆盖层的 CEF profile，116.4MB / 1377 文件：Default/ 22.4MB/795f(含 Acrobat PDF 扩展 fkaidnbmnnnibpcajpcglclefindmkaj 26.1.2.1)、Local Storage、Local State、Network/Cookies、IndexedDB",
+        "ifDeleted": "覆盖层内嵌页的登录态、扩展与界面偏好丢失，需重新登录并重设"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "其余文件：日志(console.log/CxNative_*.log/debug.log 合计约 21MB)、overrides.json、storage.json、Diagnostics/、_deleteOldUpdateFrameworkLocation/",
+        "ifDeleted": "日志体量大但都是散落文件，删除后仅丢失排错记录；本条目把它们归入不可删是为了不让整目录判定误伤上面的 profile 与档案库"
+      }
+    ],
+    "evidence": "实测 AppData\\Local\\NVIDIA Corporation 243MB / 2007 文件，只有两个子目录。NVIDIA app/ 107.9MB / 617 文件：CefCache/49.6MB(422f，含 Default/9.4MB/292f、component_crx_cache/14.1MB/2f、WidevineCdm/18.5MB/6f、Service Worker/2.7MB/77f、Network/7f、Local Storage/5f、Local State 6KB、LocalPrefs.json 1KB、Visited Links 128KB、databases/2f)、NvBackend/53.9MB(179f，内含 DAO\\<sha>\\fingerprint.db 3743KB 与 ApplicationOntology\\data\\fingerprint.db 3743KB)、NvAccount/(1f)、UXD/(1f)、Diagnostics/(空)、_deleteOldUpdateFrameworkLocation/(空)、overrides.json、storage.json，以及 console.log 155KB、console.log.bak 2088KB、CxNative_LocalUser.log 605KB、CxNative_NVIDIA App.log 429KB、debug.log 27KB + .bak、selfupdate*.log 4 个(均 0KB)。NVIDIA Overlay/ 135.1MB / 1388 文件：CefCache/116.4MB(1377f，含 Default/22.4MB/795f 且 Default\\Extensions 下有 efaidnbmnnnibpcajpcglclefindmkaj 26.1.2.1_0 的 Acrobat PDF 扩展、component_crx_cache/26.7MB/19f、CertificateRevocation/15.9MB/65f、WidevineCdm/18.5MB/6f、OnDeviceHeadSuggestModel/7.6MB、Cache/4.6MB、GrShaderCache/4.6MB、OptimizationHints/3.3MB、hyphen-data/1.7MB、ZxcvbnData/1.6MB、Crowd Deny/1.2MB、PKIMetadata/1.2MB)、AppConfigs/v2/(1f)、ShareSettings.json(1KB)、GallerySettings.json、overrides.json、storage.json，以及 CxNative_NVIDIA Overlay.log 5821KB、CxNative_NVIDIA Overlay.1.log 8816KB、debug.log 1537KB + debug.log.bak 2129KB、console.log 552KB。结论依据：CefCache 是 Chromium profile(有 Cookies/Local State/Extensions)，不是纯静态资源；NvBackend 里是两份 fingerprint.db(应用指纹库)；ShareSettings/GallerySettings/AppConfigs 是用户设置——故整目录只能是 mixed，只有子目录级缓存可删。"
+  },
+  {
+    "match": "Zotero",
+    "owner": "Zotero（文献管理）",
+    "purpose": "Zotero 内嵌浏览器的 HTTP 缓存(Profiles\\1ffdc7ae.default\\cache2 300MB)与更新暂存(updates 100MB)",
+    "category": "cache",
+    "safety": "safe",
+    "confidence": "high",
+    "ifDeleted": "Zotero 重新抓取网页快照与元数据，首次打开文献条目略慢；文献库 zotero.sqlite 与 PDF 附件在用户自选的 Zotero 数据目录下，不在 AppData，完全不受影响",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\Zotero 400MB / 662 文件。Zotero\\Zotero\\Profiles\\1ffdc7ae.default 内只有 cache2/(300MB，650 文件)、startupCache/(1MB，2 文件)、safebrowsing/(空)、.startup-incomplete、ShutdownDuration.json——没有 zotero.sqlite。updates/(100MB，8 文件：1 个 .mar + xml + .log + .status)。"
+  },
+  {
+    "match": "Steam",
+    "owner": "Valve Steam 客户端",
+    "purpose": "Steam 内置浏览器(CEF)的网页缓存与 DRM 组件：htmlcache 355MB、widevine 23MB、cefdata 18MB",
+    "category": "cache",
+    "safety": "safe",
+    "confidence": "high",
+    "ifDeleted": "Steam 商店/库/社区页面重新下载资源，首页会白屏几秒；widevine 缺失时受 DRM 保护的视频暂时无法播放，Steam 会自动重新下载。游戏本体装在库目录，不在此",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\Steam 396MB / 2950 文件。htmlcache/355MB(2933 文件，其中 Default/ 342MB/2774f，另有 GrShaderCache、ShaderCache、first_party_sets.db、Local State)、widevine/(23MB：dll 2、json 2、txt 2)、cefdata/(18MB)。根下只有 local.vdf 2KB。"
+  },
+  {
+    "match": "Programs",
+    "owner": "各软件的 per-user 安装目录（Paradox 启动器、Store 版 Python 等）",
+    "purpose": "Windows 的「每用户安装」目录：程序本体直接装在这里，不是数据目录。本机 Paradox Interactive 启动器 326MB、Python 2MB、Common 3MB",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "high",
+    "ifDeleted": "整删会让这些程序直接无法启动（快捷方式指向这里的 exe），必须重新安装；卸载入口也会一并丢失，之后只能手动清注册表",
+    "children": [
+      {
+        "match": "Paradox Interactive\\launcher\\logs",
+        "safety": "safe",
+        "purpose": "启动器日志，12 个 .log",
+        "ifDeleted": "下次启动重新生成"
+      },
+      {
+        "match": "Paradox Interactive\\launcher\\Cache",
+        "safety": "safe",
+        "purpose": "启动器 Electron 缓存",
+        "ifDeleted": "启动器重新下载界面资源"
+      },
+      {
+        "match": "Paradox Interactive",
+        "safety": "never",
+        "purpose": "Paradox 游戏启动器本体，326MB / 149 文件(58 个 .pak + 12 个 dll + 19 个 js)",
+        "ifDeleted": "所有 Paradox 游戏无法通过启动器启动"
+      },
+      {
+        "match": "Python",
+        "safety": "never",
+        "purpose": "Windows Store 版 Python 的启动垫片(python.exe + python3.dll)",
+        "ifDeleted": "python 命令失效，需从商店重装"
+      },
+      {
+        "match": "Microsoft VS Code",
+        "safety": "never",
+        "purpose": "VS Code 用户级安装本体(Code.exe 与 resources)",
+        "ifDeleted": "VS Code 无法启动，需重新安装(设置仍保留在 Roaming\\Code)"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "任一程序的本体文件",
+        "ifDeleted": "对应程序无法启动"
+      }
+    ],
+    "evidence": "实测 AppData\\Local\\Programs 330MB / 154 文件，只有 3 个子目录：Paradox Interactive/launcher(326MB，149 文件：pak 58、js 19、dll 12、json 10)、Python/(2MB：python.exe、pythonw.exe、python3.dll)、Common/(3MB：node + dll)。本机没有 Programs\\Microsoft VS Code 目录。"
+  },
+  {
+    "match": "Programs\\Microsoft VS Code",
+    "owner": "Microsoft Visual Studio Code",
+    "purpose": "VS Code 的用户级安装目录：Code.exe、resources\\app、运行所需的 dll 与 Electron 运行时",
+    "category": "dev-toolchain",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "VS Code 无法启动，快捷方式全部失效；用户设置、扩展与工作区记录在 Roaming\\Code 下不受影响，重装后能接回",
+    "children": [],
+    "evidence": "本机未安装：实测 AppData\\Local\\Programs 下只有 Common、Paradox Interactive、Python 三项，没有 Microsoft VS Code。条目依据 VS Code 官方 Windows 用户级安装布局；同构旁证是本机 Programs\\Python 与 Programs\\Paradox Interactive 同样是把 exe/dll 平铺在 Programs 子目录里。"
+  },
+  {
+    "match": "bilibili-updater",
+    "owner": "哔哩哔哩客户端（electron-updater）",
+    "purpose": "B 站客户端更新器下载的完整安装包：installer.exe 202MB + pending/ 94MB",
+    "category": "installer-cache",
+    "safety": "safe",
+    "confidence": "high",
+    "ifDeleted": "只是更新的二进制包，下次推送更新时重新下载；已安装的哔哩哔哩客户端、登录态与缓存都不受影响",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\bilibili-updater 292MB / 3 文件：installer.exe(202MB)、pending/(2 文件，94MB)。没有任何用户数据文件。"
+  },
+  {
+    "match": "cherrystudio-updater",
+    "owner": "Cherry Studio（electron-updater）",
+    "purpose": "Cherry Studio 更新器下载的待安装包，285MB / 2 文件，全部在 pending/ 下",
+    "category": "installer-cache",
+    "safety": "safe",
+    "confidence": "high",
+    "ifDeleted": "下次检查更新时重新下载安装包；已安装的 Cherry Studio 与聊天数据(在 Roaming\\CherryStudio)不受影响",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\cherrystudio-updater 285MB / 2 文件，仅 pending/ 子目录，无其他文件。"
+  },
+  {
+    "match": "srun4-portal-app-updater",
+    "owner": "深澜 srun4 校园网 Portal 客户端",
+    "purpose": "srun4 Portal 客户端更新器下载的安装包：installer.exe 140MB + pending/ 136MB",
+    "category": "installer-cache",
+    "safety": "safe",
+    "confidence": "high",
+    "ifDeleted": "下次更新重新下载安装包；已安装客户端与账号配置不受影响",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\srun4-portal-app-updater 280MB / 3 文件：installer.exe(143608KB)、pending/(2 文件，140MB)。"
+  },
+  {
+    "match": "@deepseek-aidsh-desktop-updater",
+    "owner": "DeepSeek AIDSH 桌面端（electron-updater）",
+    "purpose": "DSH 桌面端更新器下载的安装包，276MB，只有一个文件",
+    "category": "installer-cache",
+    "safety": "safe",
+    "confidence": "high",
+    "ifDeleted": "下次更新重新下载安装包；已安装的桌面端与其数据不受影响",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\@deepseek-aidsh-desktop-updater 276MB / 1 文件：installer.exe(282603KB)。"
+  },
+  {
+    "match": "adrive-desktop-updater",
+    "owner": "阿里云盘桌面端（electron-updater）",
+    "purpose": "阿里云盘更新器的下载包，92MB / 2 文件，全部在 pending/ 内",
+    "category": "installer-cache",
+    "safety": "safe",
+    "confidence": "high",
+    "ifDeleted": "下次更新重新下载；已安装客户端与云盘数据不受影响",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\adrive-desktop-updater 92MB / 2 文件，只有 pending/ 子目录。"
+  },
+  {
+    "match": "clash_win-updater",
+    "owner": "Clash for Windows（electron-updater）",
+    "purpose": "Clash for Windows 更新器下载的安装包，76MB / 1 文件",
+    "category": "installer-cache",
+    "safety": "safe",
+    "confidence": "high",
+    "ifDeleted": "下次更新重新下载；已安装客户端与订阅配置(在 Roaming\\clash_win)不受影响",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\clash_win-updater 76MB / 1 文件：installer.exe(77951KB)。"
+  },
+  {
+    "match": "wenxiaobai-updater",
+    "owner": "文小白（electron-updater）",
+    "purpose": "文小白桌面端更新器下载的安装包，68MB / 1 文件",
+    "category": "installer-cache",
+    "safety": "safe",
+    "confidence": "high",
+    "ifDeleted": "下次更新重新下载；已安装程序与数据(在 Roaming\\wenxiaobai)不受影响",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\wenxiaobai-updater 68MB / 1 文件：installer.exe(69833KB)。"
+  },
+  {
+    "match": "tidalab-updater",
+    "owner": "TidaLab（electron-updater）",
+    "purpose": "TidaLab 更新器下载的安装包，50MB / 1 文件",
+    "category": "installer-cache",
+    "safety": "safe",
+    "confidence": "high",
+    "ifDeleted": "下次更新重新下载；已安装程序与数据(在 Roaming\\tidalab)不受影响",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\tidalab-updater 50MB / 1 文件：installer.exe(51533KB)。"
+  },
+  {
+    "match": "app_shell_cache_6383",
+    "owner": "某 Electron 类应用的 app_shell 更新缓存（目录名带进程号）",
+    "purpose": "单个已下载的应用整包：app_package_cb97a250dd.exe 242MB，目录里没有其他任何文件",
+    "category": "installer-cache",
+    "safety": "safe",
+    "confidence": "medium",
+    "ifDeleted": "只是安装包的落盘缓存，对应程序下次更新时重新下载；不影响任何已安装程序",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\app_shell_cache_6383 242MB / 1 文件，内容为 app_package_cb97a250dd.exe(247769KB)。目录名形如 app_shell_cache_<PID>，是个一次性的下载落地点；没有 manifest 或用户数据可推断具体厂商。"
+  },
+  {
+    "match": "Mudlet",
+    "owner": "Mudlet（MUD 客户端，Squirrel 安装器）",
+    "purpose": "Mudlet 的 Squirrel 版本化安装：app-4.19.1 是程序本体(164MB)，packages 里是完整安装包(62MB)，根下 Mudlet.exe 是启动垫片",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "high",
+    "ifDeleted": "整删会让 Mudlet 直接无法启动，且 Squirrel 的版本目录是它唯一的程序来源，必须重新运行安装包；MUD 存档与脚本在用户自己的 Mudlet profile 目录，不在此",
+    "children": [
+      {
+        "match": "packages",
+        "safety": "safe",
+        "purpose": "Squirrel 更新用的完整安装包 Mudlet-4.19.1-full.nupkg(62MB) 与 RELEASES，packages\\SquirrelTemp 为空",
+        "ifDeleted": "下次更新/回滚时重新下载"
+      },
+      {
+        "match": "app-4.19.1",
+        "safety": "never",
+        "purpose": "Mudlet 程序本体，164MB / 492 文件：lua 321、dll 72、qm 翻译 29、json 24，另有 libicudt75.dll 30MB、多语言 .dic 词典",
+        "ifDeleted": "Mudlet 无法启动，必须重装"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "Mudlet.exe 启动垫片与 Update.exe 更新器",
+        "ifDeleted": "无法启动也无法自动更新"
+      }
+    ],
+    "evidence": "实测 AppData\\Local\\Mudlet 228MB / 497 文件。app-4.19.1/(164MB，492 文件：lua 321、dll 72、qm 29、json 24，可辨 libicudt75.dll 30MB、el_GR.dic 10.7MB、de_AT_frami.dic 4.4MB、discord-rpc32.dll)、packages/(61MB：Mudlet-4.19.1-full.nupkg 62MB + RELEASES + 空的 SquirrelTemp)、根下 Mudlet.exe(463KB)、Update.exe(1855KB)、app.ico。"
+  },
+  {
+    "match": "CrashDumps",
+    "owner": "Windows 错误报告（WER）为崩溃进程保存的转储",
+    "purpose": "崩溃进程的内存转储，210MB / 10 个 .dmp，单个 3MB~62MB，来自 AlibabaProtect、AnsysFWW、fl_mpi2320、HYP 等进程",
+    "category": "crash-dump",
+    "safety": "safe",
+    "confidence": "high",
+    "ifDeleted": "那几次崩溃的现场数据丢失，以后无法再用 WinDbg 回溯；不影响任何程序运行，也不会再产生新文件直到下次崩溃",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\CrashDumps 210MB / 10 个文件，全部是 .dmp：AlibabaProtect.exe 六个(9960/13116/26172/27016/29532/29608，各约 3.1MB)、AnsysFWW.exe.22632.dmp(60MB)、fl_mpi2320.exe.5840.dmp(61MB)、fl_mpi2320.exe.29676.dmp(61MB)、HYP.exe.23388.dmp(8.4MB)。"
+  },
+  {
+    "match": "com.wenxiaobai.desktop",
+    "owner": "文小白桌面端（WebView2 承载）",
+    "purpose": "「文小白」桌面端的 WebView2(EBWebView) 数据，176MB：Default 的缓存/Cookie/IndexedDB、组件包缓存、Widevine、Subresource Filter 规则库",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删会让文小白失去登录态（账户 Cookie 与 localStorage 全丢），需要重新扫码/登录；缓存类子目录删掉只是首次加载变慢",
+    "children": [
+      {
+        "match": "EBWebView\\component_crx_cache",
+        "safety": "safe",
+        "purpose": "WebView2 组件包缓存，19MB / 8 文件",
+        "ifDeleted": "按需重新下载组件"
+      },
+      {
+        "match": "EBWebView\\Default\\Cache",
+        "safety": "safe",
+        "purpose": "内嵌页面网页缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "EBWebView\\Default\\Code Cache",
+        "safety": "safe",
+        "purpose": "JS 字节码缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "EBWebView\\Subresource Filter",
+        "safety": "safe",
+        "purpose": "广告过滤规则库，12MB",
+        "ifDeleted": "重新下载规则"
+      },
+      {
+        "match": "EBWebView\\WidevineCdm",
+        "safety": "safe",
+        "purpose": "DRM 组件，22MB",
+        "ifDeleted": "受保护视频暂不可播，自动重新下载"
+      },
+      {
+        "match": "EBWebView\\Snapshots",
+        "safety": "safe",
+        "purpose": "会话快照缓存，2MB / 75 文件",
+        "ifDeleted": "崩溃恢复快照丢失"
+      },
+      {
+        "match": "EBWebView\\Default",
+        "safety": "never",
+        "purpose": "内嵌浏览器的 profile：Cookies、Local Storage、IndexedDB、Local State 登录态，111MB / 4066 文件",
+        "ifDeleted": "文小白需要重新登录，本地缓存的账号与表单数据丢失"
+      },
+      {
+        "match": "EBWebView",
+        "safety": "never",
+        "purpose": "WebView2 用户数据根目录",
+        "ifDeleted": "等同重置内嵌浏览器"
+      }
+    ],
+    "evidence": "实测 AppData\\Local\\com.wenxiaobai.desktop\\EBWebView 176MB / 4274 文件，目录结构与 Edge\\User Data 完全同构：Default/(111MB，4066 文件)、component_crx_cache/(19MB，8 文件)、WidevineCdm/(22MB)、Subresource Filter/(12MB)、Speech Recognition/(3MB)、Snapshots/(2MB，75 文件)、hyphen-data/(2MB)、ZxcvbnData/(2MB)、Local State(21KB)、BrowserMetrics。"
+  },
+  {
+    "match": "JianyingPro",
+    "owner": "剪映专业版（ByteDance）",
+    "purpose": "剪映的每用户数据 137MB：Cache 37MB、TTNet 网络缓存 80MB、Resources 素材 18MB、Projects 工程列表、Draft 草稿",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "high",
+    "ifDeleted": "整删会丢掉工程列表与草稿箱索引，剪映打开后看不到历史项目（素材文件本身在你选的导出目录）；缓存类子目录删掉只是首次加载变慢",
+    "children": [
+      {
+        "match": "User Data\\Cache",
+        "safety": "safe",
+        "purpose": "素材与界面缓存，37MB / 438 文件",
+        "ifDeleted": "重新下载，首次打开变慢"
+      },
+      {
+        "match": "User Data\\TTNet",
+        "safety": "safe",
+        "purpose": "字节 TTNet 网络库缓存，80MB / 4 文件",
+        "ifDeleted": "重新建立网络缓存"
+      },
+      {
+        "match": "User Data\\Resources",
+        "safety": "safe",
+        "purpose": "贴纸/特效/字体资源缓存，18MB / 331 文件",
+        "ifDeleted": "用到时重新下载"
+      },
+      {
+        "match": "User Data\\Projects",
+        "safety": "never",
+        "purpose": "工程列表与项目索引数据库",
+        "ifDeleted": "剪映里看不到历史工程，需手动找到草稿目录重新导入"
+      },
+      {
+        "match": "User Data\\Draft",
+        "safety": "never",
+        "purpose": "草稿箱目录",
+        "ifDeleted": "未完成的草稿丢失，无法恢复"
+      },
+      {
+        "match": "User Data\\Config",
+        "safety": "never",
+        "purpose": "登录态与配置，8 文件",
+        "ifDeleted": "需重新登录剪映账号"
+      }
+    ],
+    "evidence": "实测 AppData\\Local\\JianyingPro\\User Data 137MB / 805 文件：Cache/(37MB，438 文件)、TTNet/(80MB，4 文件)、Resources/(18MB，331 文件)、Projects/(7 文件)、Draft/(空)、Config/(8 文件)、Crash/(3 文件)、Log/、Migration/、ParfaitServer/(1MB)、VELog/、ByteBench/、CEF/(10 文件)。上层另有空的 Apps/ 目录。"
+  },
+  {
+    "match": "Python",
+    "owner": "Windows Store 版 Python 3.15",
+    "purpose": "Store 版 Python 的每用户安装体：pythoncore-3.15-64 129MB(stdlib 1163 个 .py + 599 个 html 文档 + 296 个头文件)、bin 下 12 个 exe 启动垫片",
+    "category": "dev-toolchain",
+    "safety": "never",
+    "confidence": "high",
+    "ifDeleted": "该 Python 环境直接失效：python / pip 命令报错，已装的 pip 包与虚拟环境全部指向这里而无法使用；需要从 Microsoft Store 重新安装并重装所有包",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\Python 136MB / 2334 文件。pythoncore-3.15-64/(129MB，2307 文件：py 1163、html 599、h 296)、bin/(7MB，26 文件：12 个 exe + 12 个 __target__ + 2 个 py)、_cache/(1 个 txt)。"
+  },
+  {
+    "match": "TTKN",
+    "owner": "中国知网 CAJViewer（CNKI 阅读器）",
+    "purpose": "CAJViewer 的每用户数据 120MB：CAJFileTemp 是打开过的 CAJ/PDF 解出的页面文件 81MB，cache 32MB，cefCache 5MB，CAJViewer 下有 systemData.db",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "high",
+    "ifDeleted": "整删会让 CAJViewer 丢失设置库(systemData.db)与云同步目录(HWCloud)，最近打开的文档列表消失，需重新登录知网；下次打开文档时会重新解包",
+    "children": [
+      {
+        "match": "CAJFileTemp",
+        "safety": "safe",
+        "purpose": "已打开 CAJ/PDF 解出的页面图片与 XML，81MB / 226 文件(三组内容，最大一组 73MB / 119 文件)",
+        "ifDeleted": "再打开该文档时重新解析生成，仅首次打开变慢"
+      },
+      {
+        "match": "cache",
+        "safety": "safe",
+        "purpose": "通用缓存，32MB / 60 文件",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "cefCache",
+        "safety": "safe",
+        "purpose": "内嵌 CEF 缓存，5MB / 13 文件",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "CAJViewer",
+        "safety": "never",
+        "purpose": "systemData.db 设置数据库与 HWCloud 云同步目录",
+        "ifDeleted": "阅读器设置与知网账号绑定关系丢失，需重新设置与登录"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "Catalogue/(书目 XML)、Face/、HOME/、TranslateFile/ 等界面资源与配置",
+        "ifDeleted": "阅读器界面元素缺失，需重装"
+      }
+    ],
+    "evidence": "实测 AppData\\Local\\TTKN 120MB / 475 文件。CAJFileTemp/(81MB，226 文件)：e0968deb.../73MB 119 文件 + .xml/.datas.xml、ee8fc6e1.../6MB 75 文件、3888eb78.../2MB 26 文件；cache/(32MB，60 文件)；cefCache/(5MB)；CAJViewer/(含 systemData.db + HWCloud/)；Catalogue/、Face/(63 png)、HOME/(50 png)、TranslateFile/、Assistinfo/(3 xml)、FileFirstPage/(5 jpg)。"
+  },
+  {
+    "match": "Firaxis Games",
+    "owner": "Firaxis《文明 6》(Sid Meier's Civilization VI)",
+    "purpose": "《文明 6》的每用户数据 100MB：Cache 73MB 着色器与资源缓存、Challenges 16MB、Logs 9MB、Mods.sqlite 模组数据库、各类 Options 配置文本",
+    "category": "game-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删会丢掉模组启用状态(Mods.sqlite)与图形/按键等个人设置，游戏重建缓存后才能进；存档在 Documents\\My Games 下不受影响",
+    "children": [
+      {
+        "match": "Sid Meier's Civilization VI\\Cache",
+        "safety": "safe",
+        "purpose": "着色器与资源缓存，73MB / 3 文件",
+        "ifDeleted": "首次进游戏重新编译，加载明显变慢"
+      },
+      {
+        "match": "Sid Meier's Civilization VI\\Logs",
+        "safety": "safe",
+        "purpose": "游戏日志，9MB / 68 文件",
+        "ifDeleted": "仅丢失排错记录"
+      },
+      {
+        "match": "Sid Meier's Civilization VI\\dumps",
+        "safety": "safe",
+        "purpose": "崩溃转储目录(当前为空)",
+        "ifDeleted": "无影响"
+      },
+      {
+        "match": "Sid Meier's Civilization VI\\Mods.sqlite",
+        "safety": "never",
+        "purpose": "模组扫描结果与启用状态数据库，2.4MB",
+        "ifDeleted": "已启用的模组组合丢失，需重新在游戏内逐个勾选"
+      },
+      {
+        "match": "Sid Meier's Civilization VI",
+        "safety": "never",
+        "purpose": "AppOptions/UserOptions/GraphicsOptions/InputSettings/SoundOpts 等个人设置，另有 4 个 sqlite",
+        "ifDeleted": "画面的画质、按键、音量等设置全部回到默认"
+      }
+    ],
+    "evidence": "实测 AppData\\Local\\Firaxis Games\\Sid Meier's Civilization VI 100MB / 79 文件：Cache/73MB(3 文件)、Challenges/16MB(1 文件)、Logs/9MB(68 文件，28 个 .log)、Mods.sqlite 2.4MB、AppOptions.txt 5KB、UserOptions.txt 6KB、GraphicsOptions.txt 4KB、InputSettings.json 10KB、SoundOpts.txt、EOSOptions.txt、dumps/(空)、packagedDumps/(空)、PackageTemp/(空)；sqlite 共 4 个。"
+  },
+  {
+    "match": "Quark",
+    "owner": "夸克浏览器（Quark，Chromium 内核）",
+    "purpose": "夸克浏览器的 Chromium profile，94MB：Default 18MB 含账户数据/书签/Cookie，pars_data 38MB 内置页面资源，GrShaderCache 6MB，BrowserMetrics 12MB",
+    "category": "browser-profile",
+    "safety": "mixed",
+    "confidence": "high",
+    "ifDeleted": "整删等于夸克浏览器重置到出厂状态：书签、登录态、历史、扩展全丢；只删缓存类子目录则无影响",
+    "children": [
+      {
+        "match": "User Data\\Default\\Cache",
+        "safety": "safe",
+        "purpose": "网页缓存",
+        "ifDeleted": "自动重建，首次加载变慢"
+      },
+      {
+        "match": "User Data\\Default\\Code Cache",
+        "safety": "safe",
+        "purpose": "JS 字节码缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "User Data\\GrShaderCache",
+        "safety": "safe",
+        "purpose": "GPU 着色器缓存，6MB / 67 文件",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "User Data\\DawnGraphiteCache",
+        "safety": "safe",
+        "purpose": "WebGPU 缓存，1MB",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "User Data\\pars_data",
+        "safety": "safe",
+        "purpose": "内置页面/插件资源解包目录，38MB / 663 文件",
+        "ifDeleted": "用到时重新解包"
+      },
+      {
+        "match": "User Data\\BrowserMetrics",
+        "safety": "safe",
+        "purpose": "崩溃与性能指标记录，12MB / 3 文件",
+        "ifDeleted": "仅丢失本地统计"
+      },
+      {
+        "match": "User Data\\Crashpad",
+        "safety": "safe",
+        "purpose": "崩溃上报待发队列",
+        "ifDeleted": "待上报的崩溃记录丢弃"
+      },
+      {
+        "match": "User Data\\Default",
+        "safety": "never",
+        "purpose": "浏览器 profile：Bookmarks、Account Web Data、Cookies、Backup/、Local Storage、blob_storage，18MB / 346 文件",
+        "ifDeleted": "书签、保存的账号与登录态全部丢失，需重新登录并重建书签"
+      },
+      {
+        "match": "User Data",
+        "safety": "never",
+        "purpose": "整个浏览器用户数据根目录，94MB",
+        "ifDeleted": "夸克回到出厂状态"
+      }
+    ],
+    "evidence": "实测 AppData\\Local\\Quark\\User Data 94MB / 1242 文件。根下 Local State(18KB)、first_party_sets.db、account.json、cms_config(909KB)、integration_config、login_blocked_meta、GrShaderCache/(6MB，67 文件)、BrowserMetrics/(12MB)、DawnGraphiteCache/、pars_data/(38MB，663 文件)、cms_data/(3MB)、component_crx_cache/。Default/(18MB，346 文件) 内可见 Bookmarks、Bookmarks.bak、Account Web Data、BrowsingTopicsSiteData、Backup/、blob_storage/——与 Chromium 标准 profile 一致。"
+  },
+  {
+    "match": "Thunder Network",
+    "owner": "迅雷（Thunder）",
+    "purpose": "迅雷游戏模块(xlgame)下载的资源包，76MB / 2 文件：xlgame_resource 下一个 exe 与一个 json",
+    "category": "app-data",
+    "safety": "safe",
+    "confidence": "medium",
+    "ifDeleted": "该游戏资源包需重新下载；迅雷本体、其他下载任务与会员状态不受影响",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\Thunder Network 76MB / 2 文件，结构为 xlgame_resource/ 内含 1 个 .exe 与 1 个 .json，没有任何用户数据或数据库文件。LocalLow 下另有同名的 Thunder Network 目录(2 文件)。"
+  },
+  {
+    "match": "Softdeluxe",
+    "owner": "Free Download Manager（Softdeluxe）",
+    "purpose": "FDM 的每用户数据库，72MB / 7 文件，含 1 个 .sqlite 下载任务库、2 个 json 配置、ini 与 .daily 统计文件",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "high",
+    "ifDeleted": "所有下载任务、队列、已完成列表与统计消失且无法恢复（FDM 不把任务列表存到别处），必须重新添加下载链接",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\Softdeluxe\\Free Download Manager 72MB / 7 文件，含 .sqlite 1 个、.json 2 个、.ini 1 个、.daily 1 个。无需再深挖即可判定：sqlite 是任务库，删除即不可逆。"
+  },
+  {
+    "match": "node-gyp",
+    "owner": "node-gyp（Node 原生模块编译工具）",
+    "purpose": "node-gyp 下载并缓存的 Node 头文件，61MB / 2812 文件(2808 个 .h + 2 个 .gypi + lib)",
+    "category": "dev-toolchain",
+    "safety": "safe",
+    "confidence": "high",
+    "ifDeleted": "下次 npm install 编译原生模块(canvas、better-sqlite3 等)时重新从 nodejs.org 下载对应版本头文件；离线或代理不通时编译会失败",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\node-gyp\\Cache 61MB / 2812 文件：h 2808、gypi 2、lib。与 Temp\\node-gyp-tmp-IdHkDV(60MB，2808 个 .h) 是同一批解包产物。"
+  },
+  {
+    "match": "flutter_webview_windows",
+    "owner": "向日葵远程控制（AweSun），Flutter + WebView2",
+    "purpose": "向日葵用 flutter_webview_windows 插件创建的内嵌 WebView2 数据，58MB / 560 文件",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删会让向日葵内嵌网页(登录/推广页)失去登录态，需重新登录；缓存子目录删掉只是首次加载变慢",
+    "children": [
+      {
+        "match": "AweSun\\EBWebView\\component_crx_cache",
+        "safety": "safe",
+        "purpose": "WebView2 组件缓存",
+        "ifDeleted": "按需重新下载"
+      },
+      {
+        "match": "AweSun\\EBWebView\\Default\\Cache",
+        "safety": "safe",
+        "purpose": "内嵌网页缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "AweSun\\EBWebView\\Default",
+        "safety": "never",
+        "purpose": "内嵌浏览器 profile(Cookies / Local Storage / IndexedDB)",
+        "ifDeleted": "向日葵内嵌页登录态丢失"
+      },
+      {
+        "match": "AweSun\\EBWebView",
+        "safety": "never",
+        "purpose": "WebView2 用户数据根",
+        "ifDeleted": "等同重置内嵌浏览器"
+      }
+    ],
+    "evidence": "实测 AppData\\Local\\flutter_webview_windows\\AweSun\\EBWebView 58MB / 560 文件，与 Edge\\User Data 同构：Default/、component_crx_cache/(52 个 hyb)、WidevineCdm/、Snapshots/、Speech Recognition/、Subresource Filter/、Local State。"
+  },
+  {
+    "match": "AppStore",
+    "owner": "第三方「应用商店」客户端（本机 46MB）",
+    "purpose": "某个应用商店客户端的程序本体：7z.exe / 7z.dll 与 20 多个 api-ms-win-*.dll，另有空的 platforms、styles、user 目录",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "该应用商店客户端无法启动，快捷方式失效，需要重新下载安装；已装的其他软件不受影响",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\AppStore 46MB / 30 文件：7z.dll(261KB)、7z.exe(717KB)、api-ms-win-core-*.dll 与 api-ms-win-crt-*.dll 共 20 余个、三个空目录 platforms/ styles/ user/。这是程序本体而非数据目录，因此不能当缓存删。"
+  },
+  {
+    "match": "Package Cache",
+    "owner": "Visual Studio / vcredist 等 Burn 引导式安装器的安装包缓存",
+    "purpose": "安装器回滚与修复用的原始安装包缓存，45MB / 13 文件：9 个 {GUID}v3.15.150.0 目录各含 1 个 msi(最大 18MB)，另有 2 个 exe",
+    "category": "installer-cache",
+    "safety": "safe",
+    "confidence": "medium",
+    "ifDeleted": "已装程序可以继续用；但之后点「修复」或在没网的情况下卸载/修改这些组件时，安装器会要求重新下载安装源(离线环境下会卡住)",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\Package Cache 45MB / 13 文件，全部是 msi/exe：{07FCC1E6-...}v3.15.150.0 5MB msi、{8B0C35D4-...}v3.15.150.0 8MB msi、{9C259856-...}v3.15.150.0 7MB msi、{C27CF1CB-...}v3.15.150.0 18MB msi 等 9 个 msi 目录、2F70A6.../1 个 exe、{c7d15cec-...}/1 个 exe + 1 个 rsm。"
+  },
+  {
+    "match": "miHoYo",
+    "owner": "米哈游《崩坏：星穹铁道》",
+    "purpose": "游戏在 Local 的本地缓存层，30MB：cache/ 与 QtWebEngine/，另有 3 个 log",
+    "category": "cache",
+    "safety": "safe",
+    "confidence": "high",
+    "ifDeleted": "游戏内嵌网页(公告、启动器界面)重新加载，游戏本体、账号与存档不受影响",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\miHoYo 30MB / 159 文件，只有 崩坏：星穹铁道\\ 一个子目录，其下为 cache/、QtWebEngine/ 与 3 个 .log，没有 sqlite/存档文件。存档与游戏资源在安装目录与 LocalLow\\miHoYo。"
+  },
+  {
+    "match": "OriginLab",
+    "owner": "Origin（OriginLab 数据分析软件）",
+    "purpose": "Origin 的每用户应用资源，29MB：101 内置图形/主题资源、95 拟合函数定义、Apps 用户安装的插件资源、SysOptns.ini 首选项、TempSave 临时目录",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删会让用户自建/从商店安装的 Origin App 插件失效并丢失全部首选项，需要重新安装插件与重设；内置资源与模板会随软件重装恢复",
+    "children": [
+      {
+        "match": "TempSave",
+        "safety": "safe",
+        "purpose": "临时保存目录(当前为空)",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "101",
+        "safety": "safe",
+        "purpose": "内置图形/主题/符号资源，16MB / 499 文件(png 381、ocb 55、fit 32)",
+        "ifDeleted": "软件重装或首次使用时重新展开"
+      },
+      {
+        "match": "95",
+        "safety": "safe",
+        "purpose": "内置拟合函数定义表，178 个 .fit + ini",
+        "ifDeleted": "随软件重装恢复"
+      },
+      {
+        "match": "Apps",
+        "safety": "never",
+        "purpose": "用户安装的 Origin App 插件，12MB / 491 文件(svg 122、png 83、js 80、txt 44)",
+        "ifDeleted": "自建或商店安装的插件全部失效，需逐个重新安装"
+      },
+      {
+        "match": "SysOptns.ini",
+        "safety": "never",
+        "purpose": "Origin 首选项文件",
+        "ifDeleted": "所有自定义首选项回到默认"
+      }
+    ],
+    "evidence": "实测 AppData\\Local\\OriginLab 29MB / 1169 文件：101/(16MB，499 文件：png 381、ocb 55、fit 32、gen 9)、95/(178 文件：fit 173、ini 2、cnf 1)、Apps/(12MB，491 文件：svg 122、png 83、js 80、txt 44)、SysOptns.ini(1KB)、TempSave/(空)、SysNotices/(空)。"
+  },
+  {
+    "match": "WeGame",
+    "owner": "腾讯 WeGame",
+    "purpose": "WeGame 迷你加载器的版本化目录 WeGameMiniLoader(55555)，26MB：3 个 exe + 4 个 log + 4 个 ini + 1 个 ico",
+    "category": "app-data",
+    "safety": "safe",
+    "confidence": "medium",
+    "ifDeleted": "下次启动 WeGame 时会重新下载并解出迷你加载器；已安装的游戏本体与账号不受影响",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\WeGame 26MB / 15 文件，只有 WeGameMiniLoader(55555)/ 一个子目录，内含 exe 3、log 4、ini 4、ico 1，无数据库或用户存档。"
+  },
+  {
+    "match": "Comms",
+    "owner": "Windows 邮件和日历 / People（Unistore 数据库）",
+    "purpose": "邮件与联系人的本地数据库，25MB：UnistoreDB 25MB(ESE 格式 jtx/jrs/jfm/vol)、Unistore 42 个 .dat + 1 个 .uca",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "high",
+    "ifDeleted": "邮件账户、联系人、日历账户的本地数据丢失且不可恢复；需重新添加账户并重新下载，未同步到服务器的本地邮件无法找回",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\Comms 25MB / 51 文件：UnistoreDB/(25MB：.jtx 3、.jrs 2、.jfm 1、.vol 1——ESE 数据库家族)、Unistore/(42 个 .dat + 1 个 .uca)、Volatile/(空)。ESE 数据库 = 邮件/联系人存储，属不可删。"
+  },
+  {
+    "match": "Paradox Interactive",
+    "owner": "Paradox Launcher v2（Electron）",
+    "purpose": "Paradox 游戏启动器在 Local 侧的日志与 Electron 缓存，24MB：12 个 log、4 个 .old、94 个无扩展名缓存文件、2 个 json",
+    "category": "app-data",
+    "safety": "safe",
+    "confidence": "high",
+    "ifDeleted": "启动器下次启动重建缓存与日志；游戏本体、Mod 与存档(在 Documents\\Paradox Interactive)不受影响",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\Paradox Interactive 24MB / 118 文件，只有 launcher-v2/ 一个子目录(117 文件：log 12、old 4、无扩展名 94、json 2)，根下 launcherpath(0KB)。"
+  },
+  {
+    "match": "Kingsoft",
+    "owner": "金山 / WPS 的 Chromium 组件",
+    "purpose": "金山组件 kvip 的 CEF 缓存：只有 ChromeDWriteFontCache 与 Visited Links 两个文件，23MB",
+    "category": "cache",
+    "safety": "safe",
+    "confidence": "high",
+    "ifDeleted": "相关组件首屏渲染略慢，字体缓存与访问过的链接记录自动重建",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\Kingsoft 23MB / 2 文件，结构为 kvip/ 下仅 ChromeDWriteFontCache 与 Visited Links——这两个文件名正是 Chromium 的字体缓存与访问链接表，故判为纯缓存。"
+  },
+  {
+    "match": "ConnectedDevicesPlatform",
+    "owner": "Windows「手机连接 / 就近共享」(Connected Devices Platform)",
+    "purpose": "设备配对与信任的本地数据库，20MB：75fa87849f61edd0.db 19MB(SQLite + shm + wal)，另有 *.cdp 配置与证书库 .sst",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "已配对的手机与电脑列表、信任证书全部丢失，手机连接/就近共享需要重新配对，历史连接记录不可恢复",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\ConnectedDevicesPlatform 20MB / 12 文件：75fa87849f61edd0/(.db 19MB + .db-shm + .db-wal)、AAD.c46291d3-7275-41ce-9f21-7aed3165519e/(约 1MB 同样三件套)、根下 4 个 *.cdp/*.cdpresource、CDPGlobalSettings.cdp(13KB)、Connected Devices Platform certificates.sst。"
+  },
+  {
+    "match": "Google",
+    "owner": "Google（Chrome 浏览器 / DriveFS 云盘 / GoogleUpdater）",
+    "purpose": "Google 桌面组件在每用户下的数据根：Chrome 的浏览器 profile(User Data)、DriveFS 云盘缓存与登录令牌、GoogleUpdater 更新包",
+    "category": "browser-profile",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删会让 Chrome 丢失书签/密码/登录态、Google 云端硬盘需要重新登录并全量重扫同步队列；只删缓存子目录则无影响",
+    "children": [
+      {
+        "match": "Chrome\\User Data\\component_crx_cache",
+        "safety": "safe",
+        "purpose": "Chrome 组件包缓存",
+        "ifDeleted": "按需重新下载"
+      },
+      {
+        "match": "Chrome\\User Data\\*\\Cache",
+        "safety": "safe",
+        "purpose": "网页缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Chrome\\User Data\\*\\Code Cache",
+        "safety": "safe",
+        "purpose": "JS 字节码缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Chrome\\User Data\\*\\GPUCache",
+        "safety": "safe",
+        "purpose": "GPU 着色器缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Chrome\\User Data\\GrShaderCache",
+        "safety": "safe",
+        "purpose": "GPU 着色器缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Chrome\\User Data\\OptGuideOnDeviceModel",
+        "safety": "safe",
+        "purpose": "端侧模型文件(可达数百 MB)",
+        "ifDeleted": "Chrome 按需重新下载"
+      },
+      {
+        "match": "GoogleUpdater",
+        "safety": "safe",
+        "purpose": "更新器下载缓存与安装包",
+        "ifDeleted": "下次更新重新下载"
+      },
+      {
+        "match": "Chrome\\User Data\\*",
+        "safety": "never",
+        "purpose": "浏览器 profile：Bookmarks、Login Data、History、Cookies、Local Storage、Extensions",
+        "ifDeleted": "书签、保存的密码、历史与登录态全部丢失"
+      },
+      {
+        "match": "DriveFS",
+        "safety": "never",
+        "purpose": "Google 云端硬盘的登录令牌、本地镜像队列与元数据缓存",
+        "ifDeleted": "需重新登录，可能触发大量文件重新比对与下载"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "其余 Google 组件数据",
+        "ifDeleted": "对应组件需重新登录或恢复默认"
+      }
+    ],
+    "evidence": "本机未安装：实测 AppData\\Local 的 124 个一级目录里没有 Google。条目依据 Chrome/DriveFS 在 Windows 的标准布局；同构旁证是本机真实存在的 Microsoft\\Edge\\User Data(component_crx_cache 185MB、Default\\Cache 76MB、Code Cache 36MB、Login Data、Bookmarks、History)与 Quark\\User Data，两者与本条目的子目录清单一一对应。"
+  },
+  {
+    "match": "JetBrains",
+    "owner": "JetBrains IDE（IntelliJ IDEA / PyCharm / CLion / WebStorm 等）与 Toolbox",
+    "purpose": "JetBrains IDE 的每用户索引与缓存根：<产品版本>\\caches、index、log、tmp，以及 Toolbox 的安装与更新缓存",
+    "category": "dev-toolchain",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删会让所有 JetBrains IDE 丢失全部设置、插件启用状态与项目索引，需要重新配置；caches/index 删掉只是下次打开项目要重新索引(数分钟)",
+    "children": [
+      {
+        "match": "*\\caches",
+        "safety": "safe",
+        "purpose": "项目索引、语法树与符号缓存(单个项目可达数 GB)",
+        "ifDeleted": "IDE 重新索引，首次打开项目数分钟变慢，代码本身不受影响"
+      },
+      {
+        "match": "*\\index",
+        "safety": "safe",
+        "purpose": "索引临时数据",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "*\\log",
+        "safety": "safe",
+        "purpose": "IDE 日志",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "*\\tmp",
+        "safety": "safe",
+        "purpose": "IDE 临时文件",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "*\\options",
+        "safety": "never",
+        "purpose": "IDE 全部设置、快捷键、插件启用状态",
+        "ifDeleted": "IDE 回到默认设置，需重新配置主题/字体/快捷键/插件"
+      },
+      {
+        "match": "Toolbox\\*",
+        "safety": "never",
+        "purpose": "Toolbox 管理的 IDE 安装与更新缓存",
+        "ifDeleted": "Toolbox 需重新下载 IDE"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "其余每产品目录(插件、设置、许可证)",
+        "ifDeleted": "对应 IDE 需重新配置与激活"
+      }
+    ],
+    "evidence": "本机未安装：实测 AppData\\Local 的 124 个一级目录里没有 JetBrains。条目依据 JetBrains 官方 per-user 目录布局(caches / index / log / tmp / options)；本地同为开发工具链的 node-gyp\\Cache(2808 个头文件) 与 Python(2307 个 .py) 已实测属于可重建/不可删两类，可用于对照。"
+  },
+  {
+    "match": "Discord",
+    "owner": "Discord 桌面客户端",
+    "purpose": "Discord 的每用户数据：app-<版本> 程序本体、Cache/Code Cache/GPUCache 缓存、Local Storage 与登录令牌",
+    "category": "chat-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删需要重新登录所有账号，本地消息缓存与未发送草稿丢失；只删 Cache/Code Cache/GPUCache 则只是首次加载变慢",
+    "children": [
+      {
+        "match": "Cache",
+        "safety": "safe",
+        "purpose": "网页与媒体缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Code Cache",
+        "safety": "safe",
+        "purpose": "JS 字节码缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "GPUCache",
+        "safety": "safe",
+        "purpose": "GPU 着色器缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Crashpad",
+        "safety": "safe",
+        "purpose": "崩溃上报队列",
+        "ifDeleted": "待上报崩溃记录丢弃"
+      },
+      {
+        "match": "app-*",
+        "safety": "never",
+        "purpose": "程序本体(按版本号分目录)",
+        "ifDeleted": "Discord 无法启动，需重新安装"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "Local Storage / Network 下的登录令牌与本地消息缓存",
+        "ifDeleted": "需重新登录，本地草稿与缓存消息丢失"
+      }
+    ],
+    "evidence": "本机未安装：实测 AppData\\Local 的 124 个一级目录里没有 Discord。条目依据 Discord(Electron)标准布局；同构旁证是本机实际存在的 Roaming\\thunder、Roaming\\xlgame、Roaming\\@deepseek-ai\\dsh-desktop 三个 Electron 应用，均含 Cache / Code Cache / GPUCache / Local State / Network 同一套结构。"
+  },
+  {
+    "match": "Slack",
+    "owner": "Slack 桌面客户端",
+    "purpose": "Slack 的每用户数据：app-<版本> 程序本体、Cache/Code Cache/Service Worker 缓存、Local Storage 内的登录令牌与工作区列表",
+    "category": "chat-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删需要重新登录所有工作区，本地消息缓存与草稿丢失；只删缓存子目录无影响",
+    "children": [
+      {
+        "match": "Cache",
+        "safety": "safe",
+        "purpose": "网页与附件缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Code Cache",
+        "safety": "safe",
+        "purpose": "JS 字节码缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "GPUCache",
+        "safety": "safe",
+        "purpose": "GPU 着色器缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Service Worker\\CacheStorage",
+        "safety": "safe",
+        "purpose": "离线资源缓存",
+        "ifDeleted": "重新拉取"
+      },
+      {
+        "match": "app-*",
+        "safety": "never",
+        "purpose": "程序本体",
+        "ifDeleted": "Slack 无法启动"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "Local Storage / Network 内的工作区登录令牌",
+        "ifDeleted": "所有工作区需重新登录"
+      }
+    ],
+    "evidence": "本机未安装：实测 AppData\\Local 的 124 个一级目录里没有 Slack。条目依据 Slack(Electron + Chromium)标准布局；同构旁证是本机实际存在的 Roaming\\bilibili(Cache 272MB、Code Cache 65MB、Network\\Cookies、Local Storage)与 Roaming\\thunder。"
+  },
+  {
+    "match": "pip\\Cache",
+    "owner": "pip（Python 包管理器）",
+    "purpose": "pip 下载的 wheel/sdist 与 HTTP 缓存，位于 %LOCALAPPDATA%\\pip\\Cache",
+    "category": "dev-toolchain",
+    "safety": "safe",
+    "confidence": "medium",
+    "ifDeleted": "下次 pip install 重新从 PyPI 下载；已安装的 Python 包不受影响，离线环境下装包会失败",
+    "children": [],
+    "evidence": "本机未安装：实测 AppData\\Local 下没有 pip 目录。条目依据 pip 官方 cache-dir 默认位置(%LOCALAPPDATA%\\pip\\Cache)；本机已有同类的包管理缓存可对照——node-gyp\\Cache(61MB，2808 个头文件) 与 pnpm-cache(8MB，73 文件)，二者删除后都只是需要重新下载。"
+  },
+  {
+    "match": "npm-cache",
+    "owner": "npm（Node 包管理器）",
+    "purpose": "npm 的 cacache 内容寻址存储与 registry 元数据缓存(旧版 npm 在 %LOCALAPPDATA%\\npm-cache，新版在 Roaming\\npm-cache)",
+    "category": "dev-toolchain",
+    "safety": "safe",
+    "confidence": "medium",
+    "ifDeleted": "下次 npm install 重新下载依赖；已安装的 node_modules 与全局包不受影响，离线安装会失败",
+    "children": [],
+    "evidence": "本机未安装：实测 AppData\\Local 下没有 npm-cache。条目依据 npm 官方 cache 目录；本机实测的 pnpm-cache(8MB，73 文件) 与 node-gyp\\Cache(61MB) 是同类的包管理缓存，均为可重建。"
+  },
+  {
+    "match": "pnpm-cache",
+    "owner": "pnpm（Node 包管理器）",
+    "purpose": "pnpm 的元数据与内容缓存，8MB / 73 文件",
+    "category": "dev-toolchain",
+    "safety": "safe",
+    "confidence": "high",
+    "ifDeleted": "下次 pnpm install 重新下载包元数据与 tarball；已生成的 node_modules 与全局 store 不受影响",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\pnpm-cache 8MB / 73 文件，无 exe/db；同级另有 pnpm/(空) 与 pnpm-state/(1 文件)。"
+  },
+  {
+    "match": "Yarn\\Cache",
+    "owner": "Yarn（Node 包管理器）",
+    "purpose": "Yarn 的包缓存目录 yarntmp 与解包缓存",
+    "category": "dev-toolchain",
+    "safety": "safe",
+    "confidence": "medium",
+    "ifDeleted": "下次 yarn install 重新下载依赖；已完成的 node_modules 不受影响",
+    "children": [],
+    "evidence": "本机未安装：实测 AppData\\Local 下没有 Yarn。条目依据 Yarn 官方 cacheFolder 默认位置；同构旁证是本机实测的 pnpm-cache 与 node-gyp\\Cache，二者都是纯下载缓存。"
+  },
+  {
+    "match": "NuGet\\Cache",
+    "owner": "NuGet（.NET 包管理器）",
+    "purpose": "NuGet 下载的 .nupkg 包缓存(v3 在 %LOCALAPPDATA%\\NuGet\\v3-cache，旧版在 Cache)",
+    "category": "dev-toolchain",
+    "safety": "safe",
+    "confidence": "medium",
+    "ifDeleted": "下次 dotnet restore / nuget restore 重新下载包；已还原的 obj/bin 与全局 packages 目录不受影响，离线构建会失败",
+    "children": [],
+    "evidence": "本机未安装：实测 AppData\\Local 下没有 NuGet 目录。条目依据 NuGet 官方 http_cache 默认位置；同构旁证是本机实测的 pnpm-cache(8MB) 与 node-gyp\\Cache(61MB)。"
+  },
+  {
+    "match": "D3DSCache",
+    "owner": "Windows / DirectX 着色器缓存",
+    "purpose": "Direct3D 编译后的着色器磁盘缓存，1MB / 16 文件",
+    "category": "cache",
+    "safety": "safe",
+    "confidence": "high",
+    "ifDeleted": "游戏与 3D 程序首次运行时重新编译着色器，加载变慢；无功能损失",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\D3DSCache 1MB / 16 文件，无 exe/db/用户数据；与 NVIDIA\\DXCache(566MB) 是同一性质的着色器缓存。"
+  },
+  {
+    "match": "VirtualStore",
+    "owner": "Windows UAC 文件虚拟化",
+    "purpose": "UAC 虚拟化重定向目录：32 位程序写入 Program Files / Windows 被重定向到这里，本机有 Program Files/ 与 Windows/ 两个子目录，60 个文件",
+    "category": "virtualization",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "被虚拟化保存的老程序配置(ini/dat/存档)丢失，这些程序可能回到默认设置或启动报错；无法从别处恢复",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\VirtualStore 只有 Program Files/ 与 Windows/ 两个子目录，共 60 个文件 / 0MB(单个文件都很小)。这是 Windows 为不兼容 UAC 的老程序写的重定向副本，属程序数据而非缓存。"
+  },
+  {
+    "match": "PeerDistRepub",
+    "owner": "Windows BranchCache（对等分发缓存）",
+    "purpose": "BranchCache 已发布数据的本地缓存目录",
+    "category": "system",
+    "safety": "safe",
+    "confidence": "medium",
+    "ifDeleted": "缓存内容丢弃，下次从源服务器或对等机重新取；无数据损失",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\PeerDistRepub 存在但为空(0 个文件 / 0MB)，说明本机 BranchCache 未启用或已清空。"
+  },
+  {
+    "match": "Diagnostics",
+    "owner": "Windows 诊断/性能追踪",
+    "purpose": "Windows 诊断会话与 ETW 追踪的落盘目录",
+    "category": "temp",
+    "safety": "safe",
+    "confidence": "medium",
+    "ifDeleted": "仅丢失诊断追踪记录，系统与程序照常运行，下次诊断时重建",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\Diagnostics 存在但为空(0 个文件)。注意 Temp\\Diagnostics/(162MB，14 个 .log) 是另一处，已归入 Temp 条目。"
+  },
+  {
+    "match": "ElevatedDiagnostics",
+    "owner": "Windows 提权诊断会话",
+    "purpose": "以管理员权限运行的诊断/性能追踪落盘目录",
+    "category": "temp",
+    "safety": "safe",
+    "confidence": "medium",
+    "ifDeleted": "仅丢失提权诊断记录，无功能影响",
+    "children": [],
+    "evidence": "实测 AppData\\Local\\ElevatedDiagnostics 存在但为空(0 个文件)。"
+  },
+  {
+    "match": "Adobe",
+    "owner": "Adobe（Acrobat DC / Distiller / PDFMaker / Camera Raw）",
+    "purpose": "Adobe 各组件在 Local 的缓存层，4MB / 40 文件：Acrobat 的字体列表与图标缓存(.lst/.dat/UserCache.bin)、AcroCef 内嵌 CEF 缓存、Color 色彩配置文件缓存；另有 OOBE 首次运行状态。目录里没有 pdf/psd 等用户文档",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删会让 Acrobat 重新弹一次首次运行与许可协议确认（OOBE\\_LicenseAgreement.xml 与 opm.db 被清掉），并把字体/图标/CEF 缓存一起丢掉、下次启动重建；下面三个缓存子目录可以单独删，约可回收 4MB，用户文档与已完成的激活状态不在此目录",
+    "children": [
+      {
+        "match": "AcroCef",
+        "safety": "safe",
+        "purpose": "Acrobat 内嵌 CEF 缓存：Cache/index 512KB、Cache/data_1 264KB、GPUCache/data_1 + index，共 8 个文件",
+        "ifDeleted": "内嵌网页资源重新下载，首次打开 PDF 帮助页变慢"
+      },
+      {
+        "match": "Acrobat",
+        "safety": "safe",
+        "purpose": "字体列表与图标缓存：Distiller/PDFMaker/DC 三个 Cache 下的 17 个 .lst 字体列表、IconCacheAcro.dat 802KB、UserCache.bin 100KB、AdobeSysFnt15.lst 291KB",
+        "ifDeleted": "下次打开 Acrobat 重新扫描系统字体并重建列表，首次启动明显变慢"
+      },
+      {
+        "match": "Color",
+        "safety": "safe",
+        "purpose": "色彩配置文件缓存：wscRGB.icc 等 2 个 icc 与 ACECache11.lst",
+        "ifDeleted": "重新枚举系统色彩配置文件"
+      },
+      {
+        "match": "CameraRaw",
+        "safety": "safe",
+        "purpose": "Camera Raw 缓存与 GPU 探测结果",
+        "ifDeleted": "重新探测并生成"
+      },
+      {
+        "match": "OOBE",
+        "safety": "never",
+        "purpose": "首次运行引导状态：opm.db(9KB) 记已完成的引导步骤、_LicenseAgreement.xml(543B) 记已同意的许可协议",
+        "ifDeleted": "Acrobat 下次启动会重新走一遍首次运行引导并要求再次同意许可协议"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "AAMUpdater 等更新器目录与其余无扩展名文件",
+        "ifDeleted": "Adobe 更新器目录与未知状态文件，按不可重建处理"
+      }
+    ],
+    "evidence": "实测 AppData\\Local\\Adobe 4MB / 40 文件，6 个子目录。逐文件清点后扩展名分布：lst 17、无扩展名 14、dat 2、icc 2、log 2、db 1、xml 1、bin 1，没有 pdf/psd/ai/xmp 等用户文档。体积前列：Acrobat\\DC\\IconCacheAcro.dat 802KB、AcroCef\\DC\\Acrobat\\Cache\\index 512KB、Acrobat\\Distiller DC\\Cache\\AdobeFnt01.lst 322KB、AdobeSysFnt15.lst 291KB、AcroCef GPUCache\\data_1 264KB、Acrobat\\DC\\UserCache.bin 100KB、Color\\Profiles\\wscRGB.icc 65KB、Color\\ACECache11.lst 40KB。全目录仅 2 个非缓存类文件：OOBE\\opm.db(9216 bytes) 与 OOBE\\_LicenseAgreement.xml(543 bytes)——即首次运行与许可协议状态，因此整目录不能判 safe。"
+  },
+  {
+    "match": "Zoom",
+    "owner": "Zoom 桌面客户端",
+    "purpose": "Zoom 的每用户数据：bin 下的程序本体、data 下的缓存与本地录制临时文件、logs",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删需要重新安装并登录，本地会议历史与聊天记录丢失；只删 data 下的缓存/日志子目录无影响",
+    "children": [
+      {
+        "match": "data\\Cache",
+        "safety": "safe",
+        "purpose": "网页与头像缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "logs",
+        "safety": "safe",
+        "purpose": "客户端日志",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "bin",
+        "safety": "never",
+        "purpose": "Zoom 程序本体",
+        "ifDeleted": "Zoom 无法启动，需重新安装"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "data 下的本地会议历史、聊天记录与登录态",
+        "ifDeleted": "本地聊天与会议记录丢失，需重新登录"
+      }
+    ],
+    "evidence": "本机未安装：实测 AppData\\Local 的 124 个一级目录里没有 Zoom。条目依据 Zoom Windows 客户端的 bin/data/logs 布局；同构旁证是本机实际存在的 AppStore 目录(7z.exe + dll 平铺，属程序本体) 与 Programs\\Python。"
+  },
+  {
+    "match": "Spotify",
+    "owner": "Spotify 桌面客户端",
+    "purpose": "Spotify 的每用户数据：Update 下的安装包缓存、Data 下的离线歌曲缓存、Browser 下的 CEF 登录态",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删需要重新登录，已下载的离线歌曲需重新下载；只删 Update 与 CEF 缓存子目录则无影响",
+    "children": [
+      {
+        "match": "Update",
+        "safety": "safe",
+        "purpose": "更新安装包缓存",
+        "ifDeleted": "下次更新重新下载"
+      },
+      {
+        "match": "Browser\\Cache",
+        "safety": "safe",
+        "purpose": "CEF 网页缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Data",
+        "safety": "never",
+        "purpose": "离线歌曲缓存与本地库元数据",
+        "ifDeleted": "已下载的离线歌曲全部失效，需重新下载"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "登录态与设置",
+        "ifDeleted": "需重新登录"
+      }
+    ],
+    "evidence": "本机未安装：实测 AppData\\Local 的 124 个一级目录里没有 Spotify。条目依据 Spotify Windows 客户端 Update/Data/Browser 三段式布局；同构旁证是本机 Steam\\htmlcache(CEF 缓存) 与 Microsoft\\Edge\\User Data。"
+  },
+  {
+    "match": "Microsoft\\Terminal Server Client",
+    "owner": "Windows 远程桌面连接(mstsc)",
+    "purpose": "远程桌面的每用户记录：Default.rdp 默认连接配置与 Cache 下的位图缓存",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删会丢掉最近连接过的主机列表与保存的 RDP 设置，需重新输入地址；位图缓存删掉只是首次连接重绘变慢",
+    "children": [
+      {
+        "match": "Cache",
+        "safety": "safe",
+        "purpose": "RDP 位图缓存",
+        "ifDeleted": "首次连接重新绘制，略慢"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "Default.rdp 等保存的连接配置",
+        "ifDeleted": "远程桌面连接历史与设置丢失"
+      }
+    ],
+    "evidence": "实测 AppData\\Local\\Microsoft\\Terminal Server Client 存在但为空(0 个文件)，说明本机从未用 mstsc 连接或记录已被清理；条目按 Windows 远程桌面的标准结构给出。"
+  }
+]

@@ -1,0 +1,2195 @@
+[
+  {
+    "match": "Tencent",
+    "owner": "腾讯（微信 WeChat 4.x / QQ / 腾讯会议 / WeGame）",
+    "purpose": "腾讯全家桶的每用户数据总目录，Roaming 下最大的一项 4584MB：其中微信 xwechat 3787MB、腾讯会议 WeMeet 235MB、QQ 263MB、手游助手 TxGameAssistant 216MB",
+    "category": "chat-data",
+    "safety": "mixed",
+    "confidence": "high",
+    "ifDeleted": "整删等于把微信、QQ、腾讯会议全部退登并清空本地聊天缓存与收藏，未同步到服务器的本地文件与聊天记录无法恢复；只有下面列出的日志、更新包、缓存子目录可以删",
+    "children": [
+      {
+        "match": "xwechat\\log",
+        "safety": "safe",
+        "purpose": "微信运行日志，1039MB / 88 文件，每天一个 mm_YYYYMMDD.xlog(单个 20~85MB)",
+        "ifDeleted": "仅丢失排错日志，微信正常使用"
+      },
+      {
+        "match": "xwechat\\update",
+        "safety": "safe",
+        "purpose": "微信更新包：patch/ 876MB(31 文件) + download/ 235MB(14 文件)",
+        "ifDeleted": "下次更新重新下载"
+      },
+      {
+        "match": "xwechat\\radium\\cache",
+        "safety": "safe",
+        "purpose": "微信内置浏览器缓存，1MB / 6 文件",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "xwechat\\radium\\web",
+        "safety": "safe",
+        "purpose": "微信小程序/内置网页资源解包目录，389MB / 2326 文件",
+        "ifDeleted": "用到的小程序重新解包，首次打开变慢"
+      },
+      {
+        "match": "QQ\\webkit_cache",
+        "safety": "safe",
+        "purpose": "QQ 内置浏览器缓存，139MB / 704 文件",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "QQ\\Crashpad",
+        "safety": "safe",
+        "purpose": "QQ 崩溃上报队列，70MB / 10 文件",
+        "ifDeleted": "待上报崩溃记录丢弃"
+      },
+      {
+        "match": "QQ\\Skins",
+        "safety": "safe",
+        "purpose": "QQ 皮肤资源缓存，68MB / 2426 文件",
+        "ifDeleted": "重新下载皮肤"
+      },
+      {
+        "match": "QQ\\packages",
+        "safety": "safe",
+        "purpose": "QQ 更新用的完整安装包，198MB / 1 文件(full/)",
+        "ifDeleted": "下次更新重新下载"
+      },
+      {
+        "match": "QQ\\qqex\\dynamic_package",
+        "safety": "safe",
+        "purpose": "QQ 动态功能包，87MB / 2516 文件",
+        "ifDeleted": "用到时重新下发"
+      },
+      {
+        "match": "QQ\\miniapp",
+        "safety": "safe",
+        "purpose": "QQ 小程序缓存，19MB / 252 文件",
+        "ifDeleted": "重新下载小程序"
+      },
+      {
+        "match": "WeMeet\\Global",
+        "safety": "safe",
+        "purpose": "腾讯会议全局资源与缓存，232MB / 1182 文件",
+        "ifDeleted": "重新下载会议组件，首次开会变慢"
+      },
+      {
+        "match": "QQTempSys",
+        "safety": "safe",
+        "purpose": "QQ 临时系统文件，8MB / 405 文件",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "xwechat\\xplugin",
+        "safety": "never",
+        "purpose": "微信插件运行库，768MB / 241 文件",
+        "ifDeleted": "微信部分功能(视频号/小程序)无法加载，需重装微信"
+      },
+      {
+        "match": "xwechat\\radium\\users",
+        "safety": "never",
+        "purpose": "微信本机账号数据与聊天索引，478MB / 855 文件",
+        "ifDeleted": "登录状态与本地聊天索引丢失，需重新登录并重新同步"
+      },
+      {
+        "match": "xwechat",
+        "safety": "never",
+        "purpose": "微信主目录 3787MB：账号、聊天、插件、更新",
+        "ifDeleted": "微信需重新登录，本地聊天记录与缓存丢失"
+      },
+      {
+        "match": "WeMeet\\Users",
+        "safety": "never",
+        "purpose": "腾讯会议本机账号数据，4MB / 34 文件",
+        "ifDeleted": "会议账号登录态丢失，历史会议记录需重新拉取"
+      },
+      {
+        "match": "Users",
+        "safety": "never",
+        "purpose": "腾讯系组件的用户数据，26MB / 98 文件",
+        "ifDeleted": "相关组件登录态丢失"
+      },
+      {
+        "match": "TxGameAssistant",
+        "safety": "never",
+        "purpose": "腾讯手游助手，216MB / 62 文件",
+        "ifDeleted": "手游助手需重新安装并重新登录"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "其余腾讯组件目录(CTLogin、TXSSO、WeGame、MobileGamePC 等)含登录票据与账号绑定",
+        "ifDeleted": "对应组件需重新登录"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\Tencent 4584MB / 10476 文件，26 个子目录。xwechat/3787MB 拆分：log/(1039MB，88 个 mm_2026xxxx.xlog + mm*.mmap3)、update/(1111MB：patch 876MB/31f、download 235MB/14f)、radium/(869MB：users 478MB/855f、web 389MB/2326f)、xplugin/(768MB，Plugins 241f)。QQ/263MB(Skins 68MB、webkit_cache 139MB、Crashpad 70MB、qqex 87MB、packages 198MB/full、miniapp 19MB)。WeMeet/235MB(Global 232MB/1182f、Users 4MB)。TxGameAssistant/216MB。Users/26MB。MobileGamePC/24MB。"
+  },
+  {
+    "match": "Tencent\\xwechat",
+    "owner": "微信 WeChat 4.x（xwechat 架构）",
+    "purpose": "微信 4.x 的每用户数据根 3787MB：日志 1039MB、更新包 1111MB、radium 运行时 869MB、插件 768MB",
+    "category": "chat-data",
+    "safety": "mixed",
+    "confidence": "high",
+    "ifDeleted": "整删需要重新扫码登录，本地聊天记录索引与已下载的文件缓存丢失；日志与更新包子目录可以放心删",
+    "children": [
+      {
+        "match": "log",
+        "safety": "safe",
+        "purpose": "运行日志 1039MB，88 个 xlog",
+        "ifDeleted": "仅丢排错日志"
+      },
+      {
+        "match": "update",
+        "safety": "safe",
+        "purpose": "更新下载与补丁 1111MB",
+        "ifDeleted": "下次更新重新下载"
+      },
+      {
+        "match": "radium\\cache",
+        "safety": "safe",
+        "purpose": "内置浏览器缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "radium\\web",
+        "safety": "safe",
+        "purpose": "小程序与内置网页资源 389MB",
+        "ifDeleted": "重新解包"
+      },
+      {
+        "match": "radium\\users",
+        "safety": "never",
+        "purpose": "本机账号数据 478MB / 855 文件",
+        "ifDeleted": "需重新登录并重新同步"
+      },
+      {
+        "match": "xplugin",
+        "safety": "never",
+        "purpose": "插件运行库 768MB / 241 文件",
+        "ifDeleted": "视频号等部分功能无法加载"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "config/login/net 等账号与网络配置",
+        "ifDeleted": "登录态丢失"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\Tencent\\xwechat 3787MB / 3734 文件：All Users(空)、config(2f)、confsdk、crashinfo、ilink(6f)、log/(1039MB：mm_20260929~mm_20261021.xlog 各 20~85MB + mm.mmap3/per.mmap3/update.mmap3)、login、net/(53f)、net_1、radium/(869MB：cache、crashpad、device_uuid_0、ilink、locales、mmkv、storage_runtime.bin、users 478MB、web 389MB、window.config)、uh、update/(1111MB：download 235MB、patch 876MB、update.data)、xplayer、xplugin/(768MB，Plugins 241f)。"
+  },
+  {
+    "match": "Tencent\\QQ",
+    "owner": "腾讯 QQ（Windows NT 版）",
+    "purpose": "QQ 的每用户数据 263MB：皮肤 68MB、内置浏览器缓存 139MB、崩溃上报 70MB、动态功能包 87MB、完整安装包 198MB",
+    "category": "chat-data",
+    "safety": "mixed",
+    "confidence": "high",
+    "ifDeleted": "整删需要重新登录 QQ，本地聊天记录缓存与收藏丢失；webkit_cache、Crashpad、Skins、packages 等子目录删除无影响",
+    "children": [
+      {
+        "match": "webkit_cache",
+        "safety": "safe",
+        "purpose": "内置浏览器缓存 139MB / 704 文件",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Crashpad",
+        "safety": "safe",
+        "purpose": "崩溃上报队列 70MB",
+        "ifDeleted": "待上报记录丢弃"
+      },
+      {
+        "match": "Skins",
+        "safety": "safe",
+        "purpose": "皮肤资源 68MB / 2426 文件",
+        "ifDeleted": "重新下载皮肤"
+      },
+      {
+        "match": "packages",
+        "safety": "safe",
+        "purpose": "更新用完整安装包 198MB / 1 文件",
+        "ifDeleted": "下次更新重新下载"
+      },
+      {
+        "match": "qqex\\dynamic_package",
+        "safety": "safe",
+        "purpose": "动态功能包 87MB",
+        "ifDeleted": "用到时重新下发"
+      },
+      {
+        "match": "miniapp",
+        "safety": "safe",
+        "purpose": "小程序缓存 19MB",
+        "ifDeleted": "重新下载"
+      },
+      {
+        "match": "Cache",
+        "safety": "safe",
+        "purpose": "通用缓存 6MB",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Misc",
+        "safety": "safe",
+        "purpose": "杂项缓存 16MB / 1262 文件",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "SNS/、Local Storage、Partitions 内的账号与聊天数据",
+        "ifDeleted": "登录态与本地聊天缓存丢失"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\QQ 495MB / 3594 文件：webkit_cache/(139MB，704f)、qqex/dynamic_package/(87MB，2516f)、Partitions/(81MB，419f)、Crashpad/(70MB)、Skins/(68MB，2426f)、SNS/(30MB，183f)、packages/full/(198MB)、dynamic_package/(23MB)、miniapp/(19MB)、Misc/(16MB，1262f)、PushHead/(9MB)、arks/(6MB)、Cache/(6MB)、Code Cache/、GPUCache/、Network/、Local Storage/、log/(33f)、urdo.cache(843KB)。"
+  },
+  {
+    "match": "Tencent\\WeMeet",
+    "owner": "腾讯会议",
+    "purpose": "腾讯会议的全局资源与账号数据 235MB：Global 232MB/1182 文件、Users 4MB，另有 config_info.ini",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删需要重新登录腾讯会议，界面资源与历史会议记录缓存丢失；下次开会重新下载组件",
+    "children": [
+      {
+        "match": "Global\\Cache",
+        "safety": "safe",
+        "purpose": "会议界面资源缓存",
+        "ifDeleted": "重新下载"
+      },
+      {
+        "match": "Global\\logs",
+        "safety": "safe",
+        "purpose": "会议日志",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "Users",
+        "safety": "never",
+        "purpose": "本机账号数据 4MB / 34 文件",
+        "ifDeleted": "登录态丢失，历史会议记录需重新拉取"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "Global 下其余资源与配置",
+        "ifDeleted": "客户端需重新初始化"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\Tencent\\WeMeet 235MB / 1217 文件：Global/(232MB，1182 文件)、Users/(4MB，34 文件)、config_info.ini。"
+  },
+  {
+    "match": "Tencent\\TxGameAssistant",
+    "owner": "腾讯手游助手（TxGameAssistant）",
+    "purpose": "手游助手的每用户数据（本机 216MB / 62 文件），含模拟器实例配置与缓存",
+    "category": "game-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "手游助手的模拟器实例与已装手游需要重新创建与重新下载，账号需重新登录",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming\\Tencent\\TxGameAssistant 216MB / 62 文件（文件少而单个体积大，符合模拟器磁盘镜像/资源包特征）。"
+  },
+  {
+    "match": "Tencent\\Users",
+    "owner": "腾讯系组件的公共用户数据",
+    "purpose": "腾讯多个组件的用户数据公共目录（本机 26MB / 98 文件），存放登录票据与账号绑定信息",
+    "category": "chat-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "腾讯系客户端(QQ/微信/腾讯会议)的登录票据丢失，全部需要重新登录",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming\\Tencent\\Users 26MB / 98 文件。"
+  },
+  {
+    "match": "miHoYo",
+    "owner": "米哈游（HoYoPlay 启动器 / 崩坏：星穹铁道）",
+    "purpose": "米哈游 HYP 启动器的每用户数据 655MB：modules 528MB 是游戏模块/资源包，fedata 126MB 是前端资源",
+    "category": "game-data",
+    "safety": "mixed",
+    "confidence": "high",
+    "ifDeleted": "整删会丢掉启动器的账号登录与模块清单，下次启动重新登录并重新下载模块；游戏存档在服务器，不受影响",
+    "children": [
+      {
+        "match": "HYP\\1_1\\cache",
+        "safety": "safe",
+        "purpose": "启动器缓存(当前为空)",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "HYP\\1_1\\logs",
+        "safety": "safe",
+        "purpose": "启动器日志",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "HYP\\1_1\\crash",
+        "safety": "safe",
+        "purpose": "崩溃转储(当前为空)",
+        "ifDeleted": "无影响"
+      },
+      {
+        "match": "HYP\\1_1\\fedata",
+        "safety": "safe",
+        "purpose": "启动器前端资源 126MB / 247 文件",
+        "ifDeleted": "启动器重新解包，首次打开变慢"
+      },
+      {
+        "match": "HYP\\1_1\\modules",
+        "safety": "never",
+        "purpose": "游戏模块与运行组件 528MB / 690 文件",
+        "ifDeleted": "启动器需重新下载模块后才能进游戏"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "账号登录态与配置(data/、ico/、fepak/)",
+        "ifDeleted": "需重新登录"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\miHoYo 655MB / 947 文件，只有一个子目录 HYP\\1_1，其下：modules/(528MB，690f)、fedata/(126MB，247f)、data/(8f)、cache/(空)、crash/(空)、fepak/(空)、ico/(1f)、logs/(1f)。"
+  },
+  {
+    "match": "Wargaming.net",
+    "owner": "Wargaming《坦克世界》(World of Tanks)",
+    "purpose": "《坦克世界》的每用户数据 503MB：web_cache 383MB 是内置浏览器的网页缓存，game_loading_cache 66MB，profile 48MB 是账号配置",
+    "category": "game-data",
+    "safety": "mixed",
+    "confidence": "high",
+    "ifDeleted": "整删会丢掉账号配置(profile 48MB)、车库布局、偏好设置与各类缓存，需要重新登录并重新配置；存档与金币等在服务器不受影响",
+    "children": [
+      {
+        "match": "WorldOfTanks\\web_cache",
+        "safety": "safe",
+        "purpose": "内置浏览器网页缓存 383MB / 7017 文件",
+        "ifDeleted": "自动重建，车库/商店页面首次加载变慢"
+      },
+      {
+        "match": "WorldOfTanks\\game_loading_cache",
+        "safety": "safe",
+        "purpose": "战斗加载预取缓存 66MB / 23 文件",
+        "ifDeleted": "首次进入战斗加载变慢"
+      },
+      {
+        "match": "WorldOfTanks\\offers_cache",
+        "safety": "safe",
+        "purpose": "活动/礼包数据缓存 4MB / 70 文件",
+        "ifDeleted": "重新拉取"
+      },
+      {
+        "match": "WorldOfTanks\\battle_results",
+        "safety": "safe",
+        "purpose": "战斗结果缓存 6 文件",
+        "ifDeleted": "重新拉取"
+      },
+      {
+        "match": "WorldOfTanks\\dossier_cache",
+        "safety": "safe",
+        "purpose": "战绩缓存 4 文件",
+        "ifDeleted": "重新拉取"
+      },
+      {
+        "match": "WorldOfTanks\\profile",
+        "safety": "never",
+        "purpose": "账号配置、车库与偏好设置 48MB / 175 文件",
+        "ifDeleted": "车库布局、模块配置、界面偏好全部回到默认，需重新设置"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "custom_data、preferences.xml 等个人配置",
+        "ifDeleted": "个人设置丢失"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\Wargaming.net\\WorldOfTanks 503MB / 7308 文件：web_cache/(383MB，7017f)、game_loading_cache/(66MB，23f)、profile/(48MB，175f)、offers_cache/(4MB，70f)、account_caches/、battle_results/、clan_cache/、messenger_cache/、storage_cache/、veh_cmp_cache/、collections_cache/、custom_data/(1MB)、preferences.xml(64KB)。"
+  },
+  {
+    "match": "Microsoft",
+    "owner": "Microsoft Office / Windows 组件（临时放在 Roaming 侧的办公文档恢复与配置）",
+    "purpose": "微软办公套件的每用户数据 501MB：Word 421MB(自动恢复与文档缓存，是最大的一块)、Templates 52MB、Windows 12MB，另有 Protect/Crypto/Credentials 等安全密钥目录",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "high",
+    "ifDeleted": "整删会丢掉 Word/Excel 的自动恢复文件(未保存过的文档)、自定义模板、邮件签名与凭据保护密钥，其中自动恢复文件与签名不可重建；规则类与拼写缓存子目录可以删",
+    "children": [
+      {
+        "match": "UProof",
+        "safety": "safe",
+        "purpose": "拼写检查自定义词典缓存",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "Spelling",
+        "safety": "safe",
+        "purpose": "拼写检查词库缓存",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "Stationery",
+        "safety": "safe",
+        "purpose": "Outlook 信纸缓存",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "HTML Help",
+        "safety": "safe",
+        "purpose": "帮助文档缓存",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "Word",
+        "safety": "never",
+        "purpose": "Word 自动恢复与文档缓存 421MB：~WRA*.wbk 备份、~WRL*.tmp 恢复文件，以及「大论文审后修改…」等 260MB/130MB 的临时文档目录",
+        "ifDeleted": "Word 崩溃或断电时的自动恢复文档全部丢失，之前没保存的编辑内容不可恢复"
+      },
+      {
+        "match": "Templates",
+        "safety": "never",
+        "purpose": "Office 模板库 52MB / 52 文件，含用户自建 Normal.dotm 等",
+        "ifDeleted": "自定义模板与默认样式丢失，新建文档回到出厂格式"
+      },
+      {
+        "match": "Signatures",
+        "safety": "never",
+        "purpose": "Outlook 邮件签名",
+        "ifDeleted": "所有邮件签名丢失且需重写"
+      },
+      {
+        "match": "Credentials",
+        "safety": "never",
+        "purpose": "Office/系统凭据条目 8 个文件",
+        "ifDeleted": "已保存的账户凭据丢失"
+      },
+      {
+        "match": "Protect",
+        "safety": "never",
+        "purpose": "DPAPI 主密钥备份 22 个文件",
+        "ifDeleted": "用 DPAPI 加密的数据永久无法解密"
+      },
+      {
+        "match": "Crypto",
+        "safety": "never",
+        "purpose": "用户证书与密钥容器 14 个文件",
+        "ifDeleted": "数字证书私钥丢失，签名与加密邮件无法处理"
+      },
+      {
+        "match": "InputMethod",
+        "safety": "never",
+        "purpose": "输入法自造词与用户词库 3MB",
+        "ifDeleted": "自造词库丢失，无法恢复"
+      },
+      {
+        "match": "Windows",
+        "safety": "never",
+        "purpose": "Windows 每用户配置 12MB / 301 文件(含 Recent、Network 映射)",
+        "ifDeleted": "开始菜单最近使用记录与资源管理器网络历史丢失"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "Office/Access/Bibliography 等其余办公配置",
+        "ifDeleted": "对应组件恢复默认设置"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\Microsoft 501MB / 573 文件，44 个子目录。Word/(421MB，27 文件)：~WRA0002.wbk 96KB、~WRA0767.wbk 176KB、~WRA3401.wbk 103KB、~WRL0696.tmp、~WRL0812.tmp 2.7MB、~WRL1315.tmp，以及「大论文审后修改312837562465390425/」(260MB，4f)、「大论文审后修改312851812802463589/」(130MB，3f)、「大论文312460910890673963/」(25MB) 等编号目录。Templates/(52MB，52f)。Windows/(12MB，301f)。InputMethod/(3MB，11f)。Access/(3MB)、Bibliography/(3MB)、Document Building Blocks/(3MB)。Protect/(22f)、Crypto/(14f)、Credentials/(8f)、SystemCertificates/(10f)、Signatures/(空)。"
+  },
+  {
+    "match": "Microsoft\\Word",
+    "owner": "Microsoft Word",
+    "purpose": "Word 的崩溃自动恢复与未保存文档缓存 421MB：~WRA*.wbk 备份副本、~WRL*.tmp 恢复文件、STARTUP 启动模板，以及按编号命名的临时文档目录",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "high",
+    "ifDeleted": "Word 崩溃/断电后的自动恢复文档、以及只在 Word 里打开未另存的编辑内容全部丢失且无法重建；建议先在 Word 里确认「恢复未保存的文档」为空再考虑",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming\\Microsoft\\Word 421MB / 27 文件：~WRA0002.wbk(96KB)、~WRA0767.wbk(176KB)、~WRA3401.wbk(103KB)、~WRL0696.tmp(63KB)、~WRL0812.tmp(2774KB)、~WRL1315.tmp(101KB)、ListGal.dat、STARTUP/；另有 8 个编号目录，其中「大论文审后修改312837562465390425/」260MB/4f、「大论文审后修改312851812802463589/」130MB/3f、「大论文312460910890673963/」25MB/2f、「实验报告模版310938760038314510/」「草稿310985240185409202/」「介绍310812061609389727/」「介绍311023372757573598/」「风速转速311656730164956050/」。从 .wbk/.tmp 命名与「草稿」「大论文」目录名可确认这是未保存/自动恢复区。"
+  },
+  {
+    "match": "Microsoft\\Templates",
+    "owner": "Microsoft Office（模板库）",
+    "purpose": "Office 自定义模板与默认样式文件库 52MB / 52 文件",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "用户自建模板与 Normal.dotm 默认样式丢失，新建文档回到出厂格式，需重新制作模板",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming\\Microsoft\\Templates 52MB / 52 文件，全部为模板类文件，目录内无缓存子目录。"
+  },
+  {
+    "match": "Microsoft\\Credentials",
+    "owner": "Windows 凭据管理器（漫游部分）",
+    "purpose": "凭据管理器中可漫游的账户条目 8 个文件",
+    "category": "system",
+    "safety": "never",
+    "confidence": "high",
+    "ifDeleted": "已保存的凭据条目丢失，需要重新输入各站点与共享的密码",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming\\Microsoft\\Credentials 8 个文件(无扩展名的凭据块)，属凭据存储。"
+  },
+  {
+    "match": "Microsoft\\Crypto",
+    "owner": "Windows CryptoAPI（用户密钥容器）",
+    "purpose": "用户级 RSA/证书密钥容器 14 个文件，是 DPAPI 与证书签名的基础",
+    "category": "system",
+    "safety": "never",
+    "confidence": "high",
+    "ifDeleted": "用户私钥与 DPAPI 依赖的密钥丢失，加密邮件、数字签名、以及所有 DPAPI 加密的数据永久无法恢复",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming\\Microsoft\\Crypto 14 个文件，是 CryptoAPI 的密钥容器目录；与 Local\\Microsoft\\Crypto 属同一套密钥体系。"
+  },
+  {
+    "match": "Microsoft\\Protect",
+    "owner": "Windows DPAPI（主密钥备份）",
+    "purpose": "DPAPI 主密钥的备份副本 22 个文件",
+    "category": "system",
+    "safety": "never",
+    "confidence": "high",
+    "ifDeleted": "DPAPI 主密钥备份丢失，密码重置后本来还能解密的旧数据将彻底无法解密",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming\\Microsoft\\Protect 22 个文件，属 DPAPI 主密钥备份目录(标准路径 %APPDATA%\\Microsoft\\Protect)。"
+  },
+  {
+    "match": "Microsoft\\Signatures",
+    "owner": "Microsoft Outlook",
+    "purpose": "Outlook 邮件签名文件（.htm/.txt/.rtf 各一套）",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "所有邮件签名被删除，新邮件不再自动带签名，需要手工重写",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming\\Microsoft\\Signatures 存在但当前为空（0 个文件），即本机尚未创建邮件签名；目录用途按 Outlook 标准布局判定。"
+  },
+  {
+    "match": "Microsoft\\InputMethod",
+    "owner": "Windows 微软输入法",
+    "purpose": "微软拼音的个人词库、自造词与用户学习数据 3MB / 11 文件",
+    "category": "system",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "自造词与词频学习结果丢失，输入法回到初始词库，长期积累的打字习惯需重新培养",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming\\Microsoft\\InputMethod 3MB / 11 文件；同级 IME/ 为空目录。"
+  },
+  {
+    "match": "QQ",
+    "owner": "腾讯 QQ（顶层数据目录）",
+    "purpose": "QQ 在 Roaming 顶层的每用户数据 495MB：浏览器缓存 139MB、安装包 198MB、动态包 87MB、崩溃上报 70MB、皮肤 68MB",
+    "category": "chat-data",
+    "safety": "mixed",
+    "confidence": "high",
+    "ifDeleted": "整删需要重新登录 QQ 并重新下载皮肤与小程序；本地聊天缓存与收藏丢失，云端聊天记录重新拉取后仍在",
+    "children": [
+      {
+        "match": "webkit_cache",
+        "safety": "safe",
+        "purpose": "内置浏览器缓存 139MB",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Crashpad",
+        "safety": "safe",
+        "purpose": "崩溃上报队列 70MB",
+        "ifDeleted": "丢弃待上报记录"
+      },
+      {
+        "match": "Skins",
+        "safety": "safe",
+        "purpose": "皮肤资源 68MB / 2426 文件",
+        "ifDeleted": "重新下载"
+      },
+      {
+        "match": "packages",
+        "safety": "safe",
+        "purpose": "完整安装包 198MB",
+        "ifDeleted": "下次更新重新下载"
+      },
+      {
+        "match": "qqex\\dynamic_package",
+        "safety": "safe",
+        "purpose": "动态功能包 87MB",
+        "ifDeleted": "重新下发"
+      },
+      {
+        "match": "miniapp",
+        "safety": "safe",
+        "purpose": "小程序缓存 19MB",
+        "ifDeleted": "重新下载"
+      },
+      {
+        "match": "Cache",
+        "safety": "safe",
+        "purpose": "通用缓存 6MB",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Code Cache",
+        "safety": "safe",
+        "purpose": "JS 字节码缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "GPUCache",
+        "safety": "safe",
+        "purpose": "GPU 着色器缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "Local Storage / Partitions / SNS 内的账号与聊天数据",
+        "ifDeleted": "登录态与本地聊天缓存丢失"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\QQ 495MB / 3594 文件：webkit_cache 139MB、qqex/dynamic_package 87MB/2516f、Partitions 81MB/419f、Crashpad 70MB、Skins 68MB/2426f、SNS 30MB、packages/full 198MB/1f、dynamic_package 23MB/258f、miniapp 19MB/252f、Misc 16MB/1262f、PushHead 9MB、arks 6MB、Cache 6MB、Code Cache/、GPUCache/、Network/、Local Storage/、Session Storage/、log/、urdo.cache 843KB。"
+  },
+  {
+    "match": "bilibili",
+    "owner": "哔哩哔哩桌面客户端（Electron + CEF）",
+    "purpose": "B 站客户端的每用户数据 432MB：Cache 272MB、Code Cache 65MB、ffmpeg 41MB、IndexedDB 31MB、本地字体 10MB，以及 Cookies 与登录态",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "high",
+    "ifDeleted": "整删需要重新扫码登录，本地收藏缓存与播放记录丢失；只删 Cache/Code Cache/GPUCache/ffmpeg/fonts 则无影响",
+    "children": [
+      {
+        "match": "Cache",
+        "safety": "safe",
+        "purpose": "网页与视频封面缓存 272MB / 321 文件",
+        "ifDeleted": "自动重建，首页首次加载变慢"
+      },
+      {
+        "match": "Code Cache",
+        "safety": "safe",
+        "purpose": "JS 字节码缓存 65MB / 343 文件",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "GPUCache",
+        "safety": "safe",
+        "purpose": "GPU 着色器缓存 1MB",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "DawnCache",
+        "safety": "safe",
+        "purpose": "WebGPU 缓存 1MB",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "ffmpeg",
+        "safety": "safe",
+        "purpose": "ffmpeg 解码库 41MB / 1 文件",
+        "ifDeleted": "用到时重新下载"
+      },
+      {
+        "match": "fonts",
+        "safety": "safe",
+        "purpose": "内置字体 10MB / 110 文件",
+        "ifDeleted": "重新下载"
+      },
+      {
+        "match": "Crashpad",
+        "safety": "safe",
+        "purpose": "崩溃上报队列 4MB",
+        "ifDeleted": "丢弃待上报记录"
+      },
+      {
+        "match": "logs",
+        "safety": "safe",
+        "purpose": "客户端日志 2MB",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "Service Worker",
+        "safety": "safe",
+        "purpose": "离线资源缓存 1MB / 28 文件",
+        "ifDeleted": "重新拉取"
+      },
+      {
+        "match": "IndexedDB",
+        "safety": "never",
+        "purpose": "本地数据库 31MB / 59 文件，存播放记录与本地状态",
+        "ifDeleted": "播放记录与本地收藏状态丢失"
+      },
+      {
+        "match": "databases",
+        "safety": "never",
+        "purpose": "Databases.db 与站点数据库",
+        "ifDeleted": "站点本地数据丢失"
+      },
+      {
+        "match": "Network",
+        "safety": "never",
+        "purpose": "Cookies 与网络状态(NetworkDataMigrated、TransportSecurity)",
+        "ifDeleted": "登录态丢失，需重新扫码"
+      },
+      {
+        "match": "Local Storage",
+        "safety": "never",
+        "purpose": "本地存储 2MB / 9 文件",
+        "ifDeleted": "偏好与登录态丢失"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "Storage/、store.json、config.json、settings.json 等配置与状态",
+        "ifDeleted": "客户端需重新配置"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\bilibili 432MB / 948 文件：Cache/(272MB，321f)、Code Cache/(65MB，343f)、ffmpeg/(41MB)、IndexedDB/(31MB，59f)、fonts/(10MB，110f)、Crashpad/(4MB)、Storage/(1MB)、Service Worker/(1MB)、Local Storage/(2MB)、logs/(2MB)、DawnCache/、GPUCache/、databases/(Databases.db + Databases.db-journal + https_passport.jd.com_0/)、Network/(Cookies、Cookies-journal、Network Persistent State、NetworkDataMigrated、TransportSecurity)、store.json(419KB)、config.json(15KB)、settings.json(7KB)。"
+  },
+  {
+    "match": "Mozilla",
+    "owner": "Mozilla Firefox（用户 profile）",
+    "purpose": "Firefox 真正的用户数据目录 166MB：Profiles\\0fa4voc1.default-release 里有 cookies.sqlite、cert9.db、favicons、formhistory 等浏览器数据库",
+    "category": "browser-profile",
+    "safety": "mixed",
+    "confidence": "high",
+    "ifDeleted": "整删等于 Firefox 回到出厂状态：书签、历史、保存的密码、扩展与登录态全部丢失；只有 cache2 这类缓存子目录可以删",
+    "children": [
+      {
+        "match": "Firefox\\Profiles\\*\\cache2",
+        "safety": "safe",
+        "purpose": "HTTP 缓存",
+        "ifDeleted": "自动重建，网页首次加载变慢"
+      },
+      {
+        "match": "Firefox\\Profiles\\*\\startupCache",
+        "safety": "safe",
+        "purpose": "启动缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Firefox\\Profiles\\*\\safebrowsing",
+        "safety": "safe",
+        "purpose": "安全浏览规则库",
+        "ifDeleted": "重新下载"
+      },
+      {
+        "match": "Firefox\\Profiles\\*\\thumbnails",
+        "safety": "safe",
+        "purpose": "新标签页缩略图",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "Firefox\\Crash Reports",
+        "safety": "safe",
+        "purpose": "崩溃报告",
+        "ifDeleted": "丢弃崩溃记录"
+      },
+      {
+        "match": "Firefox\\Pending Pings",
+        "safety": "safe",
+        "purpose": "待发送的遥测数据",
+        "ifDeleted": "丢弃遥测"
+      },
+      {
+        "match": "Firefox\\Profiles\\*",
+        "safety": "never",
+        "purpose": "浏览器 profile：cookies.sqlite、cert9.db、favicons.sqlite、formhistory.sqlite、extensions.json、extension-store/ 等",
+        "ifDeleted": "书签、保存的密码、Cookie 登录态、扩展与表单记录全部丢失"
+      },
+      {
+        "match": "Firefox",
+        "safety": "never",
+        "purpose": "Firefox 每用户数据根 166MB / 946 文件",
+        "ifDeleted": "Firefox 需重新配置并重新登录所有网站"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\Mozilla\\Firefox 166MB / 946 文件：Profiles/0fa4voc1.default-release 164MB / 917 文件，目录内实测到 addons.json、addonStartup.json.lz4、AlternateServices.bin、autofill-profiles.json、bookmarkbackups/、bounce-tracking-protection.sqlite、breach-alerts.db(-shm/-wal)、cert9.db、cert_override.txt、chat-store.sqlite、containers.json、content-prefs.sqlite、cookies.sqlite(+bak/-shm/-wal)、credentialstate.sqlite、crashes/、domain_to_categories.sqlite 等；另有 Background Tasks Profiles/、Crash Reports/、Pending Pings/、Profile Groups/、installs.ini、profiles.ini。"
+  },
+  {
+    "match": "Adobe",
+    "owner": "Adobe（Photoshop / Audition / Camera Raw / Acrobat）",
+    "purpose": "Adobe 各应用的每用户配置与预设，111MB：Adobe Photoshop CC 2017 107MB/59 文件，Audition 1MB，CameraRaw 1MB，Common 1MB",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删会丢掉各应用的偏好设置、工作区布局与自定义预设，需要重新调；Adobe 授权信息在 ProgramData，不受影响",
+    "children": [
+      {
+        "match": "LogTransport2",
+        "safety": "safe",
+        "purpose": "日志传输缓存",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "LogTransport2CC",
+        "safety": "safe",
+        "purpose": "日志传输缓存",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "GPUSniffer",
+        "safety": "safe",
+        "purpose": "GPU 探测结果缓存",
+        "ifDeleted": "重新探测"
+      },
+      {
+        "match": "DVAAudioFilterScan",
+        "safety": "safe",
+        "purpose": "音频插件扫描缓存",
+        "ifDeleted": "重新扫描"
+      },
+      {
+        "match": "Adobe Photoshop CC 2017",
+        "safety": "never",
+        "purpose": "Photoshop 偏好设置、工作区与预设 107MB / 59 文件",
+        "ifDeleted": "Photoshop 回到默认界面与工具预设，自定义工作区与笔刷设置丢失"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "其余应用的偏好设置与预设",
+        "ifDeleted": "对应应用恢复默认设置"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\Adobe 111MB / 217 文件，21 个子目录：Adobe Photoshop CC 2015.5/、Adobe Photoshop CC 2017/(107MB，59 文件)、Audition/(1MB，61 文件)、CameraRaw/(1MB)、Common/(1MB，34 文件)、Acrobat/、Adobe PDF/、After Effects/(17 文件)、Character Animator/、Color/、DVAAudioFilterScan/、DynamicSonar/、Flash Player/(6 文件)、GPUSniffer/、LogTransport2/、LogTransport2CC/、Lumetri/、Premiere Pro/(7 文件)、RTTransfer/、Sonar/(6 文件)、dynamiclinkmanager/。"
+  },
+  {
+    "match": "CherryStudio",
+    "owner": "Cherry Studio（AI 客户端）",
+    "purpose": "Cherry Studio 的每用户数据 110MB：Data 84MB 下是 cherrystudio.sqlite 聊天数据库、KnowledgeBase、Notes、Agents、Skills、Files",
+    "category": "chat-data",
+    "safety": "mixed",
+    "confidence": "high",
+    "ifDeleted": "整删等于清空 Cherry Studio 的全部会话历史、知识库与笔记，且本地 sqlite 删除后不可恢复；只有 Cache/Code Cache/GPUCache/Crashpad 可以删",
+    "children": [
+      {
+        "match": "Cache",
+        "safety": "safe",
+        "purpose": "网页与界面缓存 10MB / 24 文件",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Code Cache",
+        "safety": "safe",
+        "purpose": "JS 字节码缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "GPUCache",
+        "safety": "safe",
+        "purpose": "GPU 着色器缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Crashpad",
+        "safety": "safe",
+        "purpose": "崩溃上报队列",
+        "ifDeleted": "丢弃待上报记录"
+      },
+      {
+        "match": "logs",
+        "safety": "safe",
+        "purpose": "运行日志 4MB / 24 文件",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "Partitions",
+        "safety": "safe",
+        "purpose": "各分区的浏览器缓存 9MB / 156 文件",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Data",
+        "safety": "never",
+        "purpose": "用户数据 84MB / 90 文件：cherrystudio.sqlite(会话与消息)、KnowledgeBase/(知识库向量)、Notes/、Agents/、Skills/、Files/",
+        "ifDeleted": "全部聊天记录、知识库与笔记丢失且几乎无法恢复(文件小但都是数据库)"
+      },
+      {
+        "match": "Local Storage",
+        "safety": "never",
+        "purpose": "本地存储与界面状态",
+        "ifDeleted": "界面配置与登录态丢失"
+      },
+      {
+        "match": "Network",
+        "safety": "never",
+        "purpose": "Cookies 等网络凭据",
+        "ifDeleted": "登录态丢失"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "config.json、IndexedDB 等其余状态",
+        "ifDeleted": "客户端需重新配置"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\CherryStudio 110MB / 398 文件。Data/(84MB，90 文件) 内实测到 cherrystudio.sqlite、Agents/、Files/、KnowledgeBase/、Notes/、Skills/——都是用户数据。Cache/(10MB)、Code Cache/、Partitions/(9MB，156f)、logs/(4MB，24f)、Crashpad/、Local Storage/、Network/、IndexedDB/、GPUCache/、DawnGraphiteCache/、DawnWebGPUCache/、Local State、Preferences、config.json、cache.json、window-state.json、version.log。"
+  },
+  {
+    "match": "Netease",
+    "owner": "网易 UU 加速器",
+    "purpose": "网易 UU 加速器的每用户数据 97MB：userdata.db 与 cloud_syn.db 是账号与云端同步数据库，webview2cache 与各图标/背景缓存占大头",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删需要重新登录 UU 并重新选择加速的游戏，云端同步记录丢失；只删 webview2cache 与图标缓存则无影响",
+    "children": [
+      {
+        "match": "UU\\webview2cache",
+        "safety": "safe",
+        "purpose": "内嵌 WebView2 缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "UU\\game_bg",
+        "safety": "safe",
+        "purpose": "游戏背景图缓存",
+        "ifDeleted": "重新下载"
+      },
+      {
+        "match": "UU\\logos",
+        "safety": "safe",
+        "purpose": "游戏图标缓存",
+        "ifDeleted": "重新下载"
+      },
+      {
+        "match": "UU\\icos",
+        "safety": "safe",
+        "purpose": "图标缓存",
+        "ifDeleted": "重新下载"
+      },
+      {
+        "match": "UU\\avatar",
+        "safety": "safe",
+        "purpose": "头像缓存",
+        "ifDeleted": "重新下载"
+      },
+      {
+        "match": "UU\\cards",
+        "safety": "safe",
+        "purpose": "活动卡片缓存",
+        "ifDeleted": "重新下载"
+      },
+      {
+        "match": "UU\\ad_res",
+        "safety": "safe",
+        "purpose": "推广素材缓存",
+        "ifDeleted": "重新下载"
+      },
+      {
+        "match": "UU\\sentry",
+        "safety": "safe",
+        "purpose": "错误上报队列",
+        "ifDeleted": "丢弃上报"
+      },
+      {
+        "match": "UU\\userdata.db",
+        "safety": "never",
+        "purpose": "账号与加速偏好数据库",
+        "ifDeleted": "登录态与加速偏好丢失，需重新登录与重新配置"
+      },
+      {
+        "match": "UU\\cloud_syn.db",
+        "safety": "never",
+        "purpose": "云端同步数据库",
+        "ifDeleted": "同步记录丢失，云端与本地配置可能不一致"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "toolbox/、webdata/、tap_driver/ 与各类 dll(exe 依赖)",
+        "ifDeleted": "加速功能异常，需重装"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\Netease 97MB / 519 文件，只有 Mpay/(5 文件) 与 UU/(97MB，514 文件) 两个子目录。UU 内实测到 userdata.db、cloud_syn.db、webview2cache/、game_bg/、logos/、icos/、avatar/、cards/、ad_res/、sentry/、cloud_syn_sentry/、webdata/、toolbox/、tap_driver/、netease-uu-booster.7z、local_proxy.dll、openvpn.dll、ping.dll、tcp_proxy.dll、tun2proxy.dll、uu_vpn.dll、uu.log/uu_cloudsyn.log/uu_proxy.log。"
+  },
+  {
+    "match": "Zotero",
+    "owner": "Zotero（文献管理）",
+    "purpose": "Zotero 的用户 profile 87MB：Profiles\\1ffdc7ae.default 里有 cookies.sqlite、cert9.db、favicons.sqlite、formhistory.sqlite、extensions.json",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "high",
+    "ifDeleted": "Zotero 的登录态、插件启用列表与浏览器数据丢失，需重新登录并重新启用插件；文献库 zotero.sqlite 在用户自选的 Zotero 数据目录，不在此目录，但仍建议整体保留",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming\\Zotero\\Zotero 87MB / 153 文件：Profiles/1ffdc7ae.default 内实测到 cookies.sqlite(+shm/wal)、cert9.db、favicons.sqlite(+shm/wal)、formhistory.sqlite、content-prefs.sqlite、extensions/、extensions.json、addonStartup.json.lz4、browser-extension-data/、extension-store/、crashes/、compatibility.ini，另有 profiles.ini。没有 zotero.sqlite（文献库不在 AppData）。"
+  },
+  {
+    "match": "aliwangwangData",
+    "owner": "阿里旺旺（千牛/旺旺 PC 版）",
+    "purpose": "阿里旺旺的每用户数据 68MB：app.log 54MB 是运行日志，MessageSDK 13MB 是消息 SDK 数据，另有 Global.db 账号库与头像/图片缓存",
+    "category": "chat-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删需要重新登录旺旺，本地消息缓存与联系人缓存丢失；app.log 与头像缓存可以放心删",
+    "children": [
+      {
+        "match": "app.log",
+        "safety": "safe",
+        "purpose": "运行日志 54MB / 1 文件",
+        "ifDeleted": "仅丢排错日志"
+      },
+      {
+        "match": "portrait_image",
+        "safety": "safe",
+        "purpose": "头像缓存 1MB / 120 文件",
+        "ifDeleted": "重新下载"
+      },
+      {
+        "match": "msg_image",
+        "safety": "safe",
+        "purpose": "消息图片缓存 1MB",
+        "ifDeleted": "重新下载"
+      },
+      {
+        "match": "Global.db",
+        "safety": "never",
+        "purpose": "账号与设置数据库",
+        "ifDeleted": "登录态与设置丢失"
+      },
+      {
+        "match": "MessageSDK",
+        "safety": "never",
+        "purpose": "消息 SDK 数据 13MB / 38 文件",
+        "ifDeleted": "本地消息缓存丢失"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "appdata/、CPMSyncSDK/、msg_linkinfo/ 等其余数据",
+        "ifDeleted": "客户端需重新初始化"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\aliwangwangData 68MB / 181 文件：app.log 54913KB(54MB 单文件)、MessageSDK/(13MB，38 文件)、portrait_image/(1MB，120 文件)、msg_image/(1MB)、Global.db(3KB)、lastLoginUser、proxyConfig.json、appdata/(8 文件)、CPMSyncSDK/(2 文件)、dumps/(4 文件)、msg_linkinfo/(1 文件)。"
+  },
+  {
+    "match": "WPFLauncher",
+    "owner": "网易《我的世界》中国版启动器（WPFLauncher）",
+    "purpose": "启动器内置浏览器(CEF)的磁盘缓存 58MB：里面同时有 ChromeDWriteFontCache、data_0~3、f_000001~ 缓存块，以及 Cookies 与 databases/",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删会把启动器网页的缓存和 Cookie 一起清掉，需要重新登录网易账号；只删缓存块与字体缓存则无影响",
+    "children": [
+      {
+        "match": "cache\\ChromeDWriteFontCache",
+        "safety": "safe",
+        "purpose": "字体缓存(占本目录绝大部分体积)",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "cache\\f_*",
+        "safety": "safe",
+        "purpose": "CEF 磁盘缓存数据块",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "cache\\data_*",
+        "safety": "safe",
+        "purpose": "CEF 索引数据",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "cache\\Cookies",
+        "safety": "never",
+        "purpose": "启动器网页的 Cookies 登录态",
+        "ifDeleted": "启动器需重新登录网易账号"
+      },
+      {
+        "match": "cache\\databases",
+        "safety": "never",
+        "purpose": "站点本地数据库",
+        "ifDeleted": "启动器本地状态丢失"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "Cookies-journal 等其余状态",
+        "ifDeleted": "登录态可能不一致"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\WPFLauncher 58MB / 315 文件，只有 cache/ 一个子目录，内含 ChromeDWriteFontCache、Cookies、Cookies-journal、databases/、data_0~data_3、f_000001~f_000011 等 CEF 磁盘缓存块——典型 Chromium 磁盘缓存结构，但 Cookies 混在其中。"
+  },
+  {
+    "match": "thunder",
+    "owner": "迅雷（Thunder，Electron 版）",
+    "purpose": "迅雷客户端在 Roaming 的 Electron 用户数据：Cache 39MB、Code Cache 4MB、GPUCache、Network、Storage",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删需要重新登录迅雷，下载任务列表若在这里也会丢；只删 Cache/Code Cache/GPUCache 则无影响",
+    "children": [
+      {
+        "match": "Cache",
+        "safety": "safe",
+        "purpose": "网络缓存 39MB / 174 文件",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Code Cache",
+        "safety": "safe",
+        "purpose": "JS 字节码缓存 4MB / 359 文件",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "GPUCache",
+        "safety": "safe",
+        "purpose": "GPU 着色器缓存 1MB",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "DawnCache",
+        "safety": "safe",
+        "purpose": "WebGPU 缓存 1MB",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Network",
+        "safety": "never",
+        "purpose": "Cookies 等网络凭据",
+        "ifDeleted": "登录态丢失"
+      },
+      {
+        "match": "Local Storage",
+        "safety": "never",
+        "purpose": "本地存储",
+        "ifDeleted": "界面配置与登录态丢失"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "Storage/、Preferences 等状态",
+        "ifDeleted": "客户端需重新配置"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\thunder 47MB / 578 文件：Cache/(39MB，174f)、Code Cache/(4MB，359f)、GPUCache/(1MB)、DawnCache/(1MB)、Storage/(1MB)、Local Storage/、Network/(5 文件)、Session Storage/、blob_storage/、Dictionaries/、Local State、Preferences。注意与 Local\\Thunder Network(76MB 的 xlgame_resource) 不是同一份数据。"
+  },
+  {
+    "match": "T2GP Launcher",
+    "owner": "The 2nd Game Platform Launcher（T2GP）",
+    "purpose": "T2GP 游戏启动器 44MB：Steam/ 子目录里有 content、content_backup、data、helper，以及一大堆 .log",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删需要重新登录并重新下载启动器内容包；日志可以单独删",
+    "children": [
+      {
+        "match": "Steam\\cache",
+        "safety": "safe",
+        "purpose": "缓存目录",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Steam\\content_backup",
+        "safety": "safe",
+        "purpose": "内容包备份",
+        "ifDeleted": "用到时重新下载"
+      },
+      {
+        "match": "Steam\\launcher.log",
+        "safety": "safe",
+        "purpose": "启动器日志",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "Steam\\app.log",
+        "safety": "safe",
+        "purpose": "应用日志",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "Steam\\content",
+        "safety": "never",
+        "purpose": "启动器内容包(游戏/平台组件)",
+        "ifDeleted": "启动器需重新下载内容"
+      },
+      {
+        "match": "Steam\\data",
+        "safety": "never",
+        "purpose": "启动器本地数据(账号与配置)",
+        "ifDeleted": "需重新登录与配置"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "helper/、crashwatch/ 等运行组件",
+        "ifDeleted": "启动器可能无法启动"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\T2GP Launcher 44MB / 120 文件：Steam/ 内含 .args、app.log、cache/、cef.log、content/、content_backup/、crashagent.log、crashwatch/、data/、dna.log、helper/、helper.log、launcher.log、launcher_bridge.log；根下 captive.locale.json。"
+  },
+  {
+    "match": "EaseUS",
+    "owner": "EaseUS 数据恢复/分区工具",
+    "purpose": "EaseUS 的推荐与运营内容缓存 41MB：DRW\\EURecommend 191 个文件",
+    "category": "app-data",
+    "safety": "safe",
+    "confidence": "medium",
+    "ifDeleted": "软件下次启动重新拉取推荐内容；扫描结果与许可证不在这个目录，恢复任务不受影响",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming\\EaseUS 41MB / 191 文件，只有 DRW\\EURecommend/ 一个子目录，无数据库与用户文档。"
+  },
+  {
+    "match": "IDMComp",
+    "owner": "IDM Computer Solutions（UltraEdit / UEStudio）",
+    "purpose": "UltraEdit 的每用户配置 38MB：ue.ini、templates、themes、tools、recentdb（最近打开记录）、Backup（编辑时生成的备份）、Restore（崩溃恢复）",
+    "category": "dev-toolchain",
+    "safety": "never",
+    "confidence": "high",
+    "ifDeleted": "UltraEdit 的宏/脚本、模板、主题与最近文件列表全部丢失并回到默认；Backup 与 Restore 下可能存有编辑器自动保存的文件副本，删了就无法找回那次未保存的编辑",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming\\IDMComp 38MB / 110 文件：UltraEdit/ 内含 autorec/、Backup/、Cloud Services/、columnmarkers.xml、commandpalette/、parser.dat、projectsu.lst、recentdb/、Restore/、TAGLISTU.UET、templates/、themes/、tools/、ue.ini；另有 Common/(23 文件)。"
+  },
+  {
+    "match": "Oray",
+    "owner": "向日葵远程控制（Oray AweSun）",
+    "purpose": "向日葵的每用户数据 34MB：accounts 是本机登录账号，各 *.hive 是偏好与广告缓存，AweSunReport 与 log 是日志",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删需要重新登录向日葵，本机识别码与已保存的远程设备列表丢失；广告与上报缓存可以单独删",
+    "children": [
+      {
+        "match": "AweSun\\advertisement_campaign_cache.hive",
+        "safety": "safe",
+        "purpose": "活动推广缓存",
+        "ifDeleted": "重新拉取"
+      },
+      {
+        "match": "AweSun\\advertisement.hive",
+        "safety": "safe",
+        "purpose": "广告缓存",
+        "ifDeleted": "重新拉取"
+      },
+      {
+        "match": "AweSun\\AweSunReport",
+        "safety": "safe",
+        "purpose": "上报数据",
+        "ifDeleted": "丢弃待上报"
+      },
+      {
+        "match": "AweSun\\log",
+        "safety": "safe",
+        "purpose": "日志",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "AweSun\\accounts",
+        "safety": "never",
+        "purpose": "本机登录账号与本机识别码",
+        "ifDeleted": "需重新登录，本机识别码可能变化，已授权的控制端需重新授权"
+      },
+      {
+        "match": "AweSun\\confighive.hive",
+        "safety": "never",
+        "purpose": "核心配置",
+        "ifDeleted": "远程控制设置回到默认"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "其余 hive 与 dll 依赖",
+        "ifDeleted": "客户端需重新初始化"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\Oray 34MB / 212 文件：AweSun/ 内含 accounts/、advertisement.hive(+lock)、advertisement_campaign_cache.hive(+lock)、app_prefs.hive(+lock)、cloud_record_video.hive(+lock)、confighive.hive(+lock)、control_config.ini、log/、AweSunReport/；另有 SunloginClient/(空)。hive 后缀是本机自定义的配置存储格式。"
+  },
+  {
+    "match": "wenxiaobai",
+    "owner": "文小白（Electron 客户端）",
+    "purpose": "文小白的 Electron 用户数据 28MB：Cache 18MB、Code Cache 6MB、Service Worker 2MB、GPUCache 1MB，以及 cookies 与本地存储",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删需要重新登录文小白；只删 Cache/Code Cache/GPUCache/Service Worker 则无影响",
+    "children": [
+      {
+        "match": "Cache",
+        "safety": "safe",
+        "purpose": "网络缓存 18MB / 122 文件",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Code Cache",
+        "safety": "safe",
+        "purpose": "JS 字节码缓存 6MB / 279 文件",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Service Worker",
+        "safety": "safe",
+        "purpose": "离线资源缓存 2MB / 41 文件",
+        "ifDeleted": "重新拉取"
+      },
+      {
+        "match": "GPUCache",
+        "safety": "safe",
+        "purpose": "GPU 着色器缓存 1MB",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "DawnCache",
+        "safety": "safe",
+        "purpose": "WebGPU 缓存 1MB",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Network",
+        "safety": "never",
+        "purpose": "Cookies 等网络凭据",
+        "ifDeleted": "登录态丢失"
+      },
+      {
+        "match": "Local Storage",
+        "safety": "never",
+        "purpose": "本地存储",
+        "ifDeleted": "界面配置与登录态丢失"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "databases/、IndexedDB/、settings.json 等状态",
+        "ifDeleted": "客户端需重新配置"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\wenxiaobai 28MB / 492 文件：Cache/(18MB，122f)、Code Cache/(6MB，279f)、Service Worker/(2MB，41f)、GPUCache/(1MB)、DawnCache/(1MB)、IndexedDB/、Local Storage/、Network/、databases/(2 文件)、WebStorage/、Session Storage/、blob_storage/、app.log(10KB)、settings.json、Local State、Preferences、lockfile、en-US-10-1.bdic(441KB)。"
+  },
+  {
+    "match": "tidalab",
+    "owner": "TidaLab（Electron 客户端）",
+    "purpose": "TidaLab 的 Electron 用户数据 24MB：Cache 23MB 占绝大部分，另有 Cookies、Network Persistent State、Local Storage",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删需要重新登录 TidaLab；只删 Cache/Code Cache/GPUCache 则无影响",
+    "children": [
+      {
+        "match": "Cache",
+        "safety": "safe",
+        "purpose": "网络缓存 23MB / 15 文件",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Code Cache",
+        "safety": "safe",
+        "purpose": "JS 字节码缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "GPUCache",
+        "safety": "safe",
+        "purpose": "GPU 着色器缓存 1MB",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Cookies",
+        "safety": "never",
+        "purpose": "登录 Cookie(20KB)",
+        "ifDeleted": "登录态丢失，需重新登录"
+      },
+      {
+        "match": "Local Storage",
+        "safety": "never",
+        "purpose": "本地存储",
+        "ifDeleted": "界面配置与登录态丢失"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "Network Persistent State 等状态",
+        "ifDeleted": "客户端需重新连接"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\tidalab 24MB / 43 文件：Cache/(23MB，15f)、Code Cache/(8f)、GPUCache/(1MB)、Cookies(20KB)、Cookies-journal、Local Storage/(6f)、Network Persistent State、Session Storage/、blob_storage/。"
+  },
+  {
+    "match": "aDrive",
+    "owner": "阿里云盘桌面端（aDrive）",
+    "purpose": "阿里云盘的 Electron 用户数据 23MB：Cache 6MB、Partitions 15MB（多账号分区缓存）、config.json 与 logs，sync_drive_data 是同步状态",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删需要重新登录阿里云盘并重新选择同步目录；只删 Cache/Code Cache/Partitions 则无影响",
+    "children": [
+      {
+        "match": "Cache",
+        "safety": "safe",
+        "purpose": "网络缓存 6MB",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Code Cache",
+        "safety": "safe",
+        "purpose": "JS 字节码缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Partitions",
+        "safety": "safe",
+        "purpose": "多账号/多窗口分区缓存 15MB / 160 文件",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "logs",
+        "safety": "safe",
+        "purpose": "日志 1MB",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "Network",
+        "safety": "never",
+        "purpose": "Cookies 等网络凭据",
+        "ifDeleted": "登录态丢失"
+      },
+      {
+        "match": "sync_drive_data",
+        "safety": "never",
+        "purpose": "同步盘状态数据",
+        "ifDeleted": "同步盘需要重新比对，可能重新上传/下载"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "config.json、preference.json、Local State 等配置",
+        "ifDeleted": "客户端需重新配置"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\aDrive 23MB / 194 文件：Partitions/(15MB，160f)、Cache/(6MB)、Code Cache/、logs/(1MB)、Local Storage/、Network/、blob_storage/、sync_drive_data/(空)、config.json(6KB)、preference.json、Local State、Preferences、en-US-10-1.bdic(441KB)。"
+  },
+  {
+    "match": "@deepseek-ai",
+    "owner": "DeepSeek AIDSH 桌面端",
+    "purpose": "DSH 桌面端的 Electron 用户数据 21MB：Cache 10MB、GrShaderCache 6MB、GPUCache 2MB、Code Cache 2MB，以及 Network 与本地存储",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "high",
+    "ifDeleted": "整删需要重新登录桌面端并重新配置；只删 Cache/Code Cache/GPUCache/GrShaderCache/ShaderCache 则无影响",
+    "children": [
+      {
+        "match": "dsh-desktop\\Cache",
+        "safety": "safe",
+        "purpose": "网络缓存 10MB / 36 文件",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "dsh-desktop\\GrShaderCache",
+        "safety": "safe",
+        "purpose": "GPU 着色器缓存 6MB / 66 文件",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "dsh-desktop\\GPUCache",
+        "safety": "safe",
+        "purpose": "GPU 缓存 2MB",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "dsh-desktop\\ShaderCache",
+        "safety": "safe",
+        "purpose": "着色器缓存 1MB",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "dsh-desktop\\Code Cache",
+        "safety": "safe",
+        "purpose": "JS 字节码缓存 2MB / 54 文件",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "dsh-desktop\\GPUPersistentCache",
+        "safety": "safe",
+        "purpose": "持久化 GPU 缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "dsh-desktop\\Network",
+        "safety": "never",
+        "purpose": "Cookies 与网络凭据",
+        "ifDeleted": "登录态丢失"
+      },
+      {
+        "match": "dsh-desktop\\Local Storage",
+        "safety": "never",
+        "purpose": "本地存储",
+        "ifDeleted": "界面配置与登录态丢失"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "declarative_performance_observer.db、desktop/、DIPS 等状态",
+        "ifDeleted": "客户端需重新初始化"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\@deepseek-ai\\dsh-desktop 21MB / 216 文件：Cache/(10MB，36f)、GrShaderCache/(6MB，66f)、GPUCache/(2MB)、Code Cache/(2MB，54f)、ShaderCache/(1MB)、DawnGraphiteCache/(1MB)、DawnWebGPUCache/(1MB)、GPUPersistentCache/、Local Storage/、Network/(7f)、Session Storage/、WebStorage/、blob_storage/、logs/(空)、declarative_performance_observer.db(32KB)+journal、DIPS(36KB)+wal、desktop/、lockfile、background-close-confirmed、Local State、Preferences。"
+  },
+  {
+    "match": "Mozilla\\Firefox",
+    "owner": "Mozilla Firefox",
+    "purpose": "Firefox 的 profile 根目录 166MB：Profiles 下是该账户的全部浏览器数据库，另有 Crash Reports、Pending Pings、Profile Groups",
+    "category": "browser-profile",
+    "safety": "mixed",
+    "confidence": "high",
+    "ifDeleted": "整删等于 Firefox 重装：所有书签、历史、密码、扩展与登录态丢失；只有缓存与崩溃报告子目录可删",
+    "children": [
+      {
+        "match": "Profiles\\*\\cache2",
+        "safety": "safe",
+        "purpose": "HTTP 缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Profiles\\*\\startupCache",
+        "safety": "safe",
+        "purpose": "启动缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Profiles\\*\\thumbnails",
+        "safety": "safe",
+        "purpose": "缩略图缓存",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "Crash Reports",
+        "safety": "safe",
+        "purpose": "崩溃报告",
+        "ifDeleted": "丢弃崩溃记录"
+      },
+      {
+        "match": "Pending Pings",
+        "safety": "safe",
+        "purpose": "待发送遥测",
+        "ifDeleted": "丢弃遥测"
+      },
+      {
+        "match": "Profiles\\*",
+        "safety": "never",
+        "purpose": "浏览器数据库：cookies.sqlite、cert9.db、favicons.sqlite、formhistory.sqlite、extensions.json、bookmarkbackups/",
+        "ifDeleted": "书签、密码、Cookie 与扩展全部丢失"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "profiles.ini、installs.ini 等 profile 索引",
+        "ifDeleted": "Firefox 找不到 profile，会新建一个空 profile 并提示配置丢失"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\Mozilla\\Firefox 166MB / 946 文件：Profiles/(164MB，919f，含 0fa4voc1.default-release 164MB/917f 与 s4iio4qi.default 1f)、Background Tasks Profiles/(17f)、Crash Reports/(4f)、Pending Pings/(1f)、Profile Groups/(3f)、installs.ini、profiles.ini。profile 内实测有 cookies.sqlite、cert9.db、favicons.sqlite、formhistory.sqlite、bookmarkbackups/、extensions.json。"
+  },
+  {
+    "match": "Zotero\\Zotero",
+    "owner": "Zotero（文献管理）",
+    "purpose": "Zotero 的 profile 根目录 87MB：Profiles\\1ffdc7ae.default 内是 cookies.sqlite、cert9.db、favicons.sqlite 等浏览器数据库与 extensions",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "high",
+    "ifDeleted": "Zotero 需重新登录并重新启用插件，profile 内的浏览器数据不可恢复；文献库本体在别处不受影响，但仍不建议删整目录",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming\\Zotero\\Zotero 87MB / 153 文件：Profiles/1ffdc7ae.default 内实测 cookies.sqlite(+shm/wal)、cert9.db、favicons.sqlite(+shm/wal)、formhistory.sqlite、content-prefs.sqlite、extensions/、extensions.json、extension-store/、extension-store-userscripts/、browser-extension-data/、addonStartup.json.lz4、crashes/、compatibility.ini、AlternateServices.bin/txt、bounce-tracking-protection.sqlite；根下 profiles.ini。"
+  },
+  {
+    "match": "Code",
+    "owner": "Microsoft Visual Studio Code",
+    "purpose": "VS Code 的每用户数据根 21 世纪最常见的一项：User 设置、extensions 扩展、logs、CachedData、Service Worker",
+    "category": "dev-toolchain",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删会丢掉全部设置、快捷键与已装扩展；只有 Cache/CachedData/Code Cache/GPUCache/logs 可以删",
+    "children": [
+      {
+        "match": "Cache",
+        "safety": "safe",
+        "purpose": "网络缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "CachedData",
+        "safety": "safe",
+        "purpose": "V8 字节码缓存",
+        "ifDeleted": "首次启动变慢"
+      },
+      {
+        "match": "Code Cache",
+        "safety": "safe",
+        "purpose": "JS 字节码缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "GPUCache",
+        "safety": "safe",
+        "purpose": "GPU 着色器缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "logs",
+        "safety": "safe",
+        "purpose": "扩展宿主与主进程日志",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "User",
+        "safety": "never",
+        "purpose": "settings.json、keybindings.json、snippets/、globalStorage/",
+        "ifDeleted": "全部个性化设置与扩展数据丢失"
+      },
+      {
+        "match": "extensions",
+        "safety": "never",
+        "purpose": "已安装的扩展",
+        "ifDeleted": "所有扩展失效，需从市场重装"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "其余(Backups、workspaceStorage 等)",
+        "ifDeleted": "未保存文件的备份与工作区状态丢失"
+      }
+    ],
+    "evidence": "本机未安装(实测 Roaming 下无 Code 目录)。条目依据 VS Code 官方布局；同构旁证是本机实测的 Roaming\\@deepseek-ai\\dsh-desktop 与 Roaming\\CherryStudio，两者都呈现 Cache/Code Cache/GPUCache/Service Worker 与用户数据目录并存的结构。"
+  },
+  {
+    "match": "JetBrains",
+    "owner": "JetBrains IDE（IntelliJ / PyCharm / CLion / WebStorm 等）",
+    "purpose": "JetBrains IDE 的设置与插件根：<产品版本>\\options、plugins、scratches、consoles，以及 Toolbox 的应用列表",
+    "category": "dev-toolchain",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删会丢掉 IDE 的全部设置、插件与 scratch 文件；只有 caches/log 这类子目录能删(Local 侧)",
+    "children": [
+      {
+        "match": "*\\options",
+        "safety": "never",
+        "purpose": "IDE 设置、快捷键与插件启用状态",
+        "ifDeleted": "IDE 回到默认设置"
+      },
+      {
+        "match": "*\\plugins",
+        "safety": "never",
+        "purpose": "已安装插件",
+        "ifDeleted": "插件失效，需重新安装"
+      },
+      {
+        "match": "*\\scratches",
+        "safety": "never",
+        "purpose": "Scratch 文件(临时但用户手写的代码片段)",
+        "ifDeleted": "手写的 scratch 代码丢失"
+      },
+      {
+        "match": "*\\consoles",
+        "safety": "never",
+        "purpose": "数据库/终端控制台历史",
+        "ifDeleted": "控制台配置与历史丢失"
+      },
+      {
+        "match": "Toolbox",
+        "safety": "never",
+        "purpose": "Toolbox 的应用列表与 IDE 安装位置",
+        "ifDeleted": "Toolbox 需重新扫描并可能重新下载 IDE"
+      }
+    ],
+    "evidence": "本机未安装：实测 AppData\\Roaming 的 95 个一级目录里没有 JetBrains。条目依据 JetBrains 官方 per-user 布局；同构旁证是本机实测的 Roaming\\IDMComp\\UltraEdit(ue.ini + templates + recentdb + Backup) 属同类「设置+插件+备份」结构。"
+  },
+  {
+    "match": "FileZilla",
+    "owner": "FileZilla FTP 客户端",
+    "purpose": "FileZilla 的配置与站点管理器数据库：filezilla.xml、sitemanager.xml、recentservers.xml、queue.sqlite3、trustedcerts.xml —— 站点密码默认以明文/可逆方式存在这里",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "所有站点(含主机、用户名与保存的密码)、传输队列与信任证书丢失且不可恢复，必须逐个重新录入",
+    "children": [],
+    "evidence": "本机未安装：实测 AppData\\Roaming 的 95 个一级目录里没有 FileZilla。条目依据 FileZilla 官方配置位置(%APPDATA%\\FileZilla)；含凭据这一点与本机实测的 Local\\Softdeluxe\\Free Download Manager(.sqlite 任务库) 属同类「单库文件即全部状态」风险。"
+  },
+  {
+    "match": "PuTTY",
+    "owner": "PuTTY（SSH 客户端）",
+    "purpose": "PuTTY 的会话配置：sessions 子键导出文件、sshhostkeys 主机密钥缓存；保存的会话里可能带用户名与密钥路径",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "所有已保存的 SSH 会话(主机、端口、用户名、密钥路径)与已信任主机密钥丢失，需逐个重建；首次重连还会重新提示主机密钥指纹",
+    "children": [],
+    "evidence": "本机未安装：实测 AppData\\Roaming 下没有 PuTTY 目录(PuTTY 通常把会话写在注册表，选中「便携」模式才落到这里)。条目保留是因为它属于「小体积但不可重建」的典型，与实测的 Local\\Softdeluxe 同类。"
+  },
+  {
+    "match": "WinRAR",
+    "owner": "WinRAR 压缩软件",
+    "purpose": "WinRAR 的界面设置与压缩历史：WinRAR.ini 或 Settings/ 下的主题、最近压缩列表",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "WinRAR 的界面偏好与压缩历史回到默认，需重新设置；不会影响任何压缩包文件",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming 下确实存在 WinRAR 目录（一级目录清单中出现，体积 <1MB），说明本机装过 WinRAR；内容为设置类小文件，无缓存子目录。"
+  },
+  {
+    "match": "Telegram Desktop",
+    "owner": "Telegram Desktop",
+    "purpose": "Telegram 桌面端的数据：tdata 下的账号与消息本地加密库、用户下载的媒体缓存",
+    "category": "chat-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "Telegram 需要重新登录(可能要重新收验证码)，本地缓存的媒体与未同步的草稿丢失；tdata 删除后本地消息库不可恢复",
+    "children": [],
+    "evidence": "本机未安装：实测 AppData\\Roaming 的 95 个一级目录里没有 Telegram Desktop。条目依据 Telegram Desktop 官方 tdata 布局；同构旁证是本机实测的 Roaming\\Tencent\\xwechat(radium/users 478MB 聊天索引) 与 Roaming\\QQ，二者同为「聊天库不可删、缓存可删」结构。"
+  },
+  {
+    "match": "Steam",
+    "owner": "Valve Steam 客户端（Roaming 侧）",
+    "purpose": "Steam 在 Roaming 的少量配置与登录票据(Steam 大部分数据在安装目录与 Local\\Steam)",
+    "category": "game-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "Steam 需要重新登录并重新验证，登录令牌与本地配置丢失",
+    "children": [],
+    "evidence": "本机 Roaming 下没有 Steam 一级目录（本机 Steam 数据实际在 Local\\Steam，已单独建条：htmlcache 355MB、widevine 23MB）。此条按 Steam 在 Roaming 的标准布局保留，供其他机器命中。"
+  },
+  {
+    "match": "Battle.net",
+    "owner": "暴雪 Battle.net 客户端",
+    "purpose": "Battle.net 的每用户配置与缓存：Battle.net.config、Cache、Logs、<账号ID> 目录",
+    "category": "game-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删需要重新登录暴雪账号并重新配置下载限速等选项；只删 Cache/Logs 则无影响",
+    "children": [
+      {
+        "match": "Cache",
+        "safety": "safe",
+        "purpose": "界面与资源缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Logs",
+        "safety": "safe",
+        "purpose": "客户端日志",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "Battle.net.config",
+        "safety": "never",
+        "purpose": "账号与下载/语言设置",
+        "ifDeleted": "需重新登录并重设选项"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "账号相关目录",
+        "ifDeleted": "登录态丢失"
+      }
+    ],
+    "evidence": "本机未安装：实测 AppData\\Roaming 的 95 个一级目录里没有 Battle.net。条目依据暴雪官方 Battle.net 目录布局；同构旁证是本机实测的 Roaming\\Wargaming.net\\WorldOfTanks(web_cache 383MB 可删 + profile 48MB 不可删)。"
+  },
+  {
+    "match": "EpicGamesLauncher",
+    "owner": "Epic Games Launcher",
+    "purpose": "Epic 启动器的每用户数据：Saved\\Config 与 Saved\\Logs、webcache、以及 UnrealEngineLauncher 的缓存",
+    "category": "game-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删需要重新登录 Epic 并重新配置；已安装游戏本体在别的库目录不受影响",
+    "children": [
+      {
+        "match": "Saved\\webcache",
+        "safety": "safe",
+        "purpose": "内置浏览器缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Saved\\Logs",
+        "safety": "safe",
+        "purpose": "启动器日志",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "Saved\\Config 内的账号与设置",
+        "ifDeleted": "登录态与设置丢失"
+      }
+    ],
+    "evidence": "本机未安装：实测 AppData\\Roaming 的 95 个一级目录里没有 EpicGamesLauncher。条目依据 Epic 启动器 Saved\\Config / Saved\\Logs / webcache 布局；同构旁证是本机实测的 Roaming\\T2GP Launcher(Steam\\content + data + 多个 .log)。"
+  },
+  {
+    "match": "Composer",
+    "owner": "Composer（PHP 包管理器）",
+    "purpose": "Composer 的全局配置与包缓存：config.json、auth.json(含仓库令牌) 与 cache 目录",
+    "category": "dev-toolchain",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "全局配置与已保存的私有仓库令牌(auth.json)丢失，私有包拉取会失败；缓存部分可重建但令牌不可重建，因此整目录按不可删处理",
+    "children": [],
+    "evidence": "本机未安装：实测 AppData\\Roaming 的 95 个一级目录里没有 Composer。条目依据 Composer 官方 COMPOSER_HOME(%APPDATA%\\Composer)；含 auth.json 凭据这一点与本机实测的 Local\\Softdeluxe(sqlite 任务库) 同类风险。"
+  },
+  {
+    "match": "npm",
+    "owner": "npm（Node 包管理器）",
+    "purpose": "npm 的每用户配置与新版缓存：npmrc、_logs、_cacache",
+    "category": "dev-toolchain",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删会丢掉 .npmrc 中的 registry 私有源与令牌配置，需要重新配置；只删 _cacache 与 _logs 则只是重新下载依赖",
+    "children": [
+      {
+        "match": "_cacache",
+        "safety": "safe",
+        "purpose": "内容寻址包缓存",
+        "ifDeleted": "下次 install 重新下载"
+      },
+      {
+        "match": "_logs",
+        "safety": "safe",
+        "purpose": "npm 运行日志",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "npmrc",
+        "safety": "never",
+        "purpose": "registry、代理与私有源令牌配置",
+        "ifDeleted": "私有源与令牌配置丢失，需重新配置"
+      }
+    ],
+    "evidence": "本机未安装(实测 Roaming 下无 npm)。条目依据 npm 官方 userconfig 位置(%APPDATA%\\npm\\etc\\npmrc 与 _cacache)；同构旁证是本机实测的 Local\\pnpm-cache(8MB，纯缓存) 与 Local\\node-gyp\\Cache。"
+  },
+  {
+    "match": "qBittorrent",
+    "owner": "qBittorrent",
+    "purpose": "qBittorrent 的配置与种子库：qBittorrent.ini、BT_backup 下的 .torrent 与 .fastresume",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "全部任务列表、做种进度(BT_backup 的 fastresume)与下载设置丢失，重新添加种子会重新校验，做种数据无法恢复",
+    "children": [],
+    "evidence": "本机未安装：实测 AppData\\Roaming 的 95 个一级目录里没有 qBittorrent。条目依据 qBittorrent 官方配置位置(%APPDATA%\\qBittorrent)；同构旁证是本机实测的 Local\\Softdeluxe\\Free Download Manager(单 .sqlite 即全部任务)。"
+  },
+  {
+    "match": "xlgame",
+    "owner": "迅雷游戏(xlgame) 内置浏览器",
+    "purpose": "xlgame 的 Electron 用户数据 5MB：Cache、Code Cache、Local Storage、Network Persistent State",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删需要重新登录迅雷游戏；只删 Cache/Code Cache 则无影响",
+    "children": [
+      {
+        "match": "Cache",
+        "safety": "safe",
+        "purpose": "网络缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Code Cache",
+        "safety": "safe",
+        "purpose": "JS 字节码缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Local Storage",
+        "safety": "never",
+        "purpose": "本地存储(含登录态)",
+        "ifDeleted": "需重新登录"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "Network Persistent State、Preferences 等状态",
+        "ifDeleted": "客户端需重新连接"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\xlgame 5MB / 26 文件：Cache/、Code Cache/、Dictionaries/、Local State、Local Storage/、Network Persistent State、Preferences、Session Storage/、blob_storage/，无数据库文件。"
+  },
+  {
+    "match": "clash_win",
+    "owner": "Clash for Windows",
+    "purpose": "Clash for Windows 的 Electron 用户数据 9MB：Cache、Code Cache、GPUCache、logs，以及窗口位置配置",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删需要重新导入订阅与重新配置；只删缓存与日志则无影响。注意订阅配置若放在此目录，删除后需重新导入",
+    "children": [
+      {
+        "match": "Cache",
+        "safety": "safe",
+        "purpose": "网络缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Code Cache",
+        "safety": "safe",
+        "purpose": "JS 字节码缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "GPUCache",
+        "safety": "safe",
+        "purpose": "GPU 着色器缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "logs",
+        "safety": "safe",
+        "purpose": "运行日志",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "Local Storage、Preferences 与窗口配置",
+        "ifDeleted": "界面配置与订阅相关状态丢失"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\clash_win 9MB / 63 文件：Cache/、Code Cache/、Dictionaries/、GPUCache/、Local State、Local Storage/、Network/、Preferences、Session Storage/、blob_storage/、logs/、Clash for Windows-window-bounds.json、window_ocnfig.json(原文拼写如此)。"
+  },
+  {
+    "match": "lddownloader",
+    "owner": "雷电模拟器下载器（LDPlayer lddownloader）",
+    "purpose": "雷电模拟器的下载器数据 5MB：cachepath.data、ldcurl/ 与两个 .log",
+    "category": "installer-cache",
+    "safety": "safe",
+    "confidence": "medium",
+    "ifDeleted": "下载器缓存与日志丢弃，下次下载镜像/游戏时重新拉取；已安装的模拟器实例不受影响",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming\\lddownloader 5MB / 14 文件：cachepath.data、ldcurl/(目录)、ldcurl.log、lddownloader.log，无数据库与用户文档。"
+  },
+  {
+    "match": "星穹铁道工坊",
+    "owner": "星穹铁道工坊（第三方工具）",
+    "purpose": "该工具的 Electron 用户数据 12MB：Cache、Code Cache、GPUCache、DawnCache、Local Storage、Network",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删需要重新登录/重设工具；只删缓存子目录则无影响",
+    "children": [
+      {
+        "match": "Cache",
+        "safety": "safe",
+        "purpose": "网络缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Code Cache",
+        "safety": "safe",
+        "purpose": "JS 字节码缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "GPUCache",
+        "safety": "safe",
+        "purpose": "GPU 着色器缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "DawnCache",
+        "safety": "safe",
+        "purpose": "WebGPU 缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Network",
+        "safety": "never",
+        "purpose": "Cookies 等凭据",
+        "ifDeleted": "登录态丢失"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "Local Storage、Preferences 等配置",
+        "ifDeleted": "工具需重新配置"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\星穹铁道工坊 12MB / 46 文件：blob_storage/、Cache/、Code Cache/、DawnCache/、Dictionaries/、GPUCache/、Local State、Local Storage/、Network/、Preferences、Session Storage/、Shared Dictionary/、SharedStorage。"
+  },
+  {
+    "match": "utForpc",
+    "owner": "utForpc（某网盘/传输工具的 PC 端）",
+    "purpose": "按 ID 分组的本地存储目录，15MB / 6 文件；storage/ 与若干数字 ID 目录、一个 Base64 形态的目录名",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "该工具的本地数据(按账号/任务 ID 分组)丢失，需重新登录并重新建立任务列表",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming\\utForpc 15MB / 6 文件：四个子目录 33187142/、34385585/、MzMxODcxNDI=/、storage/。文件数极少而体积集中，符合「少量大二进制/数据库」特征，因此不按缓存处理。"
+  },
+  {
+    "match": "ZhiYunTranslator",
+    "owner": "智云翻译（ZhiYun Translator）",
+    "purpose": "智云翻译的每用户数据 19MB：data.db 翻译记录数据库、UserDataPath/、sound/ 语音缓存、apk/ 与 Cache",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "翻译历史(data.db)与个人设置丢失且不可恢复，需重新设置；语音缓存可以单独删但整目录按不可删处理",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming\\ZhiYunTranslator 19MB / 336 文件：apk/、Cache/、data.db、dc.html、info.txt、j.txt、s.txt、setting.txt、sound/、UserDataPath/、ut.txt。存在 .db 与大量 txt 配置，属用户数据而非纯缓存。"
+  },
+  {
+    "match": "PotPlayerMini64",
+    "owner": "PotPlayer（64 位）",
+    "purpose": "PotPlayer 的播放列表与媒体信息库 16MB：MediaInfo.sdb 媒体信息数据库、Playlist/ 播放列表、WebView2/ 内嵌浏览器数据",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "播放列表、播放记录与媒体信息库(MediaInfo.sdb)丢失，需重新建立播放列表；下次打开视频要重新扫描媒体信息",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming\\PotPlayerMini64 16MB / 235 文件：MediaInfo.sdb、Playlist/、WebView2/。.sdb 是 PotPlayer 的媒体信息数据库，属用户积累的数据。"
+  },
+  {
+    "match": "Mendeley Reference Manager",
+    "owner": "Mendeley Reference Manager",
+    "purpose": "Mendeley 的每用户数据 15MB：databases/ 文献库索引、userfiles/ 用户文件、usersettings/ 设置，以及 Electron 的 Cache/Code Cache",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删会丢掉本地文献库索引与用户文件副本，首次启动要重新全量同步云端；只删 Cache/Code Cache/GPUCache/logs 则无影响",
+    "children": [
+      {
+        "match": "Cache",
+        "safety": "safe",
+        "purpose": "网络缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "Code Cache",
+        "safety": "safe",
+        "purpose": "JS 字节码缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "GPUCache",
+        "safety": "safe",
+        "purpose": "GPU 着色器缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "DawnCache",
+        "safety": "safe",
+        "purpose": "WebGPU 缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "logs",
+        "safety": "safe",
+        "purpose": "日志",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "Service Worker",
+        "safety": "safe",
+        "purpose": "离线资源缓存",
+        "ifDeleted": "重新拉取"
+      },
+      {
+        "match": "databases",
+        "safety": "never",
+        "purpose": "本地文献库索引数据库",
+        "ifDeleted": "需重新全量同步云端文献库"
+      },
+      {
+        "match": "userfiles",
+        "safety": "never",
+        "purpose": "用户文件副本",
+        "ifDeleted": "本地文件副本丢失，需从云端重新下载"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "usersettings/、IndexedDB/、Local Storage 等设置",
+        "ifDeleted": "登录态与设置丢失"
+      }
+    ],
+    "evidence": "实测 AppData\\Roaming\\Mendeley Reference Manager 15MB / 166 文件：.updaterId、blob_storage/、Cache/、Code Cache/、databases/、DawnCache/、Dictionaries/、GPUCache/、IndexedDB/、Local State、Local Storage/、logs/、Network/、Preferences、Service Worker/、Session Storage/、userfiles/、usersettings/、WebStorage/。"
+  },
+  {
+    "match": "MATLAB",
+    "owner": "MathWorks MATLAB",
+    "purpose": "MATLAB 的每用户设置与许可证缓存 11MB：MathWorks 下的 MATLAB 配置、历史命令与工具箱缓存",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "MATLAB 的命令历史、界面布局与个性化设置丢失，需重新配置；许可证激活信息部分在此，可能需要重新激活",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming\\MathWorks 11MB / 75 文件，结构为 MathWorks\\MATLAB\\；Local 下另有同名的 MathWorks(8MB，2 文件) 属缓存侧。"
+  },
+  {
+    "match": "SOLIDWORKS",
+    "owner": "Dassault Systèmes SOLIDWORKS",
+    "purpose": "SOLIDWORKS 的每用户配置与安装日志 12MB：SOLIDWORKS 2021/、SOLIDWORKS Rx 2021/、Installation Manager Data/、FileAccess.log",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "SOLIDWORKS 的用户界面与工具设置、Rx 诊断记录丢失，需重新配置；不影响已保存的零件与装配体文件",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming\\SOLIDWORKS 12MB / 85 文件：FileAccess.log、Installation Logs/、Installation Manager Data/、SOLIDWORKS 2021/、SOLIDWORKS Rx 2021/。"
+  },
+  {
+    "match": "SpaceClaim",
+    "owner": "Ansys SpaceClaim（三维建模）",
+    "purpose": "SpaceClaim 的每用户数据 11MB：Autosave 自动保存、Journal Files 操作日志、Published Scripts 已发布脚本、DiscoverySpaceClaim21.2/23.2 版本配置",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "Autosave 里的自动保存副本、已发布脚本与操作日志丢失，崩溃后无法用 Autosave 找回未保存的建模；版本配置需重新设置",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming\\SpaceClaim 11MB / 116 文件：AcisJournals/、Autosave/、DiscoverySpaceClaim21.2/、DiscoverySpaceClaim23.2/、Journal Files/、Log Files/、PolygonicaJournals/、Published Scripts/、StrideJournals/、giprof.out。"
+  },
+  {
+    "match": "Paradox Interactive",
+    "owner": "Paradox Launcher v2",
+    "purpose": "Paradox 启动器的每用户数据 6MB：launcher-v2 下的设置、日志与账户信息",
+    "category": "game-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "启动器需重新登录 Paradox 账号并重新关联游戏，设置丢失；游戏本体与存档不受影响",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming\\Paradox Interactive 6MB / 10 文件，结构为 launcher-v2/。注意本机 Local\\Paradox Interactive(24MB) 是同一启动器的缓存与日志，已单独建条并判 safe。"
+  },
+  {
+    "match": "NVIDIA",
+    "owner": "NVIDIA ComputeCache（CUDA / OptiX 计算缓存）",
+    "purpose": "NVIDIA 在 Roaming 侧的计算缓存，7MB：ComputeCache 下的编译产物",
+    "category": "cache",
+    "safety": "safe",
+    "confidence": "medium",
+    "ifDeleted": "CUDA/OptiX 相关程序首次运行时重新编译计算内核，首次启动变慢；无数据损失",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming\\NVIDIA 7MB / 36 文件，只有 ComputeCache/ 一个子目录；与 Local\\NVIDIA(DXCache 566MB) 属同族缓存。"
+  },
+  {
+    "match": "SolidDocuments",
+    "owner": "Solid Documents（Solid PDF 工具）",
+    "purpose": "Solid 文档工具的 Acrobat 插件配置，2MB / 1 文件",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "Solid 的 Acrobat 插件配置丢失，需重新安装该插件或用默认设置重新配置",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming\\SolidDocuments 2MB / 1 文件，结构为 Acrobat/。单文件体积 2MB，属插件二进制/配置，不是缓存。"
+  },
+  {
+    "match": "BaiduYunGuanjia",
+    "owner": "百度网盘（BaiduYunGuanjia）",
+    "purpose": "百度网盘客户端的本地账号与任务数据，1MB / 13 文件：多个十六进制命名的 .dat、localdata.dat、logs/",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "本地账号缓存与传输任务记录丢失，需重新登录并重新添加传输任务",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming\\BaiduYunGuanjia 1MB / 13 文件：167049598206689A6C8C.dat、168232330035C3D9EC62.dat 等 8 个十六进制名 .dat、localdata.dat、logs/。体积小但均为数据文件，无缓存子目录。"
+  },
+  {
+    "match": "Ansys",
+    "owner": "Ansys（ANSYS / Fluent 等）",
+    "purpose": "Ansys 各版本的每用户配置与许可证端口记录，2MB / 126 文件：v202/、v212/、v232/ 与若干 .dat",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "各 Ansys 版本的界面与求解器偏好设置、许可证端口配置丢失，需重新设置；不影响已生成的工程文件",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming\\Ansys 2MB / 126 文件：10615191071292927982.dat、10617142704432624057.dat、ANSYSLI_DEMO_PORT、v202/、v212/、v232/。"
+  },
+  {
+    "match": "LaoMaoTao",
+    "owner": "老毛桃 U 盘启动盘制作工具",
+    "purpose": "老毛桃的本地配置与资源包 1MB：Back.tmp、Desk.tmp、gfba、MENU.LST、MSG、MYSET、Res.7z、Custom/",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "自定义的启动菜单(MENU.LST)、设置(MYSET)与 Custom 目录内容丢失，重新制作启动盘时会用默认菜单；已做好的 U 盘不受影响",
+    "children": [],
+    "evidence": "实测 AppData\\Roaming\\LaoMaoTao 1MB / 7 文件：Back.tmp、Custom/、Desk.tmp、gfba、MENU.LST、MSG、MYSET、Res.7z。MENU.LST 是启动菜单定义，MYSET 是用户设置，属可失去的数据。"
+  }
+]

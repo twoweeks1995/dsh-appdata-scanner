@@ -1,0 +1,418 @@
+[
+  {
+    "match": "Ludeon Studios",
+    "owner": "Ludeon Studios《环世界》(RimWorld)",
+    "purpose": "《环世界》的每用户数据 33MB：Saves 存的是 6 个实际存档文件，另有 Config 下的模组与设置、Player.log 与 steam_autocloud.vdf",
+    "category": "game-data",
+    "safety": "never",
+    "confidence": "high",
+    "ifDeleted": "Saves 下 6 个存档直接消失且不进回收站就不可恢复——这是玩家几个月的殖民地进度；Config 里的模组列表与设置也一并丢失，Steam 云同步只会在下次启动时把云端的旧档拉回来",
+    "children": [],
+    "evidence": "实测 AppData\\LocalLow\\Ludeon Studios\\RimWorld by Ludeon Studios 33MB / 14 文件：Saves/(33MB，6 文件——单个存档可达数 MB)、Config/(5 文件)、Player.log(3KB)、Player-prev.log(2KB)、Scenarios/(空)、steam_autocloud.vdf。Saves 目录的体积与文件数直接证明存的是实际存档。"
+  },
+  {
+    "match": "miHoYo",
+    "owner": "米哈游《崩坏：星穹铁道》",
+    "purpose": "《崩坏：星穹铁道》在 LocalLow 的 Unity 侧数据 9MB：网页缓存 act-webstatic.mihoyo.com、logs、Player.log、Replay_History 回放记录、resources 与 StreamingAssets",
+    "category": "game-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删会丢掉回放记录(Replay_History)与本地日志，游戏需要重新解包网页资源；账号与存档在服务器，不受影响",
+    "children": [
+      {
+        "match": "崩坏：星穹铁道\\act-webstatic.mihoyo.com",
+        "safety": "safe",
+        "purpose": "游戏内嵌网页的静态资源缓存",
+        "ifDeleted": "重新下载"
+      },
+      {
+        "match": "崩坏：星穹铁道\\logs",
+        "safety": "safe",
+        "purpose": "游戏日志",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "崩坏：星穹铁道\\Player.log",
+        "safety": "safe",
+        "purpose": "Unity 运行日志(output_log.txt / Player-prev.log 同性质)",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "崩坏：星穹铁道\\Replay_History",
+        "safety": "never",
+        "purpose": "本地保存的战斗回放记录",
+        "ifDeleted": "已保存的回放无法回看，且不可重新生成"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "resources/、StreamingAssets/、warmupdone.bin 等运行时数据",
+        "ifDeleted": "首次启动需重新预热与解包"
+      }
+    ],
+    "evidence": "实测 AppData\\LocalLow\\miHoYo\\崩坏：星穹铁道 9MB / 22 文件：act-webstatic.mihoyo.com/、logs/、output_log.txt、Player.log、Player-prev.log、Replay_History/、resources/、StreamingAssets/、warmupdone.bin。Local 下同名目录(30MB)只有 cache 与 QtWebEngine，已单独建条判 safe。"
+  },
+  {
+    "match": "webviewdata",
+    "owner": "某个 WebView2 宿主应用（目录内无厂商标识）",
+    "purpose": "WebView2 的用户数据 27MB，按会话分成 2/ 与 3/ 两套：2\\EBWebView 18MB/313 文件、3\\EBWebView 9MB/174 文件",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删会让某个应用的内嵌浏览器丢掉登录 Cookie 与本地存储，需要重新登录；只删 Cache/Code Cache/GPUCache 则无影响。由于目录里没有厂商标识文件，删前建议先确认是哪个应用在用",
+    "children": [
+      {
+        "match": "*\\EBWebView\\Default\\Cache",
+        "safety": "safe",
+        "purpose": "内嵌网页缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "*\\EBWebView\\Default\\Code Cache",
+        "safety": "safe",
+        "purpose": "JS 字节码缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "*\\EBWebView\\Default\\GPUCache",
+        "safety": "safe",
+        "purpose": "GPU 着色器缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "*\\EBWebView\\component_crx_cache",
+        "safety": "safe",
+        "purpose": "WebView2 组件包缓存",
+        "ifDeleted": "按需重新下载"
+      },
+      {
+        "match": "*\\EBWebView\\Default",
+        "safety": "never",
+        "purpose": "内嵌浏览器 profile：Cookies、Local Storage、IndexedDB",
+        "ifDeleted": "宿主应用需重新登录"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "EBWebView 其余数据",
+        "ifDeleted": "等同重置内嵌浏览器"
+      }
+    ],
+    "evidence": "实测 AppData\\LocalLow\\webviewdata 27MB / 487 文件，只有两个数字目录 2/ 与 3/，各自含一个 EBWebView/ 子目录(18MB/313f 与 9MB/174f)，内部结构与 Edge\\User Data 同构。目录内没有任何厂商名或 manifest，故 owner 只能描述为「某个 WebView2 宿主应用」，confidence 取 medium。"
+  },
+  {
+    "match": "MapleLeap",
+    "owner": "某 Unity 单机游戏《聊斋》系(LiaoZhaiRL) 的启动/更新器分支",
+    "purpose": "LiaoZhaiRL 的游戏数据 2MB / 157 文件：archive/ 存档目录、Unity/ 引擎日志与配置、Player.log",
+    "category": "game-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "archive/ 下的存档与 Unity 的本地配置丢失，玩家进度不可恢复；游戏本身可重装但进度回不来",
+    "children": [],
+    "evidence": "实测 AppData\\LocalLow\\MapleLeap\\LiaoZhaiRL 2MB / 157 文件：archive/、Unity/、Player-prev.log、Player.log。同级还有 MapleLeaf\\LiaoZhaiRL(有 archive/ 与 Unity/)，两者是同一游戏的两套数据目录，存档优先落在 archive/。"
+  },
+  {
+    "match": "MapleLeaf",
+    "owner": "Unity 单机游戏《聊斋》系(LiaoZhaiRL)",
+    "purpose": "LiaoZhaiRL 的另一套游戏数据：Player.log 与 Unity/ 引擎数据",
+    "category": "game-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "游戏的 Unity 本地配置与日志丢失；若存档落在 Unity/ 下的持久化目录，会一起丢失，因此整目录按不可删处理",
+    "children": [],
+    "evidence": "实测 AppData\\LocalLow\\MapleLeaf\\LiaoZhaiRL：Player.log + Unity/（目录内共 36 文件）。与 MapleLeap\\LiaoZhaiRL(157 文件，含 archive/) 并列存在。"
+  },
+  {
+    "match": "moyuwan",
+    "owner": "《中国式家长》(moyuwan) ",
+    "purpose": "《中国式家长》的每用户数据：Save/ 存档、Unity/ 引擎数据、output_log.txt，另有独立的中文目录「中国式家长\\Save」",
+    "category": "game-data",
+    "safety": "never",
+    "confidence": "high",
+    "ifDeleted": "Save/ 下的存档直接丢失，玩家进度不可恢复；Steam 云同步只能拉回云端已有的旧档，本地未同步部分无法找回",
+    "children": [],
+    "evidence": "实测 AppData\\LocalLow\\moyuwan 1MB / 13 文件，含 chineseparentsgame/(output_log.txt、Save/、Unity/) 与「中国式家长/」(Save/)。两个 Save 目录都是存档，另有同级 com.moyuwan.chineseparents\\Save\\steam_autocloud.vdf。"
+  },
+  {
+    "match": "com.moyuwan.chineseparents",
+    "owner": "《中国式家长》(包名 com.moyuwan.chineseparents)",
+    "purpose": "该游戏的存档目录 Save/，内含 steam_autocloud.vdf 标记",
+    "category": "game-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "存档目录与 Steam 自动云同步标记丢失，游戏会认为没有存档而重新开始，Steam 可能把云端旧档覆盖",
+    "children": [],
+    "evidence": "实测 AppData\\LocalLow\\com.moyuwan.chineseparents 1MB / 1 文件，结构为 Save\\steam_autocloud.vdf。同名游戏的另一份数据在 AppData\\LocalLow\\moyuwan\\下。"
+  },
+  {
+    "match": "CatfoodStudio",
+    "owner": "Catfood Studio《雀魂麻將》(Mahjong Soul)",
+    "purpose": "《雀魂麻將》的每用户数据：Cookies/、Hosts、HTTPCache/、Library 与 Player 日志",
+    "category": "game-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删会让雀魂丢失登录 Cookie 与本地缓存，需要重新登录；只删 HTTPCache 则只是首次进入大厅变慢",
+    "children": [
+      {
+        "match": "雀魂麻將\\HTTPCache",
+        "safety": "safe",
+        "purpose": "网页资源缓存",
+        "ifDeleted": "自动重建"
+      },
+      {
+        "match": "雀魂麻將\\Player.log",
+        "safety": "safe",
+        "purpose": "Unity 运行日志(Player-prev.log 同性质)",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "雀魂麻將\\Cookies",
+        "safety": "never",
+        "purpose": "登录 Cookie 与站点登录态",
+        "ifDeleted": "需要重新登录账号"
+      },
+      {
+        "match": "雀魂麻將\\Hosts",
+        "safety": "never",
+        "purpose": "主机映射与站点状态",
+        "ifDeleted": "需重新连接并重新缓存"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "Library 等其余数据",
+        "ifDeleted": "客户端需重新初始化"
+      }
+    ],
+    "evidence": "实测 AppData\\LocalLow\\CatfoodStudio\\雀魂麻將 5 文件：Cookies/、Hosts、HTTPCache/、Library、Player-prev.log、Player.log。Cookies 与缓存混在同一层，故必须拆开判定。"
+  },
+  {
+    "match": "Clever Endeavour Games",
+    "owner": "Clever Endeavour Games《Ultimate Chicken Horse》",
+    "purpose": "《Ultimate Chicken Horse》的存档标记目录，只有 steam_autocloud.vdf 一个文件",
+    "category": "game-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "Steam 自动云同步的存档映射标记被删，游戏下次启动会认为没有存档，云端旧档可能被覆盖；体积虽小但不是缓存",
+    "children": [],
+    "evidence": "实测 AppData\\LocalLow\\Clever Endeavour Games\\Ultimate Chicken Horse 只有 1 个文件 steam_autocloud.vdf —— Steam 用它记录云同步的存档路径。"
+  },
+  {
+    "match": "Konami Digital Entertainment Co., Ltd_",
+    "owner": "KONAMI《游戏王 大师决斗》(masterduel)",
+    "purpose": "《游戏王 大师决斗》的 Unity 运行日志，只有 Player.log 与 Player-prev.log",
+    "category": "logs",
+    "safety": "safe",
+    "confidence": "high",
+    "ifDeleted": "仅丢失运行日志，游戏正常启动并重新生成；卡组与账号数据在服务器或别处，不受影响",
+    "children": [],
+    "evidence": "实测 AppData\\LocalLow\\Konami Digital Entertainment Co., Ltd_\\masterduel 只有 2 个文件：Player-prev.log、Player.log。目录内没有任何 .dat/.sav/数据库。"
+  },
+  {
+    "match": "MyACG Studio",
+    "owner": "MyACG Studio《AutoChess》(刀塔自走棋单机版)",
+    "purpose": "该游戏的每用户数据：两个数字 ID 目录(账号/存档)、Sentry 上报目录与 Unity 日志",
+    "category": "game-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "两个 ID 目录里的账号进度与本地存档丢失，游戏会当作新账号重新开始；Sentry 与日志可重建",
+    "children": [],
+    "evidence": "实测 AppData\\LocalLow\\MyACG Studio\\AutoChess 4 文件：-8885406385966940157/、-8886886809753878525/、Player-prev.log、Player.log、Sentry/。以长整型 ID 命名的目录是该游戏的本地账号目录。"
+  },
+  {
+    "match": "Microsoft",
+    "owner": "Microsoft（CryptnetUrlCache / Crypto / IME / Internet Explorer / EdgeBho）",
+    "purpose": "微软组件在 LocalLow 的每用户数据 1MB / 170 文件：证书吊销列表缓存 Content/MetaData、TokenBindingKeys 密钥、输入法 15.0 状态、IE 的 DOMStore 与 EmieSiteList、EdgeBHO 映射",
+    "category": "system",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删会丢输入法状态、TokenBinding 密钥与 IE 站点列表；缓存类子目录删掉无影响",
+    "children": [
+      {
+        "match": "CryptnetUrlCache",
+        "safety": "safe",
+        "purpose": "证书吊销列表(CRL)缓存，Content/ 与 MetaData/",
+        "ifDeleted": "系统下次联网重新下载 CRL，期间证书校验可能略慢"
+      },
+      {
+        "match": "Windows\\AppCache",
+        "safety": "safe",
+        "purpose": "开始菜单磁贴与缩略图缓存",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "Internet Explorer\\IEFlipAheadCache",
+        "safety": "safe",
+        "purpose": "IE 预读缓存",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "Crypto",
+        "safety": "never",
+        "purpose": "TokenBindingKeys 密钥",
+        "ifDeleted": "Token Binding 密钥丢失，依赖它的站点会重新绑定"
+      },
+      {
+        "match": "IME",
+        "safety": "never",
+        "purpose": "微软输入法 15.0 的用户状态",
+        "ifDeleted": "输入法学习数据与状态丢失"
+      },
+      {
+        "match": "Internet Explorer\\DOMStore",
+        "safety": "never",
+        "purpose": "IE 站点 DOM 存储",
+        "ifDeleted": "站点本地数据丢失"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "EmieSiteList、EdgeBho 等其余组件状态",
+        "ifDeleted": "IE/Edge 的兼容列表与插件映射需重建"
+      }
+    ],
+    "evidence": "实测 AppData\\LocalLow\\Microsoft 1MB / 170 文件，6 个子目录：CryptnetUrlCache/{Content/、MetaData/}、Crypto/TokenBindingKeys/、EdgeBho/IEToEdge/、IME/15.0/、Internet Explorer/{DOMStore、EdpDomStore、EmieSiteList、EmieSiteListDualEngineZP0MPPSO、EmieUserList、IEFlipAheadCache、Services}、Windows/AppCache/。"
+  },
+  {
+    "match": "Adobe",
+    "owner": "Adobe Acrobat DC",
+    "purpose": "Acrobat 在 LocalLow 的每用户数据：Acrobat\\DC 的状态与 Linguistics\\UserDictionaries 自定义词典",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "自定义拼写词典(用户添加的词)丢失且不可重建；Acrobat DC 的缓存状态则会重建",
+    "children": [
+      {
+        "match": "Acrobat",
+        "safety": "safe",
+        "purpose": "Acrobat DC 状态与缓存",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "Linguistics",
+        "safety": "never",
+        "purpose": "Linguistics\\UserDictionaries 用户自定义词典",
+        "ifDeleted": "手动加入词典的词全部丢失，拼写检查会重新标红"
+      }
+    ],
+    "evidence": "实测 AppData\\LocalLow\\Adobe 5 文件，只有 Acrobat/DC/ 与 Linguistics/UserDictionaries/ 两个分支。"
+  },
+  {
+    "match": "Sun",
+    "owner": "Oracle Java 8 (Sun\\Java)",
+    "purpose": "Java 8 的每用户部署配置与 JRE 记录：Deployment/ 与 jre1.8.0_321/",
+    "category": "dev-toolchain",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "Java Web Start / 小程序的安全设置、缓存与已记录版本丢失，下次启动会重新提示安全确认；依赖 deployment.properties 的站点可能无法直接运行",
+    "children": [],
+    "evidence": "实测 AppData\\LocalLow\\Sun\\Java 2 文件，结构为 Deployment/ 与 jre1.8.0_321/，是 Java 8 的 per-user deployment 根目录。"
+  },
+  {
+    "match": "Thunder Network",
+    "owner": "迅雷（Thunder）浏览器插件",
+    "purpose": "迅雷的浏览器 BHO 插件数据，只有 Thunder\\BHO 一个子目录，2 个文件",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "迅雷的浏览器右键下载挂钩需要重新注册，浏览器里的迅雷下载按钮可能失效，需重装或重新启用插件",
+    "children": [],
+    "evidence": "实测 AppData\\LocalLow\\Thunder Network\\Thunder\\BHO 2 个文件。BHO 即浏览器帮助对象(插件)注册数据，不是缓存。"
+  },
+  {
+    "match": "TENCENT",
+    "owner": "腾讯 Adplus（广告/推广组件）",
+    "purpose": "腾讯组件 Adplus\\Update 的更新包目录，2 个文件",
+    "category": "installer-cache",
+    "safety": "safe",
+    "confidence": "medium",
+    "ifDeleted": "推广组件的更新包丢弃，下次启动重新下载；对腾讯系客户端的正常功能无影响",
+    "children": [],
+    "evidence": "实测 AppData\\LocalLow\\TENCENT 2 个文件，结构为 Adplus\\Update/。"
+  },
+  {
+    "match": "Unity",
+    "owner": "Unity 引擎运行时",
+    "purpose": "Unity 引擎的共享临时目录 Unity\\Temp，本机为空",
+    "category": "temp",
+    "safety": "safe",
+    "confidence": "medium",
+    "ifDeleted": "引擎启动时重建临时目录；当前为空，删除无任何影响",
+    "children": [],
+    "evidence": "实测 AppData\\LocalLow\\Unity 只有 Temp/ 一个子目录且为空(0 文件 / 0MB)。"
+  },
+  {
+    "match": "Temp",
+    "owner": "LocalLow 侧的临时目录（含 Microsoft 子目录）",
+    "purpose": "低完整性进程(LocalLow 权限)使用的临时目录，本机含一个空的 Microsoft 子目录",
+    "category": "temp",
+    "safety": "safe",
+    "confidence": "medium",
+    "ifDeleted": "临时文件被清理，相关进程重新创建；本机当前几乎为空，删除无影响",
+    "children": [],
+    "evidence": "实测 AppData\\LocalLow\\Temp 只有 Microsoft/ 一个子目录且为空(0 文件 / 0MB)。"
+  },
+  {
+    "match": "NVIDIA",
+    "owner": "NVIDIA 显卡驱动",
+    "purpose": "NVIDIA 在 LocalLow 侧的 DXCache 着色器缓存，本机为空",
+    "category": "cache",
+    "safety": "safe",
+    "confidence": "medium",
+    "ifDeleted": "着色器缓存重建；本机当前为空，删除无影响",
+    "children": [],
+    "evidence": "实测 AppData\\LocalLow\\NVIDIA 只有 DXCache/ 一个子目录且为空(0 文件 / 0MB)。主缓存位于 AppData\\Local\\NVIDIA(581MB)，已单独建条。"
+  },
+  {
+    "match": "Mozilla",
+    "owner": "Mozilla Firefox",
+    "purpose": "Firefox 在 LocalLow 侧的占位目录，本机为空",
+    "category": "unknown",
+    "safety": "safe",
+    "confidence": "medium",
+    "ifDeleted": "目录为空，删除无任何影响；Firefox 若需要会重新创建",
+    "children": [],
+    "evidence": "实测 AppData\\LocalLow\\Mozilla 存在但完全为空(0 个文件 / 0MB)，Firefox 的真实数据在 AppData\\Roaming\\Mozilla 与 AppData\\Local\\Mozilla。"
+  },
+  {
+    "match": "MSLiveSticker",
+    "owner": "Windows Live 贴纸/输入法表情组件",
+    "purpose": "系统贴纸资源缓存目录，本机为空",
+    "category": "system",
+    "safety": "safe",
+    "confidence": "medium",
+    "ifDeleted": "目录为空，删除无影响；使用贴纸功能时由系统重新生成",
+    "children": [],
+    "evidence": "实测 AppData\\LocalLow\\MSLiveSticker 与同级 MSLiveStickerWhiteList 都存在但完全为空(各 0 文件 / 0MB)。"
+  },
+  {
+    "match": "Roblox",
+    "owner": "Roblox 玩家客户端",
+    "purpose": "Roblox 的每用户数据：logs 运行日志与 crashes 崩溃转储、以及按账号分的本地缓存",
+    "category": "game-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "整删会丢掉本地设置与缓存，需要重新登录；只删 logs 与 crashes 则无影响",
+    "children": [
+      {
+        "match": "logs",
+        "safety": "safe",
+        "purpose": "客户端日志",
+        "ifDeleted": "重新生成"
+      },
+      {
+        "match": "crashes",
+        "safety": "safe",
+        "purpose": "崩溃转储",
+        "ifDeleted": "丢弃崩溃现场"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "账号与本地设置目录",
+        "ifDeleted": "需重新登录并重新配置"
+      }
+    ],
+    "evidence": "本机未安装：实测 AppData\\LocalLow 的 22 个一级目录里没有 Roblox。条目依据 Roblox Windows 客户端在 %USERPROFILE%\\AppData\\LocalLow\\Roblox 的 logs/crashes/版本目录布局；同构旁证是本机实测的 LocalLow\\MyACG Studio\\AutoChess(数字 ID 目录 + Sentry + Player.log)。"
+  }
+]
