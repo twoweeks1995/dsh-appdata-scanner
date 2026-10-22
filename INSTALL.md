@@ -16,16 +16,13 @@
 
 ## 二、安装
 
-### 从 GitHub 安装（推荐的两种输入）
-
-安装框直接填下面任意一个：
+### 三种输入任选其一
 
 ```
-https://github.com/twoweeks1995/dsh-appdata-scanner/releases/download/v0.6.1/dsh-appdata-scanner-0.6.1.tgz
+dsh-appdata-scanner
 https://github.com/twoweeks1995/dsh-appdata-scanner
+D:\temp\dsh-appdata-scanner-0.6.1.tgz
 ```
-
-> 本项目未发布到 npm，填包名会失败。
 
 ### 从本地文件安装
 
