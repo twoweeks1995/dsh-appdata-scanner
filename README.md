@@ -58,7 +58,7 @@ https://github.com/twoweeks1995/dsh-appdata-scanner
 先从 [Releases](../../releases) 下载 tgz，安装框填它的绝对路径：
 
 ```
-D:\temp\dsh-appdata-scanner-0.6.1.tgz
+D:\temp\dsh-appdata-scanner-0.6.2.tgz
 ```
 
 安装后**完全退出 DSH 再启动**，左侧栏会出现「AppData Scanner」图标。
