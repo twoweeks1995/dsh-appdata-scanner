@@ -48,5 +48,14 @@
     "knowledge/",
     "README.md",
     "INSTALL.md"
-  ]
+  ],
+  "author": "twoweeks1995",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/twoweeks1995/AppData-Scanner.git"
+  },
+  "homepage": "https://github.com/twoweeks1995/AppData-Scanner#readme",
+  "bugs": {
+    "url": "https://github.com/twoweeks1995/AppData-Scanner/issues"
+  }
 }
