@@ -7,11 +7,9 @@
 
 **它不会删除任何东西。** 只帮你定位和解释，删除的决定权始终在你自己手里。
 
-> 截图占位：建议放一张左侧栏图标 + 主区面板的截图
-
 ## 特性
 
-- **资源管理器式下钻浏览**：点文件夹进入下一层，顶部「← 返回上一级」+ 面包屑跳级
+- **资源管理器式浏览**：点文件夹进入下一层，顶部「← 返回上一级」+ 面包屑跳级
 - **递归体积统计**：显示每个目录含所有后代的真实大小、文件数、最后修改时间
 - **三种排序**：名称 / 大小 / 修改日期，可切换升降序，选择会记住
 - **三档安全判定**：可安全删除 / 需拆分确认 / 不可删除，混合目录会拆到子项
@@ -31,9 +29,6 @@ DeepSeek 的**账号登录态检索**要求调用方必须是"当前这次对话
 | 配置了 `DEEPSEEK_API_KEY` | 检索 + 模型总结，返回结论与带摘要的来源 |
 | 未配置 | 自动降级：把查询串复制到剪贴板，供你粘到对话里询问 |
 | 没有 `web` 服务 | 同样降级为复制查询串 |
-
-按钮文案会随能力自动变化：「❓ 查一下」或「📋 生成查询」。
-
 
 ## 安装
 
@@ -58,28 +53,12 @@ https://github.com/twoweeks1995/dsh-appdata-scanner
 先从 [Releases](../../releases) 下载 tgz，安装框填它的绝对路径：
 
 ```
-D:\temp\dsh-appdata-scanner-0.6.2.tgz
+D:\temp\dsh-appdata-scanner-0.6.3.tgz
 ```
 
 安装后**完全退出 DSH 再启动**，左侧栏会出现「AppData Scanner」图标。
 
-#### 命令行等价写法
-
-```powershell
-dsh plugin --profile <profile名> add <上面任意一种输入>
-```
-
 详见 [INSTALL.md](./INSTALL.md)。
-
-### 独立命令行（不需要 DSH）
-
-需要 Node >= 20，零第三方依赖：
-
-```powershell
-node src/cli.mjs scan   --min-mb 20 --out out/scan.json
-node src/cli.mjs report --input out/scan.json --format table
-node src/cli.mjs plan   --input out/scan.json --out out/plan.md
-```
 
 ## 设计原则
 
@@ -103,15 +82,6 @@ node src/cli.mjs plan   --input out/scan.json --out out/plan.md
 未命中的走启发式（名称特征、文件类型、数据库文件检测）；再未命中的标记为推测。
 
 判定优先级：**知识库精确匹配 → 混合目录拆分 → 启发式 → 推测**。
-
-## 目录结构
-
-```
-plugin/        DSH 插件（host 侧 HTTP 路由 + client 侧界面）
-src/           独立可用的引擎（扫描 / 知识库 / 判定 / 报告 / 计划 / 联网）
-knowledge/     内置知识库
-test/          node:test 自测
-```
 
 ## 已知限制
 

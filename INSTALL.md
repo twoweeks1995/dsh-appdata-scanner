@@ -21,7 +21,7 @@
 ```
 dsh-appdata-scanner
 https://github.com/twoweeks1995/dsh-appdata-scanner
-D:\temp\dsh-appdata-scanner-0.6.2.tgz
+D:\temp\dsh-appdata-scanner-0.6.3.tgz
 ```
 
 ### 从本地文件安装
