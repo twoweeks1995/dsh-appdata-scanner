@@ -438,6 +438,10 @@ function scanRoute(ctx, state, config) {
     if (!requireMethod(req, res, "POST")) return;
     try {
       await ensureScanned(ctx, state, config, true);
+      // 重扫后必须让树缓存整体失效：tree 按绝对路径缓存统计结果，
+      // 只刷新扫描文档而不清缓存，界面上会一直显示删除之前的旧体积。
+      state.treeCache.clear();
+      state.treePending.clear();
       sendJson(res, 200, summaryPayload(state));
     } catch (err) {
       fail(res, err);
