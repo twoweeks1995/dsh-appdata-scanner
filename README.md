@@ -38,19 +38,56 @@ DeepSeek 的**账号登录态检索**要求调用方必须是"当前这次对话
 
 ## 安装
 
-### 作为 DSH 插件
+### 在 DSH 里安装
 
-```powershell
-dsh plugin --profile <profile名> add file:<tarball 绝对路径>
+侧边栏「插件」→「安装第三方插件」，安装框支持下面四种输入。
+
+> ⚠️ **不要填 npm 包名。** 本项目只发布在 GitHub，没有发布到 npm，
+> 填 `dsh-appdata-scanner` 或 `@twoweeks1995/dsh-appdata-scanner` 都会失败。
+
+**方式一：发布包地址（推荐）**
+
+一次小文件下载，网络不稳定时最不容易中断：
+
+```
+https://github.com/twoweeks1995/dsh-appdata-scanner/releases/download/v0.6.1/dsh-appdata-scanner-0.6.1.tgz
 ```
 
-或从源码目录链接（开发用，改代码重启即生效）：
+> 版本升级后把链接里的版本号换掉，或去 [Releases](../../releases) 页复制最新地址。
 
-```powershell
-dsh plugin --profile <profile名> add link:<本目录绝对路径>
+**方式二：仓库地址**
+
+需要克隆整个仓库，网络不稳定时容易失败：
+
+```
+https://github.com/twoweeks1995/dsh-appdata-scanner
 ```
 
-安装后**重启客户端**，左侧栏会出现「AppData Scanner」图标。
+**方式三：本地文件**
+
+先把 tgz 下载到本机，安装框填它的绝对路径：
+
+```
+D:\temp\dsh-appdata-scanner-0.6.1.tgz
+```
+
+**方式四：本地目录**（开发调试用，改代码重启即生效）
+
+填仓库在本机的绝对路径。
+
+安装后**完全退出 DSH 再启动**，左侧栏会出现「AppData Scanner」图标。
+
+#### 命令行等价写法
+
+```powershell
+dsh plugin --profile <profile名> add <上面四种输入之一>
+```
+
+例如：
+
+```powershell
+dsh plugin --profile desktop add https://github.com/twoweeks1995/dsh-appdata-scanner
+```
 
 详见 [INSTALL.md](./INSTALL.md)。
 
