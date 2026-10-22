@@ -9,7 +9,7 @@ import { join, normalize, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { LIMITS, ROOT_NAMES, defaultRoots, resolveHome, scan, scanDirectory } from "../src/scanner.mjs";
-import { loadKnowledge, matchEntry } from "../src/knowledge.mjs";
+import { loadKnowledge, matchEntry, matchRule, normalizeRelPath } from "../src/knowledge.mjs";
 import { classifyEntries, summarize } from "../src/classifier.mjs";
 import { buildPlan } from "../src/plan.mjs";
 import {
@@ -435,6 +435,7 @@ function planRoute(ctx, state, config) {
       const plan = buildPlan(state.judgements || [], {
         minBytes,
         safeOnly: safeOnly === "1" || safeOnly === "true",
+        roots: state.doc && Array.isArray(state.doc.roots) ? state.doc.roots.map((root) => root && root.absPath) : [],
       });
       sendJson(res, 200, Object.assign({ ok: true, scannedAt: state.scannedAt }, plan));
     } catch (err) {
@@ -898,34 +899,50 @@ function relFromRoot(rootAbs, absPath) {
 
 /**
  * AppData 围墙内的路径校验：/tree 的相对 path 与 /reveal 的绝对路径共用这一套。
- * 依次过：字符串/非空/NUL -> 带盘符的绝对路径 -> 原文含 .. -> normalize 后必须严格在
- * AppData 之下（前缀比较带分隔符，C:\x\AppData2 不算 AppData）-> realpath 之后仍在前缀之内
+ * 依次过：字符串/非空/NUL -> Windows 绝对路径 -> 原文含 .. -> normalize 后位于
+ * AppData 内（前缀比较带分隔符，C:\x\AppData2 不算 AppData）-> realpath 之后仍在前缀之内
  * （挡 junction / 符号链接逃逸）-> 必须是已存在的目录。
- * 任何一关不过都返回 { status, error }，调用方不得继续（/reveal 尤其不能走到 spawn）。
+ * 允许根目录本身，因为顶层要列出 AppData 下的目录。
+ * 成功返回真实路径；失败抛出带 status=400 和原有中文原因的错误。
+ * options.rootReal 仅用于宿主复用已解析的可信根路径，不得来自请求参数。
  */
-async function inspectAppDataPath(state, config, rawAbsPath) {
-  const rootAbs = appDataRoot(state, config);
-  if (!state.rootReal) state.rootReal = await realpath(rootAbs).catch(() => rootAbs);
-  if (typeof rawAbsPath !== "string") return { status: 400, error: "path 必须是字符串" };
+export async function resolveInsideRoot(rawAbsPath, rootAbs, options = {}) {
+  const rootReal = options.rootReal || await realpath(rootAbs).catch(() => rootAbs);
+  const reject = (message) => { throw Object.assign(new Error(message), { status: 400 }); };
+  if (typeof rawAbsPath !== "string") reject("path 必须是字符串");
   const text = rawAbsPath.trim();
-  if (!text) return { status: 400, error: "path 不能为空" };
-  if (text.indexOf("\u0000") >= 0) return { status: 400, error: "path 含非法字符" };
-  if (!isAbsoluteWindowsPath(text)) return { status: 400, error: "path 必须是带盘符的绝对路径：" + text };
-  if (hasParentSegment(text)) return { status: 400, error: "path 不允许包含 ..：" + text };
+  if (!text) reject("path 不能为空");
+  if (text.indexOf("\u0000") >= 0) reject("path 含非法字符");
+  if (!isAbsoluteWindowsPath(text)) reject("path 必须是带盘符的绝对路径：" + text);
+  if (hasParentSegment(text)) reject("path 不允许包含 ..：" + text);
   const absPath = normalize(text);
-  if (!isUnderTree(rootAbs, absPath)) return { status: 400, error: "path 不在 AppData 之下：" + absPath };
+  if (!isUnderTree(rootAbs, absPath)) reject("path 不在 AppData 之下：" + absPath);
   const real = await realpath(absPath).catch(() => null);
-  if (real === null) return { status: 400, error: "目录不存在：" + absPath };
-  if (!isUnderTree(state.rootReal, real)) {
-    return { status: 400, error: "path 解析后指向 AppData 之外（符号链接/目录联接）：" + real };
+  if (real === null) reject("目录不存在：" + absPath);
+  if (!isUnderTree(rootReal, real)) {
+    reject("path 解析后指向 AppData 之外（符号链接/目录联接）：" + real);
   }
   let info;
   try {
     info = await stat(real);
   } catch (err) {
-    return { status: 400, error: "无法访问：" + absPath };
+    reject("无法访问：" + absPath);
   }
-  if (!info.isDirectory()) return { status: 400, error: "path 不是目录：" + absPath };
+  if (!info.isDirectory()) reject("path 不是目录：" + absPath);
+  return real;
+}
+
+/** 保留路由的归一化请求路径与 { status, error } 契约，不把响应改成真实路径。 */
+async function inspectAppDataPath(state, config, rawAbsPath) {
+  const rootAbs = appDataRoot(state, config);
+  if (!state.rootReal) state.rootReal = await realpath(rootAbs).catch(() => rootAbs);
+  try {
+    await resolveInsideRoot(rawAbsPath, rootAbs, { rootReal: state.rootReal });
+  } catch (err) {
+    if (err.status === 400) return { status: err.status, error: err.message };
+    throw err;
+  }
+  const absPath = normalize(rawAbsPath.trim());
   return { rootAbs, absPath, rel: relFromRoot(rootAbs, absPath) };
 }
 
@@ -1094,7 +1111,7 @@ function isUnderTree(parent, child) {
  * 把 "Local\Microsoft" 切成段。只接受「段的拼接」：
  * 盘符、UNC、前导分隔符、任何 ".."、Windows 非法字符一律拒绝，返回 { error }。
  */
-function treePathSegments(raw) {
+export function treePathSegments(raw) {
   const text = typeof raw === "string" ? raw.trim() : "";
   if (!text) return { segments: [] };
   if (text.indexOf("\u0000") >= 0) return { error: "path 含非法字符" };
@@ -1360,9 +1377,9 @@ const TREE_ROOT_JUDGEMENTS = Object.freeze({
   },
   "flash player": {
     safety: "safe",
-    owner: "Adobe Flash Player（已停止支持）",
-    category: "appdata-root",
-    purpose: "已废弃的 Flash Player 数据目录，本机为空",
+    owner: "Adobe Flash Player（已于 2020 年底停止支持）",
+    category: "system",
+    purpose: "Flash Player 残留的顶层数据目录；软件早已停止支持，一般可以直接删除，删前建议确认里面没有你还需要的东西",
     confidence: "high",
     matchedBy: "knowledge",
   },
@@ -1389,27 +1406,42 @@ async function ensureKnowledge(state, config) {
   return await state.knowledgePending;
 }
 
-/**
- * 知识库命中就给 safety/owner/purpose/matchedBy/confidence（命中不到一个字段都不给）。
- * 匹配口径与 classifyEntry 一致：root 取第一段（local/roaming/locallow），相对根的路径走 suffix 匹配。
- */
+/** 最深主条目优先；下钻子规则未命中时继续尝试更浅的主条目。 */
+export function resolveTreeKnowledge(knowledge, relPath) {
+  const segments = normalizeRelPath(String(relPath || "")).split("\\");
+  const rootName = segments.shift().toLowerCase();
+  if (ROOT_NAMES.indexOf(rootName) < 0 || segments.length === 0) return null;
+  for (let k = segments.length; k >= 1; k -= 1) {
+    const prefix = segments.slice(0, k).join("\\");
+    const hit = matchEntry(knowledge, rootName, prefix, {});
+    if (!hit || !hit.entry) continue;
+    const entry = hit.entry;
+    let fields = entry;
+    let matchedBy = "knowledge";
+    if (k < segments.length) {
+      const rest = segments.slice(k).join("\\");
+      // fallback 只给「从根算起的完整路径」——与 classifier.mjs 的调用约定一致。
+      // 绝不能传 pathSuffixes(rest):那会让单段兜底规则(如 "*")命中深层路径的最后一段,
+      // 把 safe 目录下的所有子目录误判成兜底规则的安全级。
+      const child = matchRule(entry.children, rest, [segments.join("\\")]);
+      if (!child) continue;
+      fields = child.rule;
+      matchedBy = "knowledge-child";
+    }
+    return {
+      safety: fields.safety,
+      owner: entry.owner,
+      purpose: fields.purpose,
+      matchedBy,
+      confidence: entry.confidence,
+      category: entry.category,
+    };
+  }
+  return null;
+}
+
 function treeKnowledgeFields(knowledge, relPath) {
-  const segments = String(relPath || "").split("\\");
-  const rootName = String(segments[0] || "").toLowerCase();
-  if (ROOT_NAMES.indexOf(rootName) < 0) return null;
-  const relToRoot = segments.slice(1).join("\\");
-  if (!relToRoot) return null;
-  const hit = matchEntry(knowledge, rootName, relToRoot, { suffix: true });
-  if (!hit || !hit.entry) return null;
-  const entry = hit.entry;
-  return {
-    safety: entry.safety,
-    owner: entry.owner,
-    purpose: entry.purpose,
-    matchedBy: "knowledge",
-    confidence: entry.confidence,
-    category: entry.category,
-  };
+  return resolveTreeKnowledge(knowledge, relPath);
 }
 
 /** 排序在服务端做：name|size|date × asc|desc，同名兜底按名称升序（保证输出稳定）。 */

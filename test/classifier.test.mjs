@@ -5,6 +5,7 @@ import assert from "node:assert/strict";
 import {
   classifyEntry,
   classifyEntries,
+  childUnits,
   hasDatabase,
   heuristicVerdict,
   guessVerdict,
@@ -56,7 +57,7 @@ test("知识库 mixed 条目按 children 拆分出子项判定", async () => {
         ifDeleted: "整删会有损失",
         children: [
           { match: "sub", safety: "safe", purpose: "可重建的子目录", ifDeleted: "自动重建" },
-          { match: "data.txt", safety: "never", purpose: "用户数据", ifDeleted: "丢失" },
+          { match: "data", safety: "never", purpose: "用户数据目录", ifDeleted: "丢失" },
         ],
       },
     ]),
@@ -65,7 +66,7 @@ test("知识库 mixed 条目按 children 拆分出子项判定", async () => {
     const knowledge = await loadKnowledge(kbDir);
     const entry = makeEntry("PlainBits", {
       bytes: 4096,
-      children: [makeChild("sub", { bytes: 3000 }), makeChild("unknownish", { bytes: 1000 })],
+      children: [makeChild("sub", { bytes: 3000 }), makeChild("unknownish", { bytes: 1000 }), makeChild("data", { bytes: 96 })],
       rootFiles: [{ name: "data.txt", bytes: 96 }],
     });
     const judgement = classifyEntry(entry, knowledge);
@@ -75,7 +76,8 @@ test("知识库 mixed 条目按 children 拆分出子项判定", async () => {
     for (const child of judgement.children) byName[child.name] = child;
     assert.equal(byName.sub.safety, "safe");
     assert.equal(byName.sub.matchedBy, "knowledge-child");
-    assert.equal(byName["data.txt"].safety, "never");
+    assert.equal(byName.data.safety, "never");
+    assert.equal(byName["data.txt"], undefined, "散落文件不成为判定子项");
     assert.equal(byName.unknownish.safety, "mixed");
     assert.equal(byName.unknownish.needsReview, true);
   } finally {
@@ -102,17 +104,73 @@ test("没有知识库时靠启发式给出合理结果", () => {
   assert.equal(hasDatabase(makeEntry("Sessions", { levelDb: true })), true);
 });
 
-test("SPEC 优先级：缓存名规则先于数据库规则", () => {
-  const judgement = classifyEntry(
-    makeEntry("CacheStore", { exts: ["db"], rootFiles: [{ name: "x.db", bytes: 10 }] }),
-    [],
+// 2026-10 用户批准的 C2 决策：缓存名不能掩盖数据库，含数据库时需拆分确认。
+test("SPEC C2（2026-10）：缓存名含数据库降级为 mixed", () => {
+  const judgement = classifyEntry(makeEntry("CacheStore", { exts: ["db"] }), []);
+  assert.equal(judgement.safety, "mixed");
+  assert.equal(judgement.category, "cache");
+  assert.equal(judgement.confidence, "low");
+  assert.equal(judgement.matchedBy, "heuristic");
+  assert.equal(judgement.basis, "cache-name-with-database");
+  assert.equal(judgement.owner, "未知");
+  assert.equal(judgement.needsReview, true);
+  assert.match(judgement.purpose, /CacheStore.*含数据库.*不能整块删除.*拆分确认/);
+  assert.match(judgement.ifDeleted, /数据库.*用户数据.*自动重建/);
+  assert.match(judgement.evidence, /CacheStore.*数据库/);
+  assert.ok(
+    judgement.hints.some((hint) => hint.includes("数据库")) || judgement.purpose.includes("含数据库"),
+    "缓存名降级后仍应保留含数据库的线索",
   );
+});
+
+test("C2 回归：缓存名不含数据库仍为 safe/low", () => {
+  const judgement = classifyEntry(makeEntry("Temp", { exts: ["txt"] }), []);
   assert.equal(judgement.safety, "safe");
   assert.equal(judgement.category, "cache");
-  assert.ok(
-    judgement.hints.some((hint) => hint.indexOf("数据库") >= 0),
-    "命中缓存名但仍应提示目录含数据库",
+  assert.equal(judgement.confidence, "low");
+  assert.equal(judgement.matchedBy, "heuristic");
+  assert.equal(judgement.basis, "cache-name");
+  assert.equal(judgement.needsReview, false);
+});
+
+test("C2 回归：缓存名目录 levelDb 为 true 时降级为 mixed", () => {
+  const judgement = classifyEntry(makeEntry("Cache", { levelDb: true, exts: [] }), []);
+  assert.equal(judgement.safety, "mixed");
+  assert.equal(judgement.basis, "cache-name-with-database");
+  assert.equal(judgement.needsReview, true);
+});
+
+test("C2 回归：仅 rootFiles 的数据库文件名也触发缓存名降级", () => {
+  const judgement = classifyEntry(
+    makeEntry("Temp", { exts: [], rootFiles: [{ name: "x.db", bytes: 10 }] }),
+    [],
   );
+  assert.equal(judgement.safety, "mixed");
+  assert.equal(judgement.basis, "cache-name-with-database");
+  assert.equal(judgement.needsReview, true);
+});
+
+test("C2 回归：缓存名含数据库的 mixed 复用既有 children 拆分", () => {
+  const judgement = classifyEntry(
+    makeEntry("CacheStore", {
+      exts: ["db", "txt"],
+      children: [makeChild("Cache", { bytes: 100 }), makeChild("Store", { exts: ["db"], bytes: 200 })],
+    }),
+    [],
+  );
+  assert.equal(judgement.safety, "mixed");
+  assert.ok(Array.isArray(judgement.children));
+  assert.equal(judgement.children.length, 2);
+  assert.equal(judgement.children.find((child) => child.name === "Cache").safety, "safe");
+  assert.equal(judgement.children.find((child) => child.name === "Store").safety, "never");
+});
+
+test("C2 回归：缓存名含数据库但无可拆项时保留既有提示", () => {
+  const judgement = classifyEntry(makeEntry("Cache", { exts: ["sqlite"] }), []);
+  assert.equal(judgement.safety, "mixed");
+  assert.ok(Array.isArray(judgement.children));
+  assert.equal(judgement.children.length, 0);
+  assert.ok(judgement.hints.some((hint) => hint.includes("未发现可拆分")));
 });
 
 test("无法判定时回落到推测：mixed + low + 【推测】前缀 + 子项拆分", () => {
@@ -129,12 +187,12 @@ test("无法判定时回落到推测：mixed + low + 【推测】前缀 + 子项
   assert.equal(judgement.matchedBy, "guess");
   assert.ok(judgement.purpose.startsWith("【推测】"));
   assert.equal(judgement.needsReview, true);
-  assert.equal(judgement.children.length, 3);
-  assert.equal(guessVerdict({ kind: "file", name: "x.dat" }).safety, "never");
+  assert.equal(judgement.children.length, 2);
+  assert.equal(guessVerdict({ kind: "dir", name: "unknown" }).safety, "mixed");
   assert.equal(heuristicVerdict({ kind: "dir", name: "PlainBits", exts: ["txt"], rootFiles: [], childNames: [] }), null);
 });
 
-test("真实目录：1~3 个 >50MB 安装包走 updater/mixed 并拆出安装包子项", async () => {
+test("真实目录：1~3 个 >50MB 安装包仍走 updater/mixed 但不拆成文件单元", async () => {
   const dir = await createFixture("cls-installer", {
     "Installer/Setup.exe": 52 * 1024 * 1024,
     "Installer/Update.msi": 51 * 1024 * 1024,
@@ -144,11 +202,8 @@ test("真实目录：1~3 个 >50MB 安装包走 updater/mixed 并拆出安装包
     const judgement = classifyEntry(doc.entries[0], []);
     assert.equal(judgement.category, "updater");
     assert.equal(judgement.safety, "mixed");
-    assert.equal(judgement.children.length, 2);
-    for (const child of judgement.children) {
-      assert.equal(child.safety, "safe", "安装包子项应判为可安全删除");
-      assert.equal(child.category, "installer-cache");
-    }
+    assert.equal(judgement.children.length, 0);
+    assert.ok(judgement.hints.some((hint) => hint.includes("未发现可拆分")));
   } finally {
     await removeFixture(dir);
   }
@@ -273,4 +328,94 @@ test("兜底 * 规则不得吞掉已被更具体规则统辖的子树", async ()
   } finally {
     await removeFixture(kbDir);
   }
+});
+
+test("rootFiles 不成为文件子项，也不改变其它目录子项判定", () => {
+  const entry = makeEntry("PlainBits", {
+    // 真实扫描中 childNames 必然包含 children 的名字;夹具必须自洽,否则会误触发规则 3(根下无子目录的 updater 判定)
+    childNames: ["sub", "logs"],
+    children: [makeChild("sub"), makeChild("logs", { exts: ["log"] })],
+  });
+  const baseline = classifyEntry(entry, []);
+  const judgement = classifyEntry({ ...entry, rootFiles: [{ name: "big.exe", bytes: 60 * 1024 * 1024 }] }, []);
+  assert.ok(judgement.children.every((child) => child.kind === "dir"));
+  assert.ok(!judgement.children.some((child) => child.kind === "file" || child.name === "big.exe"));
+  assert.deepEqual(judgement.children, baseline.children, "文件名不能作为子目录判定依据");
+  for (const field of ["safety", "category", "matchedBy", "basis", "purpose"]) {
+    assert.equal(judgement[field], baseline[field]);
+  }
+});
+
+test("混合目录保留真实空子目录并从 childNames 补缺，不重复且只补一级", () => {
+  const entry = makeEntry("PlainBits", {
+    children: [makeChild("realEmpty", { bytes: 0, files: 0, exts: [] }), makeChild("sub", { childNames: ["nestedEmpty"] })],
+    childNames: ["realEmpty", "sub", "missingEmpty", "missingEmpty"],
+  });
+  const units = childUnits(entry);
+  assert.equal(units.length, 3);
+  const empty = units.find((unit) => unit.name === "missingEmpty");
+  assert.equal(empty.kind, "dir");
+  assert.equal(empty.depth, 1);
+  assert.equal(empty.bytes, 0);
+  assert.equal(empty.files, 0);
+  assert.deepEqual(empty.exts, []);
+  assert.deepEqual(empty.rootFiles, []);
+  assert.ok(!units.some((unit) => unit.name === "nestedEmpty"));
+  const judgement = classifyEntry(entry, []);
+  assert.equal(judgement.safety, "mixed");
+  assert.equal(judgement.children.length, 3);
+  for (const name of ["realEmpty", "missingEmpty"]) {
+    const child = judgement.children.find((item) => item.name === name);
+    assert.equal(child.kind, "dir");
+    assert.equal(child.bytes, 0);
+    assert.equal(child.files, 0);
+  }
+});
+
+test("补入的空子目录正常命中知识库子规则安全级", async () => {
+  const kbDir = await createFixture("cls-empty-rule", {
+    "local.json": JSON.stringify([{
+      match: "PlainBits", owner: "Fixture Corp", purpose: "混合目录", category: "app-data",
+      safety: "mixed", confidence: "high", ifDeleted: "整删会有损失",
+      children: [
+        { match: "emptySafe", safety: "safe", purpose: "可重建目录", ifDeleted: "自动重建" },
+        { match: "emptyKeep", safety: "never", purpose: "用户目录", ifDeleted: "丢失" },
+      ],
+    }]),
+  });
+  try {
+    const knowledge = await loadKnowledge(kbDir);
+    const judgement = classifyEntry(makeEntry("PlainBits", { childNames: ["emptySafe", "emptyKeep"] }), knowledge);
+    assert.equal(judgement.children.length, 2);
+    for (const [name, safety] of [["emptySafe", "safe"], ["emptyKeep", "never"]]) {
+      const child = judgement.children.find((item) => item.name === name);
+      assert.equal(child.kind, "dir");
+      assert.equal(child.bytes, 0);
+      assert.equal(child.files, 0);
+      assert.equal(child.safety, safety);
+      assert.equal(child.matchedBy, "knowledge-child");
+      assert.equal(child.rule, name);
+    }
+  } finally {
+    await removeFixture(kbDir);
+  }
+});
+
+test("130 个子目录含 10 个空目录时仍保留 120 个真实子项及准确省略行", () => {
+  const children = Array.from({ length: 120 }, (_, i) => makeChild("part" + i, { bytes: i + 1 }));
+  const emptyNames = Array.from({ length: 10 }, (_, i) => "empty" + i);
+  const entry = makeEntry("PlainBits", { children, childNames: [...children.map((child) => child.name), ...emptyNames] });
+  const units = childUnits(entry);
+  assert.equal(units.length, 130);
+  assert.equal(units.filter((unit) => unit.files === 0 && unit.bytes === 0).length, 10);
+  const judgement = classifyEntry(entry, []);
+  assert.equal(judgement.children.length, 121);
+  const omitted = judgement.children.find((child) => child.name === "…");
+  assert.ok(omitted);
+  assert.match(omitted.purpose, /还有 10 个子项未列出/);
+  assert.equal(omitted.bytes, 0);
+  const kept = judgement.children.filter((child) => child !== omitted);
+  assert.equal(kept.length, 120);
+  assert.ok(kept.every((child) => child.bytes > 0));
+  assert.deepEqual(new Set(kept.map((child) => child.name)), new Set(children.map((child) => child.name)));
 });

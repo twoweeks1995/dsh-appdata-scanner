@@ -1,7 +1,7 @@
 {
   "name": "dsh-appdata-scanner",
-  "version": "0.6.4",
-  "description": "AppData 目录分析插件：左侧栏图标按需打开，以资源管理器式下钻浏览，显示每个目录的递归体积/生成软件/用途/可删建议；联网查询给出模型总结与带摘要来源（只读，不提供删除功能）",
+  "version": "0.7.0",
+  "description": "AppData 目录分析插件：左侧栏图标按需打开，以资源管理器式逐层浏览，显示每个目录的递归体积/生成软件/用途/可删建议；只分析目录不检索文件；联网查询给出模型总结与带摘要来源（只读，不提供删除功能）",
   "type": "module",
   "main": "plugin/index.js",
   "engines": {
@@ -13,7 +13,7 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "test": "node --test test/"
+    "test": "node --test"
   },
   "dsh": {
     "engines": {
@@ -27,7 +27,6 @@
       "inject": [
         "@deepseek-ai/dsh-client-ui-sidebar-right",
         "@deepseek-ai/dsh-client-ui-layout",
-        "@deepseek-ai/dsh-client-ui-primitives",
         "@deepseek-ai/dsh-client-locale"
       ]
     }

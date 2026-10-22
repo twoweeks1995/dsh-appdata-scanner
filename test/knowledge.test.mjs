@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import { join } from "node:path";
 
 import {
+  coerceEntry,
   globToRegExp,
   loadKnowledge,
   matchEntry,
@@ -74,6 +75,24 @@ test("坏 JSON 与非法条目只记录问题，不影响其它条目", async ()
   } finally {
     await removeFixture(dir);
   }
+});
+
+test("children 的 mixed 原样保留，非法 safety 按 never 处理并记录问题", () => {
+  const { entry, notes } = coerceEntry({
+    match: "Browser", safety: "mixed", category: "browser-profile", confidence: "high",
+    children: [
+      { match: "Profile", safety: "mixed", purpose: "用户配置容器", ifDeleted: "不能整删" },
+      { match: "Profile\\Cache", safety: "safe", purpose: "网页资源缓存", ifDeleted: "自动重建" },
+      { match: "Protected", safety: "never", purpose: "用户持久数据", ifDeleted: "数据丢失" },
+      { match: "Unknown", safety: "maybe" },
+      { match: "Missing" },
+    ],
+  });
+  assert.deepEqual(entry.children.map((child) => child.safety), ["mixed", "safe", "never", "never", "never"]);
+  assert.deepEqual(notes, [
+    "children 条目 safety 非法（maybe），按 never 处理",
+    "children 条目 safety 非法（），按 never 处理",
+  ]);
 });
 
 test("通配匹配：大小写不敏感、* 不跨层、** 跨层", () => {

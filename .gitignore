@@ -16,3 +16,4 @@ desktop.ini
 # 内部设计文档（含本机路径，不公开）
 SPEC.md
 PLUGIN-SPEC.md
+.private/

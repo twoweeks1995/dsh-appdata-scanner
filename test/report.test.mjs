@@ -116,6 +116,70 @@ test("markdown 报告：汇总表 + 分组表 + 子项行", () => {
   assert.ok(text.includes("可安全删除"));
 });
 
+test("markdown：提示小节显示路径、安全级和完整提示", () => {
+  const entry = { ...makeEntry("缓存目录"), safety: "safe", hints: ["目录内含数据库文件", "统计被截断，体积与文件数偏小"] };
+  const text = renderMarkdown([entry]);
+  assert.ok(text.includes("## 提示/注意"));
+  assert.ok(text.includes("- " + entry.relPath + "(可安全删除):目录内含数据库文件;统计被截断，体积与文件数偏小"));
+});
+
+test("table：表格之后显示完整提示，不改变表格列宽", () => {
+  const { judgements, meta } = sample();
+  const original = renderTable(judgements, meta);
+  judgements[0].hints = ["目录内含数据库文件", "删除前请复核"];
+  const text = renderTable(judgements, meta);
+  assert.ok(text.includes("\n提示：\n- " + judgements[0].relPath + "(" + "可安全删除" + "):目录内含数据库文件;删除前请复核"));
+  assert.equal(text.slice(0, text.indexOf("合计：")), original.slice(0, original.indexOf("合计：")));
+  assert.ok(text.indexOf("\n提示：\n") > text.indexOf("合计："));
+});
+
+test("没有 hints：不生成空的提示块", () => {
+  const entries = [
+    { ...makeEntry("空提示"), safety: "safe", hints: [] },
+    { ...makeEntry("无提示字段"), safety: "never" },
+  ];
+  assert.ok(!renderMarkdown(entries).includes("## 提示/注意"));
+  assert.ok(!renderTable(entries).includes("\n提示：\n"));
+});
+
+test("提示超过 40 条：按体积降序展示并注明未显示条数", () => {
+  const entries = Array.from({ length: 43 }, (_, index) => ({
+    ...makeEntry("提示目录" + index, { bytes: index + 1 }),
+    safety: "safe",
+    hints: ["独有提示" + index],
+  }));
+  entries.push({ ...makeEntry("无提示大目录", { bytes: 9999 }), safety: "never", hints: [] });
+  for (const render of [renderMarkdown, renderTable]) {
+    const text = render(entries);
+    const hintRows = text.split("\n").filter((line) => line.startsWith("- ") && line.includes("(可安全删除):"));
+    assert.equal(hintRows.length, 40);
+    assert.equal(hintRows[0], "- " + entries[42].relPath + "(可安全删除):独有提示42");
+    assert.equal(hintRows[39], "- " + entries[3].relPath + "(可安全删除):独有提示3");
+    assert.ok(!text.includes("独有提示0"));
+    assert.ok(!text.includes("独有提示1\n"));
+    assert.ok(!text.includes("独有提示2\n"));
+    assert.ok(text.includes("另有 3 条未显示"));
+  }
+});
+
+test("展开子项的 hints：两种文本报告均显示完整子项路径", () => {
+  const parent = {
+    ...makeEntry("混合目录"),
+    safety: "mixed",
+    children: [{ ...makeChild("cache"), safety: "safe", hints: ["子项含数据库"] }],
+  };
+  for (const render of [renderMarkdown, renderTable]) {
+    assert.ok(render([parent]).includes("- " + parent.relPath + "/cache(可安全删除):子项含数据库"));
+  }
+});
+
+test("json：保留原始 hints 数组且不增加提示结构", () => {
+  const entry = { ...makeEntry("缓存目录"), safety: "safe", hints: ["目录内含数据库文件"] };
+  const data = JSON.parse(renderJson([entry]));
+  assert.deepEqual(data.entries[0].hints, entry.hints);
+  assert.deepEqual(Object.keys(data), ["version", "generator", "generatedAt", "summary", "roots", "knowledge", "entries"]);
+});
+
 test("json 报告可被解析且字段完整", () => {
   const { judgements, meta } = sample();
   const text = renderJson(judgements, meta);

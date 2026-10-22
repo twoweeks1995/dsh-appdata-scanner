@@ -280,6 +280,7 @@ export async function run(argv, customIo) {
         safeOnly: Boolean(options["safe-only"]),
         minBytes: Math.max(0, toNumber(options["min-mb"], 0)) * 1024 * 1024,
         generatedAt: doc.generatedAt,
+        roots: Array.isArray(doc.roots) ? doc.roots.map((root) => root && root.absPath) : [],
       });
       const text = renderPlan(plan, meta, options.format && options.format !== true ? String(options.format) : "md");
       await emit(text, options, io);

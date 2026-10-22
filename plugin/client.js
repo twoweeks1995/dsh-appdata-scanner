@@ -814,8 +814,8 @@ window.__ModuleLoader__.load({
 			const [sort, setSort] = react.useState(readSortPreference);
 			// 当前所在目录（相对 AppData；空串即 AppData 根）。
 			const [currentPath, setCurrentPath] = react.useState("");
-			// 当前这一层：{ status, entries, root, absPath, error }
-			const [level, setLevel] = react.useState({ status: "loading", entries: [], root: "", absPath: "", error: "" });
+			// 当前这一层：{ status, entries, root, error }
+			const [level, setLevel] = react.useState({ status: "loading", entries: [], root: "", error: "" });
 			const [summary, setSummary] = react.useState({ total: 0, reclaimableBytes: 0, scannedAt: undefined, environment: null });
 			const [busy, setBusy] = react.useState(false);
 			const [message, setMessage] = react.useState("");
@@ -827,6 +827,8 @@ window.__ModuleLoader__.load({
 			const [reloadToken, setReloadToken] = react.useState(0);
 			const alive = react.useRef(true);
 			const signatureRef = react.useRef("");
+			// 每次取层递增；响应回来时比对，晚到的旧结果直接丢弃（防止快切目录/排序时旧页覆盖新页）。
+			const levelSeq = react.useRef(0);
 			// 同一目标的请求在飞期间用 ref 挡连点（不依赖 state 渲染时机）。
 			const inflightReveal = react.useRef({});
 
@@ -845,15 +847,17 @@ window.__ModuleLoader__.load({
 
 			/** 取一层目录；排序与方向由 host 处理，客户端只透传。 */
 			const loadLevel = async (relPath, nextSort) => {
-				setLevel({ status: "loading", entries: [], root: "", absPath: "", error: "" });
+				const seq = levelSeq.current + 1;
+				levelSeq.current = seq;
+				setLevel({ status: "loading", entries: [], root: "", error: "" });
 				try {
 					const payload = await requestJson(treeUrl(relPath, nextSort));
-					if (!alive.current) return;
+					if (!alive.current || seq !== levelSeq.current) return;
 					const page = treePageOf(payload);
-					setLevel({ status: "ready", entries: page.entries, root: page.root, absPath: page.absPath, error: "" });
+					setLevel({ status: "ready", entries: page.entries, root: page.root, error: "" });
 				} catch (error) {
-					if (!alive.current) return;
-					setLevel({ status: "error", entries: [], root: "", absPath: "", error: errorText(error) });
+					if (!alive.current || seq !== levelSeq.current) return;
+					setLevel({ status: "error", entries: [], root: "", error: errorText(error) });
 				}
 			};
 

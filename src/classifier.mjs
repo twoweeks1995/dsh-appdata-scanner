@@ -1,7 +1,6 @@
 // src/classifier.mjs —— 判定：知识库命中 -> mixed 拆 children -> 启发式 -> 推测
 // 判定优先级严格按 SPEC.md 第 59~68 行实现，不得调整顺序。
 import { matchEntry, matchRule } from "./knowledge.mjs";
-import { extOf } from "./scanner.mjs";
 
 export const SAFETY_RANK = { safe: 0, mixed: 1, never: 2 };
 
@@ -78,7 +77,7 @@ export function entryUnit(entry) {
 
 /**
  * 一级目录下可参与拆分的路径：
- *   第 1 层子目录 + 根下散落文件（真实统计）
+ *   第 1 层子目录（含仅由 childNames 记录的空目录），文件不成为判定单元
  *   第 2~4 层后代（来自 scanner 的 descendants，只在匹配到知识库规则时才输出）
  */
 export function childUnits(entry) {
@@ -88,7 +87,16 @@ export function childUnits(entry) {
   const toAbs = (rel) => (parentAbs ? parentAbs + "\\" + rel : rel);
   const units = [];
 
-  for (const child of entry.children || []) {
+  const children = [...(entry.children || [])];
+  const names = new Set(children.map((child) => child.name));
+  // 扫描统计未收录的一级空目录也进入同一套匹配逻辑，不补更深层。
+  for (const name of entry.childNames || []) {
+    if (names.has(name)) continue;
+    children.push({ name });
+    names.add(name);
+  }
+
+  for (const child of children) {
     units.push({
       kind: "dir",
       depth: 1,
@@ -105,27 +113,6 @@ export function childUnits(entry) {
       files: child.files || 0,
       newestMtime: child.newestMtime || null,
       oldestMtime: child.oldestMtime || null,
-    });
-  }
-  for (const file of entry.rootFiles || []) {
-    const name = file.name;
-    const ext = extOf(name);
-    units.push({
-      kind: "file",
-      depth: 1,
-      name,
-      relPathFromParent: name,
-      relPathFromRoot: toRoot(name),
-      absPath: toAbs(name),
-      exts: ext ? [ext] : [],
-      logFiles: ext === "log" ? 1 : 0,
-      levelDb: false,
-      childNames: [],
-      rootFiles: [{ name, bytes: file.bytes || 0 }],
-      bytes: file.bytes || 0,
-      files: 1,
-      newestMtime: null,
-      oldestMtime: null,
     });
   }
   for (const descendant of entry.descendants || []) {
@@ -178,9 +165,23 @@ function cacheNameHit(unit) {
  * 全部不命中返回 null，交给推测。
  */
 export function heuristicVerdict(unit) {
-  // 规则 1：名称或子目录名匹配缓存模式 -> safe / confidence low
+  // 规则 1：缓存名命中且含数据库 -> mixed，否则保持 safe / confidence low（2026-10，C2 决策）
   const cacheHit = cacheNameHit(unit);
   if (cacheHit) {
+    if (hasDatabase(unit)) {
+      return verdict({
+        safety: "mixed",
+        category: "cache",
+        confidence: "low",
+        matchedBy: "heuristic",
+        basis: "cache-name-with-database",
+        owner: "未知",
+        purpose: "【启发式】名称像缓存（" + cacheHit + "），但目录内含数据库文件，不能整块删除，需拆分确认",
+        ifDeleted: "删掉会连同数据库一起丢失；数据库可能保存用户数据（如聊天记录、索引），不能假定可自动重建",
+        evidence: "启发式规则 1 命中缓存名：" + cacheHit + "；同时检测到目录内含数据库文件或 LevelDB 数据库",
+        needsReview: true,
+      });
+    }
     return verdict({
       safety: "safe",
       category: "cache",
@@ -191,22 +192,6 @@ export function heuristicVerdict(unit) {
       purpose: "【启发式】名称或子目录名与缓存模式匹配（" + cacheHit + "），内容通常可由软件重新生成",
       ifDeleted: "软件或系统下次运行时会自动重建；一般无用户数据损失（若含登录态请先人工确认）",
       evidence: "启发式规则 1 命中：" + cacheHit,
-    });
-  }
-
-  // 补充规则（只作用于混合目录拆出来的文件子项）：单个安装包 -> safe / installer-cache。
-  // SPEC 的四条规则都是针对目录的，这里只补一条文件级规则，不改变目录规则的先后顺序。
-  if (unit.kind === "file" && UPDATER_FILE_RE.test(unit.name || "") && (unit.bytes || 0) > UPDATER_MIN_BYTES) {
-    return verdict({
-      safety: "safe",
-      category: "installer-cache",
-      confidence: "low",
-      matchedBy: "heuristic",
-      basis: "installer-file",
-      owner: "未知",
-      purpose: "【启发式】单个体积超过 50MB 的安装包（" + unit.name + "），安装完成后不再需要",
-      ifDeleted: "安装包需要重新下载；已安装的程序不受影响",
-      evidence: "启发式补充规则命中：安装包 " + unit.name,
     });
   }
 

@@ -21,11 +21,49 @@ export function recycleDeleteCommand(absPath) {
   return psCommand("DeleteDirectory", absPath);
 }
 
-/** 文件目标的回收站删除命令（只用于 mixed 目录里拆出来的可删文件，如超大 app.log）。 */
+/** 文件目标的回收站删除命令，保留供外部调用者兼容；当前判定流程不会产生文件动作。 */
 export function recycleDeleteFileCommand(absPath) {
   return psCommand("DeleteFile", absPath);
 }
 
+function pathKey(value) {
+  return typeof value === "string" ? value.replace(/\//g, "\\").replace(/\\+$/, "").toLowerCase() : "";
+}
+
+function isAbsoluteTreePath(value) {
+  return (/^[a-z]:\\/i.test(value) || /^\\\\[^\\]+\\[^\\]+(?:\\|$)/.test(value)) &&
+    !value.split("\\").some((part) => part === "." || part === "..");
+}
+
+function isUnderTree(parent, child) {
+  const outer = pathKey(parent);
+  const inner = pathKey(child);
+  return isAbsoluteTreePath(outer) && isAbsoluteTreePath(inner) &&
+    (inner === outer || inner.startsWith(outer + "\\"));
+}
+
+function pathSkipReason(judgement, roots) {
+  const absPath = pathKey(judgement.absPath);
+  if (/^[a-z]:\\(?:Windows|Program Files(?: \(x86\))?)(?:\\|$)/i.test(absPath) ||
+      /\\Windows\\(?:System32|SysWOW64)(?:\\|$)/i.test(absPath)) {
+    return "系统路径，拒绝生成删除命令：" + judgement.absPath;
+  }
+  if (roots.length > 0) {
+    return roots.some((root) => isUnderTree(root, absPath)) ? "" :
+      "路径不在 AppData 之下，拒绝生成删除命令：" + judgement.absPath;
+  }
+  const relPath = pathKey(judgement.relPath);
+  const suffix = "\\" + relPath;
+  const rootAbs = absPath.endsWith(suffix) ? absPath.slice(0, -suffix.length) : "";
+  if (!relPath || relPath.startsWith("\\") || relPath.includes(":") ||
+      relPath.split("\\").some((part) => !part || part === "." || part === "..") ||
+      !isUnderTree(rootAbs, absPath)) {
+    return "条目路径与相对路径不一致，拒绝生成删除命令";
+  }
+  return "";
+}
+
+// 保留 kind 分支以兼容外部调用者；当前判定流程不会产生文件动作。
 function actionFrom(judgement, extra) {
   const info = extra || {};
   return {
@@ -65,24 +103,39 @@ function skipOf(judgement, reason) {
  * 由判定结果生成删除计划。
  * safe 条目整目录进计划；mixed 条目只把 safety=safe 的子项放进计划，绝不整删；
  * --safe-only 进一步收紧：只保留顶层 safe 条目，混合目录一律不碰。
+ * 统计被截断（truncated）的条目**一律不进计划**：体积与内容都没数全，不该据此给出删除命令。
  */
 export function buildPlan(judgements, options) {
   const opts = options || {};
   const safeOnly = Boolean(opts.safeOnly);
+  const roots = Array.isArray(opts.roots) ? opts.roots : [];
   const minBytes = Math.max(0, Number(opts.minBytes || 0));
   const actions = [];
   const skipped = [];
 
   for (const judgement of judgements || []) {
     if (judgement.safety === "safe") {
+      if (judgement.truncated) {
+        skipped.push(skipOf(judgement, "扫描被截断，体积与内容都没数全，不生成删除命令（可重新扫描后再看）"));
+        continue;
+      }
       if ((judgement.bytes || 0) < minBytes) {
         skipped.push(skipOf(judgement, "体积低于阈值 " + Math.round(minBytes / 1048576) + "MB，未进入计划"));
+        continue;
+      }
+      const pathReason = pathSkipReason(judgement, roots);
+      if (pathReason) {
+        skipped.push(skipOf(judgement, pathReason));
         continue;
       }
       actions.push(actionFrom(judgement, { source: "entry" }));
       continue;
     }
     if (judgement.safety === "mixed") {
+      if (judgement.truncated) {
+        skipped.push(skipOf(judgement, "扫描被截断，子项统计也不完整，不生成删除命令（可重新扫描后再看）"));
+        continue;
+      }
       const children = judgement.children || [];
       if (safeOnly) {
         skipped.push(skipOf(judgement, "--safe-only：混合目录整体不进入计划"));
@@ -94,6 +147,11 @@ export function buildPlan(judgements, options) {
         continue;
       }
       for (const child of safeChildren) {
+        const pathReason = pathSkipReason(child, roots);
+        if (pathReason) {
+          skipped.push(skipOf(child, pathReason));
+          continue;
+        }
         actions.push(actionFrom(child, { source: "child", parentRelPath: judgement.relPath }));
       }
       for (const child of children) {

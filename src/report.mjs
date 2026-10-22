@@ -130,6 +130,20 @@ function noteFor(judgement) {
   return parts.join(" ");
 }
 
+function hintLines(judgements) {
+  const entries = (judgements || []).flatMap((judgement) => [
+    judgement,
+    ...(judgement.children || []).map((child) => ({
+      ...child,
+      relPath: child.relPath || judgement.relPath + "/" + (child.relPathFromParent || child.name),
+    })),
+  ]);
+  const hinted = entries.filter((entry) => (entry.hints || []).length > 0).sort((a, b) => b.bytes - a.bytes);
+  const lines = hinted.slice(0, 40).map((entry) => "- " + entry.relPath + "(" + safetyLabel(entry.safety) + "):" + entry.hints.join(";"));
+  if (hinted.length > 40) lines.push("另有 " + (hinted.length - 40) + " 条未显示");
+  return lines;
+}
+
 function rowOf(judgement) {
   return {
     path: judgement.relPath + (judgement.safety === "mixed" && (judgement.children || []).length > 0 ? " ▼" : ""),
@@ -274,6 +288,8 @@ export function renderTable(judgements, meta) {
       " 个" +
       (summary.truncated > 0 ? "；统计被截断条目 " + summary.truncated + " 个" : ""),
   );
+  const hints = hintLines(judgements);
+  if (hints.length > 0) lines.push("", "提示：", ...hints, "");
   for (const line of LEGEND) lines.push(line);
   lines.push("提示：本阶段不执行删除。生成删除命令请运行 plan（命令只会输出，不会执行）。");
   return lines.join("\n") + "\n";
@@ -351,6 +367,9 @@ export function renderMarkdown(judgements, meta) {
     }
     lines.push("");
   }
+
+  const hints = hintLines(judgements);
+  if (hints.length > 0) lines.push("## 提示/注意", "", ...hints, "");
 
   lines.push("## 判定依据摘要");
   lines.push("");

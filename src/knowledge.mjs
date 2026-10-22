@@ -130,8 +130,9 @@ function coerceChildren(rawChildren, notes) {
       notes.push("children 条目缺少 match，已忽略");
       continue;
     }
-    // children 只允许 safe / never；非法值按 never 处理（保守：宁可不删）
-    const safety = SAFETIES.indexOf(raw.safety) >= 0 && raw.safety !== "mixed" ? raw.safety : "never";
+    // children 允许 safe / mixed / never；mixed 容器不能整删，应展开更具体的子规则
+    // 非法值按 never 处理（保守：宁可不删）
+    const safety = SAFETIES.indexOf(raw.safety) >= 0 ? raw.safety : "never";
     if (SAFETIES.indexOf(raw.safety) < 0) notes.push("children 条目 safety 非法（" + asText(raw.safety) + "），按 never 处理");
     children.push({
       match: info.text,
@@ -218,6 +219,16 @@ export async function loadKnowledge(dir, options) {
     result.degraded = true;
     return result;
   }
+  // 维护者笔记独立保存，缺失或损坏不影响公开知识库加载。
+  let evidenceNotes = null;
+  const evidenceFile = opts.evidenceFile === undefined
+    ? join(dir, "..", ".private", "knowledge-evidence.json")
+    : opts.evidenceFile;
+  try {
+    evidenceNotes = JSON.parse((await readFile(evidenceFile, "utf8")).replace(/^\uFEFF/, ""));
+  } catch {
+    // 私密笔记不是判定依赖，静默跳过。
+  }
   for (const file of jsonFiles) {
     const full = join(dir, file);
     let text;
@@ -253,6 +264,11 @@ export async function loadKnowledge(dir, options) {
       if (!coerced.entry) {
         result.problems.push({ file, message: "第 " + (index + 1) + " 条被忽略：" + coerced.notes.join("；") });
         return;
+      }
+      const group = evidenceNotes && Object.hasOwn(evidenceNotes, stem) ? evidenceNotes[stem] : null;
+      const match = raw.match;
+      if (!Object.hasOwn(raw, "evidence") && group && Object.hasOwn(group, match) && typeof group[match] === "string") {
+        coerced.entry.evidence = group[match];
       }
       result.entries.push(coerced.entry);
       accepted += 1;
