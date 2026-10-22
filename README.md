@@ -23,18 +23,8 @@
 
 这是框架层面的限制，不是配置疏漏。
 
-插件里的 HTTP 路由**无法使用 DeepSeek 账号登录态**检索。原因在 `dsh-web-search-deepseek` 的实现：
-
-```js
-resolveAccountToken: async (endpoint) => {
-  if (ctx.get("agents")?.currentInitiator()?.session.requestContext()?.provider !== ACCOUNT_PROVIDER)
-    return void 0;
-  return await ctx.get("deepseekAccount")?.resolveToken(endpoint);
-}
-```
-
-账号模式要求调用方**正处在一次 agent 调用链里**（`currentInitiator()` 非空）。
-插件的 HTTP 路由是裸请求、不在任何调用链上，所以永远走不到账号模式，只能回落到 API key。
+DeepSeek 的**账号登录态检索**要求调用方必须是"当前这次对话的发起者"，
+而插件里的 HTTP 请求不在任何对话里，所以拿不到账号凭据，只能用 API key。
 
 | 部署情况 | 行为 |
 |---|---|

@@ -52,10 +52,10 @@
   "author": "twoweeks1995",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/twoweeks1995/AppData-Scanner.git"
+    "url": "git+https://github.com/twoweeks1995/dsh-appdata-scanner.git"
   },
-  "homepage": "https://github.com/twoweeks1995/AppData-Scanner#readme",
+  "homepage": "https://github.com/twoweeks1995/dsh-appdata-scanner#readme",
   "bugs": {
-    "url": "https://github.com/twoweeks1995/AppData-Scanner/issues"
+    "url": "https://github.com/twoweeks1995/dsh-appdata-scanner/issues"
   }
 }
