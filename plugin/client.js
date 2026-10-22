@@ -57,6 +57,10 @@ window.__ModuleLoader__.load({
 			".adc-btn[disabled]{opacity:.55;cursor:default}" +
 			".adc-btn:focus-visible{outline:var(--dsw-focus-ring-width,2px) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary,#3b82f6));outline-offset:2px}" +
 			".adc-btnOn{border-color:var(--dsw-alias-state-business-primary,#3b82f6);color:var(--dsw-alias-state-business-primary,#3b82f6)}" +
+			".adc-env{flex:none;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;padding:4px 10px;font-size:11px;line-height:16px;color:var(--dsw-alias-label-tertiary);border-bottom:.5px solid var(--dsw-alias-border-l1);word-break:break-all;user-select:text;-webkit-user-select:text}" +
+			".adc-envWarn{color:#9a6700;background:color-mix(in srgb,#bf8700 14%,transparent);border-bottom-color:color-mix(in srgb,#bf8700 40%,transparent)}" +
+			"body[data-ds-dark-theme] .adc-envWarn{color:#e3b341}" +
+			".adc-envWarnText{font-weight:500}" +
 			".adc-toolbar{flex:none;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:6px 10px;border-bottom:.5px solid var(--dsw-alias-border-l1)}" +
 			".adc-nav{display:flex;align-items:center;gap:8px;flex:1 1 auto;min-width:0;flex-wrap:wrap}" +
 			".adc-crumbs{display:flex;align-items:center;flex-wrap:wrap;min-width:0;color:var(--dsw-alias-label-secondary);font-size:11px;line-height:16px}" +
@@ -333,10 +337,18 @@ window.__ModuleLoader__.load({
 			const source = raw !== null && typeof raw === "object" ? raw : {};
 			const total = pickNumber(source, ["total", "totalEntries", "count"]);
 			const reclaimable = pickNumber(source, ["reclaimableBytes", "reclaimable", "safeBytes", "reclaimBytes"]);
+			// 多用户机器上「分析的是谁的 AppData」必须可见；老 host 没有这个字段就整体留空。
+			const rawEnv = source.environment !== null && typeof source.environment === "object" ? source.environment : null;
 			return {
 				total: total === undefined ? 0 : total,
 				reclaimableBytes: reclaimable === undefined ? 0 : reclaimable,
-				scannedAt: toDate(source.scannedAt ?? source.scanTime ?? source.scanned_at ?? source.finishedAt ?? source.generatedAt)
+				scannedAt: toDate(source.scannedAt ?? source.scanTime ?? source.scanned_at ?? source.finishedAt ?? source.generatedAt),
+				environment: rawEnv === null ? null : {
+					appDataRoot: typeof rawEnv.appDataRoot === "string" ? rawEnv.appDataRoot.trim() : "",
+					user: typeof rawEnv.user === "string" ? rawEnv.user.trim() : "",
+					source: typeof rawEnv.source === "string" ? rawEnv.source : "",
+					conflict: rawEnv.conflict === true
+				}
 			};
 		}
 
@@ -757,6 +769,25 @@ window.__ModuleLoader__.load({
 			);
 		}
 
+		/**
+		 * 环境行：这批数据到底在分析哪个 AppData 根、哪个用户。
+		 * 老 host 不给 environment 就整行不渲染；环境变量与系统 API 打架时用警告色并补一句说明。
+		 */
+		function EnvironmentLine({ environment }) {
+			if (environment === null || environment === undefined || environment.appDataRoot === "") return null;
+			const conflict = environment.conflict === true;
+			const text = "正在分析：" + environment.appDataRoot + (environment.user === "" ? "" : "（用户：" + environment.user + "）");
+			return h("div", {
+				className: "adc-env" + (conflict ? " adc-envWarn" : ""),
+				"data-env-line": "true",
+				"data-env-conflict": conflict ? "true" : "false",
+				title: environment.appDataRoot
+			},
+				h("span", null, text),
+				conflict ? h("span", { className: "adc-envWarnText" }, "环境变量与系统 API 不一致，已采用系统值") : null
+			);
+		}
+
 		function SummaryBar({ summary, busy, onRescan }) {
 			const stat = (label, value, key) => h("div", { className: "adc-stat", key: key },
 				h("span", { className: "adc-statLabel" }, label),
@@ -785,7 +816,7 @@ window.__ModuleLoader__.load({
 			const [currentPath, setCurrentPath] = react.useState("");
 			// 当前这一层：{ status, entries, root, absPath, error }
 			const [level, setLevel] = react.useState({ status: "loading", entries: [], root: "", absPath: "", error: "" });
-			const [summary, setSummary] = react.useState({ total: 0, reclaimableBytes: 0, scannedAt: undefined });
+			const [summary, setSummary] = react.useState({ total: 0, reclaimableBytes: 0, scannedAt: undefined, environment: null });
 			const [busy, setBusy] = react.useState(false);
 			const [message, setMessage] = react.useState("");
 			const [lookups, setLookups] = react.useState({});
@@ -988,6 +1019,7 @@ window.__ModuleLoader__.load({
 				: h("div", { className: "adc-note" }, message);
 			return h("div", { className: "adc-root", "data-appdata-scanner": "panel", "data-path": currentPath },
 				h(SummaryBar, { summary: summary, busy: busy, onRescan: () => { void rescan(); } }),
+				h(EnvironmentLine, { environment: summary.environment }),
 				h("div", { className: "adc-toolbar" },
 					h(NavBar, { currentPath: currentPath, onBack: goBack, onGo: enter }),
 					h(SortControls, { sort: sort, onPickSort: pickSort, onToggleDir: toggleDir })

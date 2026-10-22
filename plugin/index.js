@@ -5,10 +5,10 @@
 // 而本机的 runner 起子进程会以 0xC0000142 失败；插件宿主自身不受工作区沙箱约束，故直接用 node:child_process。
 import { spawn } from "node:child_process";
 import { readdir, realpath, stat } from "node:fs/promises";
-import { dirname, join, normalize, resolve } from "node:path";
+import { join, normalize, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-import { LIMITS, ROOT_NAMES, defaultRoots, scan, scanDirectory } from "../src/scanner.mjs";
+import { LIMITS, ROOT_NAMES, defaultRoots, resolveHome, scan, scanDirectory } from "../src/scanner.mjs";
 import { loadKnowledge, matchEntry } from "../src/knowledge.mjs";
 import { classifyEntries, summarize } from "../src/classifier.mjs";
 import { buildPlan } from "../src/plan.mjs";
@@ -201,6 +201,8 @@ function createState() {
     capabilityPending: null,
     /** 上一次成功的模型总结路由（provider/model），命中后优先复用。 */
     llmRoute: null,
+    /** resolveHome() 的结果（首次解析后复用；tree/reveal/summary 共用同一个 AppData 根）。 */
+    environment: null,
   };
 }
 
@@ -232,13 +234,21 @@ async function ensureScanned(ctx, state, config, force) {
   return state;
 }
 
-function summaryPayload(state) {
+function summaryPayload(state, config) {
   const doc = state.doc || {};
   const knowledge = state.knowledge || {};
   const summary = state.summary || summarize([]);
+  let environment = null;
+  try {
+    const info = homeInfo(state, config);
+    environment = { appDataRoot: info.appDataRoot, user: info.user, source: info.source, conflict: info.conflict };
+  } catch (err) {
+    environment = { appDataRoot: null, user: null, source: null, conflict: false, error: err && err.message ? err.message : String(err) };
+  }
   return {
     ok: true,
     generatedAt: doc.generatedAt || null,
+    environment,
     scannedAt: state.scannedAt,
     total: summary.entries,
     reclaimableBytes: summary.recoverableBytes,
@@ -381,7 +391,7 @@ function summaryRoute(ctx, state, config) {
     if (!requireMethod(req, res, "GET")) return;
     try {
       await ensureScanned(ctx, state, config, false);
-      sendJson(res, 200, summaryPayload(state));
+      sendJson(res, 200, summaryPayload(state, config));
     } catch (err) {
       fail(res, err);
     }
@@ -442,7 +452,7 @@ function scanRoute(ctx, state, config) {
       // 只刷新扫描文档而不清缓存，界面上会一直显示删除之前的旧体积。
       state.treeCache.clear();
       state.treePending.clear();
-      sendJson(res, 200, summaryPayload(state));
+      sendJson(res, 200, summaryPayload(state, config));
     } catch (err) {
       fail(res, err);
     }
@@ -894,7 +904,7 @@ function relFromRoot(rootAbs, absPath) {
  * 任何一关不过都返回 { status, error }，调用方不得继续（/reveal 尤其不能走到 spawn）。
  */
 async function inspectAppDataPath(state, config, rawAbsPath) {
-  const rootAbs = appDataRoot(config);
+  const rootAbs = appDataRoot(state, config);
   if (!state.rootReal) state.rootReal = await realpath(rootAbs).catch(() => rootAbs);
   if (typeof rawAbsPath !== "string") return { status: 400, error: "path 必须是字符串" };
   const text = rawAbsPath.trim();
@@ -925,7 +935,7 @@ async function inspectAppDataPath(state, config, rawAbsPath) {
  *   2. { root, relPath }，root 为 AppData 绝对路径   —— 当前 client 发的形态（path.resolve(root, relPath)）
  *   3. { root, relPath }，root 为 local/roaming/locallow —— 旧形态，映射到 <AppData>\<根目录名>
  */
-function revealCandidate(config, body) {
+function revealCandidate(state, config, body) {
   const source = body && typeof body === "object" ? body : {};
   const absInput = typeof source.absPath === "string" ? source.absPath.trim() : "";
   if (absInput) {
@@ -1019,7 +1029,7 @@ function revealRoute(state, config) {
     let candidate;
     let target;
     try {
-      candidate = revealCandidate(config, body);
+      candidate = revealCandidate(state, config, body);
       if (!candidate.status) target = await inspectAppDataPath(state, config, candidate.candidate);
     } catch (err) {
       fail(res, err);
@@ -1052,9 +1062,20 @@ function revealRoute(state, config) {
 // 每次请求先 await ensureScanned()：state.pending 把并发调用合并成一次扫描，
 // 扫完之后一级目录的递归体积直接来自扫描文档（精确，也不会因 5s 单目录预算而偏小）。
 
-/** AppData 根由 defaultRoots() 的 Local 反推，保证与既有路由看的是同一个 C:\Users\<user>\AppData。 */
-function appDataRoot(config) {
-  return dirname(defaultRoots(config.homeDir).local);
+/**
+ * 当前用户的 AppData 解析结果（src/scanner.mjs 的 resolveHome）：os.homedir() 优先、只采用真实存在的目录，
+ * 三个根由同一个父目录推导。首次解析后缓存在 state 里，tree / reveal / summary 共用同一结果。
+ */
+function homeInfo(state, config) {
+  if (state.environment !== null) return state.environment;
+  const info = resolveHome(config.homeDir);
+  state.environment = info;
+  return info;
+}
+
+/** AppData 根（...\Users\<user>\AppData）；与扫描用的三个根出自同一次解析。 */
+function appDataRoot(state, config) {
+  return homeInfo(state, config).appDataRoot;
 }
 
 function treeKey(absPath) {
@@ -1100,7 +1121,7 @@ async function resolveTreeTarget(state, config, rawPath) {
   // 相对路径先按段校验（拒绝盘符/UNC/..），拼成绝对路径后与 /reveal 走同一个 inspectAppDataPath
   const parsed = treePathSegments(rawPath);
   if (parsed.error) return { status: 400, error: parsed.error };
-  const rootAbs = appDataRoot(config);
+  const rootAbs = appDataRoot(state, config);
   const absPath = parsed.segments.length === 0 ? resolve(rootAbs) : resolve(rootAbs, ...parsed.segments);
   return await inspectAppDataPath(state, config, absPath);
 }

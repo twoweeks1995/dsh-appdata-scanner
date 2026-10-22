@@ -5,9 +5,10 @@
 //   children    —— 相对一级目录的第 1 层（带扩展名、是否含 leveldb）
 //   descendants —— 相对一级目录的第 2~4 层（按体积排序、带深度）
 // 这样 "Edge\User Data\*\Cache" 这种多层规则才能在真实目录树里匹配到。
+import { statSync } from "node:fs";
 import { readdir, stat } from "node:fs/promises";
-import { homedir } from "node:os";
-import { basename, join } from "node:path";
+import { homedir, userInfo } from "node:os";
+import { basename, dirname, join } from "node:path";
 
 export const ROOT_NAMES = ["local", "roaming", "locallow"];
 
@@ -28,19 +29,109 @@ export const LIMITS = Object.freeze({
   maxDescendantsPerLevel: 130,
 });
 
+/** 目录是否存在（解析根路径时同步判定一次；任何异常一律按“不存在”处理）。 */
+function isDirectorySync(target) {
+  if (!target) return false;
+  try {
+    return statSync(target).isDirectory();
+  } catch (err) {
+    return false;
+  }
+}
+
+/** 两个路径是否指向同一处（Windows 语义：忽略大小写与尾部分隔符）。 */
+function samePath(a, b) {
+  const norm = (value) => String(value || "").replace(/[\\/]+$/, "").toLowerCase();
+  const left = norm(a);
+  return left !== "" && left === norm(b);
+}
+
 /**
- * 三个根的实际路径。
- * 显式传入 homeDir 时以它为准（夹具/自测需要确定性）；否则环境变量优先，其次 %USERPROFILE%。
+ * 解析「当前用户」的 AppData 三个根，并给出诊断信息。
+ *
+ * 为什么不再用 USERPROFILE/LOCALAPPDATA 优先：多用户机器上，进程环境可能属于别的账户
+ * （提权、被别的账户拉起、环境继承污染），旧写法会安静地扫错人。os.homedir() 走 libuv，
+ * 在 Windows 上会回落到 SHGetKnownFolderPath，**不依赖用户文件夹名**，所以它是主来源。
+ *
+ * 注意：绝不用 os.userInfo().username 去拼 C:\Users\<username>——文件夹名与账户名不一定对应。
+ *
+ * 顺序：显式传入的 homeDir（夹具/测试，直接采用，不校验存在性）
+ *      -> os.homedir() -> %LOCALAPPDATA% -> %USERPROFILE% ，只采用真实存在的目录；
+ *      全都不存在则抛错，错误信息里列出所有候选路径。
+ *
+ * @param {string} [homeDir] 显式指定的用户目录（可用时优先，且不做存在性校验）
+ * @param {(path:string)=>boolean} [probe] 仅供自测注入的存在性判定（默认 statSync().isDirectory()）
+ * @returns {{home:string, appDataRoot:string, local:string, roaming:string, locallow:string,
+ *   source:string, user:string, osHome:string, envLocalAppData:?string, envUserProfile:?string,
+ *   conflict:boolean, candidates:{source:string,path:string,exists:boolean}[]}}
+ */
+export function resolveHome(homeDir, probe) {
+  const env = process.env;
+  const isDirectory = typeof probe === "function" ? probe : isDirectorySync;
+  const explicitHome = typeof homeDir === "string" && homeDir.trim().length > 0 ? homeDir.trim() : "";
+  let osHome = "";
+  try {
+    osHome = homedir() || "";
+  } catch (err) {
+    osHome = "";
+  }
+  let user = "";
+  try {
+    user = (userInfo() && userInfo().username) || "";
+  } catch (err) {
+    user = "";
+  }
+  const envLocalAppData = typeof env.LOCALAPPDATA === "string" && env.LOCALAPPDATA ? env.LOCALAPPDATA : undefined;
+  const envUserProfile = typeof env.USERPROFILE === "string" && env.USERPROFILE ? env.USERPROFILE : undefined;
+  const homedirLocal = osHome ? join(osHome, "AppData", "Local") : "";
+
+  const ordered = [];
+  if (explicitHome) {
+    ordered.push({ source: "config", path: join(explicitHome, "AppData", "Local") });
+  } else {
+    if (homedirLocal) ordered.push({ source: "homedir", path: homedirLocal });
+    if (envLocalAppData) ordered.push({ source: "LOCALAPPDATA", path: envLocalAppData });
+    if (envUserProfile) ordered.push({ source: "USERPROFILE", path: join(envUserProfile, "AppData", "Local") });
+  }
+  const candidates = ordered.map((item) => ({
+    source: item.source,
+    path: item.path,
+    exists: explicitHome ? true : isDirectory(item.path),
+  }));
+  const chosen = candidates.find((item) => item.exists);
+  if (!chosen) {
+    const listed = candidates.length > 0
+      ? candidates.map((item) => item.path + "（" + item.source + "）").join("；")
+      : "没有可用候选：os.homedir()、LOCALAPPDATA、USERPROFILE 都为空";
+    throw new Error("无法确定 AppData 目录，所有候选都不存在或不是目录：" + listed);
+  }
+  // 三个根必须来自同一个用户：全部由被选中的 Local 的父目录（...\AppData）推导
+  const local = chosen.path;
+  const appDataRoot = dirname(local);
+  return {
+    home: dirname(appDataRoot),
+    appDataRoot,
+    local,
+    roaming: join(appDataRoot, "Roaming"),
+    locallow: join(appDataRoot, "LocalLow"),
+    source: chosen.source,
+    user,
+    osHome,
+    envLocalAppData,
+    envUserProfile,
+    // env 与 homedir 指向不同用户：记进诊断字段，但**仍然优先 homedir**（系统 API 更权威）
+    conflict: Boolean(envLocalAppData && homedirLocal && !samePath(envLocalAppData, homedirLocal)),
+    candidates,
+  };
+}
+
+/**
+ * 三个根的实际路径（扫描/CLI 的入口，行为与 resolveHome 一致）。
+ * 显式传入 homeDir 时以它为准；否则按 resolveHome 的顺序只采用真实存在的目录，全都不存在则抛错。
  */
 export function defaultRoots(homeDir) {
-  const env = process.env;
-  const explicit = typeof homeDir === "string" && homeDir.length > 0;
-  const home = explicit ? homeDir : env.USERPROFILE || env.HOME || homedir();
-  return {
-    local: explicit ? join(home, "AppData", "Local") : env.LOCALAPPDATA || join(home, "AppData", "Local"),
-    roaming: explicit ? join(home, "AppData", "Roaming") : env.APPDATA || join(home, "AppData", "Roaming"),
-    locallow: join(home, "AppData", "LocalLow"),
-  };
+  const resolved = resolveHome(homeDir);
+  return { local: resolved.local, roaming: resolved.roaming, locallow: resolved.locallow };
 }
 
 export function extOf(name) {
