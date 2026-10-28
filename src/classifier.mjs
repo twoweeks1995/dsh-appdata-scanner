@@ -398,8 +398,6 @@ export function splitChildren(entry, knowledge, childRules) {
   for (const item of hits) {
     if (dropped.has(item.unit) && !superseded.has(item.unit)) continue;
     const rule = item.hit.rule;
-    // 松散文件命中「*」兜底规则没有信息量（文件本来就不是删除目标），跳过以免报告被 DLL 淹掉
-    if (item.unit.kind === "file" && rule.info.spec === 0 && !superseded.has(item.unit)) continue;
     if (superseded.has(item.unit)) {
       items.push(
         childJudgement(entry, item.unit, {

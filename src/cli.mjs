@@ -9,7 +9,7 @@ import { loadKnowledge } from "./knowledge.mjs";
 import { classifyEntries, summarize } from "./classifier.mjs";
 import { renderReport, formatBytes, formatCount } from "./report.mjs";
 import { buildPlan, renderPlan } from "./plan.mjs";
-import { lookup, DEFAULT_CACHE_FILE, LABEL, REASON_NEEDS_CONFIRM } from "./lookup.mjs";
+import { lookup, LABEL, REASON_NEEDS_CONFIRM } from "./lookup.mjs";
 
 export const DEFAULT_KNOWLEDGE_DIR = fileURLToPath(new URL("../knowledge/", import.meta.url));
 

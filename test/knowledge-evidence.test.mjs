@@ -16,7 +16,7 @@ function withoutEvidence(entry) {
   return rest;
 }
 
-test("三个发布 JSON 递归无 evidence 键且保持 168 主条目与 563 子规则", async () => {
+test("三个发布 JSON 递归无 evidence 键且保持 206 主条目与 596 子规则", async () => {
   let count = 0;
   let children = 0;
   function check(value) {
@@ -30,8 +30,8 @@ test("三个发布 JSON 递归无 evidence 键且保持 168 主条目与 563 子
     count += entries.length;
     children += entries.reduce((n, entry) => n + entry.children.length, 0);
   }
-  assert.equal(count, 168);
-  assert.equal(children, 563);
+  assert.equal(count, 206);
+  assert.equal(children, 596);
 });
 
 test("显式笔记按文件根和原始 match 精确合并，不覆盖公开已有值", async () => {

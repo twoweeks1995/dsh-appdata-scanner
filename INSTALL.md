@@ -23,7 +23,7 @@ AppData 之前，先看清每一块空间被谁占用、删了会怎样。
 ```
 dsh-appdata-scanner
 https://github.com/twoweeks1995/dsh-appdata-scanner
-D:\temp\dsh-appdata-scanner-0.7.0.tgz   ← 换成你实际下载到的 tgz 绝对路径（版本号以 Releases 页为准）
+D:\temp\dsh-appdata-scanner-0.7.1.tgz   ← 换成你实际下载到的 tgz 绝对路径（版本号以 Releases 页为准）
 ```
 
 ### 从本地文件安装

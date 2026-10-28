@@ -71,10 +71,8 @@ const LLM_SUMMARY_SYSTEM = [
   "不要输出 markdown、不要加序号或小标题、不要复述问题。",
 ].join("");
 const EXPLORER = "explorer.exe";
-/** 交给 subprocess 的收尾宽限期，以及我们等它退出的上限（超时按“已交给桌面进程”处理）。 */
-const REVEAL_GRACE_MS = 2000;
+/** 等待 explorer 退出的上限（超时按“已交给桌面进程”处理）。 */
 const REVEAL_WAIT_MS = 5000;
-const REVEAL_LOG_BYTES = 4096;
 /** explorer 把请求转交给已在运行的桌面进程后以 1 退出，属成功；其它非零才算失败。 */
 const REVEAL_EXIT_OK = [0, 1];
 /** 树形目录：排序取值、单目录统计预算、整次请求预算、并发统计目录数、缓存与直接文件统计的并发。 */
@@ -1190,15 +1188,12 @@ function seedTreeCache(state, config) {
 
 /** 统计某个目录的直接文件（递归部分由 scanDirectory 或子目录聚合负责）。 */
 async function statDirectFiles(dirAbs, names, concurrency) {
-  const acc = { bytes: 0, files: 0, newest: 0, errors: 0 };
+  const acc = { bytes: 0, files: 0, newest: 0 };
   for (let i = 0; i < names.length; i += concurrency) {
     const chunk = names.slice(i, i + concurrency);
     const stats = await Promise.all(chunk.map((name) => stat(join(dirAbs, name)).catch(() => null)));
     for (const st of stats) {
-      if (!st || !st.isFile()) {
-        acc.errors += 1;
-        continue;
-      }
+      if (!st || !st.isFile()) continue;
       acc.bytes += st.size || 0;
       acc.files += 1;
       const mtime = typeof st.mtimeMs === "number" ? st.mtimeMs : st.mtime ? st.mtime.getTime() : 0;
@@ -1440,10 +1435,6 @@ export function resolveTreeKnowledge(knowledge, relPath) {
   return null;
 }
 
-function treeKnowledgeFields(knowledge, relPath) {
-  return resolveTreeKnowledge(knowledge, relPath);
-}
-
 /** 排序在服务端做：name|size|date × asc|desc，同名兜底按名称升序（保证输出稳定）。 */
 function treeComparator(sort, dir) {
   const factor = dir === "desc" ? -1 : 1;
@@ -1529,7 +1520,7 @@ function treeRoute(ctx, state, config) {
         };
         if (record.truncatedReason) out.truncatedReason = record.truncatedReason;
         // 顶上 4 个根没有知识库条目，用硬编码判定兜底；其余层只认知识库
-        const fields = treeKnowledgeFields(knowledge, relPath)
+        const fields = resolveTreeKnowledge(knowledge, relPath)
           || (target.rel === "" ? TREE_ROOT_JUDGEMENTS[child.name.toLowerCase()] : null);
         if (fields) Object.assign(out, fields);
         return out;

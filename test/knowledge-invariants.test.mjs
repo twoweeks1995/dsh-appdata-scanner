@@ -45,11 +45,11 @@ function rulesFor(root, relPath) {
   return hit.entry.children;
 }
 
-test("真实知识库保持 168 主条目、563 子规则及合法分类约束", async () => {
+test("真实知识库保持 206 主条目、596 子规则及合法分类约束", async () => {
   assert.equal(knowledge.degraded, false);
   assert.deepEqual(knowledge.problems, []);
-  assert.equal(knowledge.entries.length, 168);
-  assert.equal(knowledge.entries.reduce((count, entry) => count + entry.children.length, 0), 563);
+  assert.equal(knowledge.entries.length, 206);
+  assert.equal(knowledge.entries.reduce((count, entry) => count + entry.children.length, 0), 596);
   for (const root of ROOT_NAMES) {
     const entries = JSON.parse(await readFile(new URL(root + ".json", knowledgeDir), "utf8"));
     for (const entry of entries) {

@@ -41,8 +41,6 @@ window.__ModuleLoader__.load({
 		const DEFAULT_SORT = { sort: "name", dir: "asc" };
 		/** 排序选择的持久化键。 */
 		const SORT_STORAGE_KEY = PLUGIN_ID + ".tree.sort";
-		/** 目录树的缩进步长（px）。 */
-		const DEPTH_STEP = 14;
 		//#endregion
 		//#region 样式
 		/** 只用宿主主题变量，安全级配色写死三种语义色。 */

@@ -2342,5 +2342,323 @@
         "ifDeleted": "删除会丢失配置、存档或用户内容，不能保证恢复，应保留并先备份"
       }
     ]
+  },
+  {
+    "match": "discord",
+    "owner": "Discord",
+    "purpose": "【推测】通常保存通讯应用的用户数据、会话状态或本地库；消息与登录信息不可按缓存整删。",
+    "category": "chat-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。",
+    "children": []
+  },
+  {
+    "match": "Slack",
+    "owner": "Slack",
+    "purpose": "【推测】通常保存通讯应用的用户数据、会话状态或本地库；消息与登录信息不可按缓存整删。",
+    "category": "chat-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。",
+    "children": []
+  },
+  {
+    "match": "WhatsApp",
+    "owner": "WhatsApp Desktop",
+    "purpose": "【推测】通常保存通讯应用的用户数据、会话状态或本地库；消息与登录信息不可按缓存整删。",
+    "category": "chat-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。",
+    "children": []
+  },
+  {
+    "match": "Signal",
+    "owner": "Signal Desktop",
+    "purpose": "【推测】通常保存通讯应用的用户数据、会话状态或本地库；消息与登录信息不可按缓存整删。",
+    "category": "chat-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。",
+    "children": []
+  },
+  {
+    "match": "DingTalk",
+    "owner": "钉钉 DingTalk",
+    "purpose": "【推测】通常保存通讯应用的用户数据、会话状态或本地库；消息与登录信息不可按缓存整删。",
+    "category": "chat-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。",
+    "children": []
+  },
+  {
+    "match": "Zoom",
+    "owner": "Zoom",
+    "purpose": "【推测】通常保存通讯应用的用户数据、会话状态或本地库；消息与登录信息不可按缓存整删。",
+    "category": "chat-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。",
+    "children": []
+  },
+  {
+    "match": "Postman",
+    "owner": "Postman",
+    "purpose": "【推测】通常保存 Postman Electron 用户数据、接口工作区和认证状态；仅明确的浏览器缓存子项可清理。",
+    "category": "dev-toolchain",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "不可整删；仅明确列出的纯缓存子目录可在退出应用后清理，其余需人工确认并先备份。",
+    "children": [
+      {
+        "match": "Cache",
+        "safety": "safe",
+        "purpose": "【推测】通常保存 Chromium 网页资源缓存",
+        "ifDeleted": "退出应用后删除会按需重建，首次加载可能变慢；不应在应用运行时清理。"
+      },
+      {
+        "match": "Code Cache",
+        "safety": "safe",
+        "purpose": "【推测】通常保存 Chromium 脚本编译缓存",
+        "ifDeleted": "退出应用后删除会按需重建，首次加载可能变慢；不应在应用运行时清理。"
+      },
+      {
+        "match": "GPUCache",
+        "safety": "safe",
+        "purpose": "【推测】通常保存 Chromium GPU 渲染缓存",
+        "ifDeleted": "退出应用后删除会按需重建，首次加载可能变慢；不应在应用运行时清理。"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "【推测】通常子目录可能含配置、凭据或用户内容，未确认用途前不可删除",
+        "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。"
+      }
+    ]
+  },
+  {
+    "match": "Godot",
+    "owner": "Godot Engine",
+    "purpose": "【推测】通常保存 Godot 编辑器设置、脚本模板与导出模板，版本变化不能视为可删缓存。",
+    "category": "dev-toolchain",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。",
+    "children": []
+  },
+  {
+    "match": "Spotify",
+    "owner": "Spotify",
+    "purpose": "【推测】通常保存 Spotify 用户设置、登录状态与离线播放相关数据；离线内容不能无条件视为缓存。",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "不可整删；仅明确列出的纯缓存子目录可在退出应用后清理，其余需人工确认并先备份。",
+    "children": [
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "【推测】通常子目录可能含配置、凭据或用户内容，未确认用途前不可删除",
+        "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。"
+      }
+    ]
+  },
+  {
+    "match": "vlc",
+    "owner": "VideoLAN VLC",
+    "purpose": "【推测】通常保存 VLC 用户偏好、播放列表及界面状态，不是可整删缓存。",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。",
+    "children": []
+  },
+  {
+    "match": "obs-studio",
+    "owner": "OBS Studio",
+    "purpose": "【推测】通常保存 OBS 场景集合、直播配置、插件设置与日志；场景和授权状态必须保留。",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "不可整删；仅明确列出的纯缓存子目录可在退出应用后清理，其余需人工确认并先备份。",
+    "children": [
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "【推测】通常子目录可能含配置、凭据或用户内容，未确认用途前不可删除",
+        "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。"
+      }
+    ]
+  },
+  {
+    "match": "GIMP",
+    "owner": "GIMP",
+    "purpose": "【推测】通常保存按版本组织的 GIMP 用户设置、笔刷与插件，属于创作环境资产。",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "不可整删；仅明确列出的纯缓存子目录可在退出应用后清理，其余需人工确认并先备份。",
+    "children": [
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "【推测】通常子目录可能含配置、凭据或用户内容，未确认用途前不可删除",
+        "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。"
+      }
+    ]
+  },
+  {
+    "match": "inkscape",
+    "owner": "Inkscape",
+    "purpose": "【推测】通常保存 Inkscape 用户设置、扩展和模板，需要保留自定义创作环境。",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "不可整删；仅明确列出的纯缓存子目录可在退出应用后清理，其余需人工确认并先备份。",
+    "children": [
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "【推测】通常子目录可能含配置、凭据或用户内容，未确认用途前不可删除",
+        "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。"
+      }
+    ]
+  },
+  {
+    "match": "krita",
+    "owner": "Krita",
+    "purpose": "【推测】通常保存 Krita 用户资源、笔刷和预设，不可当作缓存整删。",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "不可整删；仅明确列出的纯缓存子目录可在退出应用后清理，其余需人工确认并先备份。",
+    "children": [
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "【推测】通常子目录可能含配置、凭据或用户内容，未确认用途前不可删除",
+        "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。"
+      }
+    ]
+  },
+  {
+    "match": "audacity",
+    "owner": "Audacity",
+    "purpose": "【推测】通常保存 Audacity 用户设置、插件状态和恢复相关数据，不能据软件类别整删。",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "不可整删；仅明确列出的纯缓存子目录可在退出应用后清理，其余需人工确认并先备份。",
+    "children": [
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "【推测】通常子目录可能含配置、凭据或用户内容，未确认用途前不可删除",
+        "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。"
+      }
+    ]
+  },
+  {
+    "match": "Blender Foundation",
+    "owner": "Blender Foundation",
+    "purpose": "【推测】通常保存 Blender 多版本用户设置、启动场景、脚本和预设，是用户创作环境。",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "不可整删；仅明确列出的纯缓存子目录可在退出应用后清理，其余需人工确认并先备份。",
+    "children": [
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "【推测】通常子目录可能含配置、凭据或用户内容，未确认用途前不可删除",
+        "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。"
+      }
+    ]
+  },
+  {
+    "match": "LibreOffice",
+    "owner": "The Document Foundation LibreOffice",
+    "purpose": "【推测】通常保存 LibreOffice 用户 profile、模板、扩展和恢复状态；最近文件记录也不是无条件安全缓存。",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "不可整删；仅明确列出的纯缓存子目录可在退出应用后清理，其余需人工确认并先备份。",
+    "children": [
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "【推测】通常子目录可能含配置、凭据或用户内容，未确认用途前不可删除",
+        "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。"
+      }
+    ]
+  },
+  {
+    "match": "Foxit",
+    "owner": "Foxit PDF",
+    "purpose": "【推测】通常保存 Foxit PDF 产品用户配置、模板与授权相关状态，产品子目录因版本而异。",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "不可整删；仅明确列出的纯缓存子目录可在退出应用后清理，其余需人工确认并先备份。",
+    "children": [
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "【推测】通常子目录可能含配置、凭据或用户内容，未确认用途前不可删除",
+        "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。"
+      }
+    ]
+  },
+  {
+    "match": "AnyDesk",
+    "owner": "AnyDesk",
+    "purpose": "【推测】通常保存远控客户端的配置、会话或授权状态，需保护并先备份。",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。",
+    "children": []
+  },
+  {
+    "match": "TeamViewer",
+    "owner": "TeamViewer",
+    "purpose": "【推测】通常保存远控客户端的配置、会话或授权状态，需保护并先备份。",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。",
+    "children": []
+  },
+  {
+    "match": "Notion",
+    "owner": "Notion Desktop",
+    "purpose": "【推测】通常保存笔记应用的登录、配置或离线数据；主知识库位置可另选，不能据此认定该根可删。",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。",
+    "children": []
+  },
+  {
+    "match": "obsidian",
+    "owner": "Obsidian",
+    "purpose": "【推测】通常保存笔记应用的登录、配置或离线数据；主知识库位置可另选，不能据此认定该根可删。",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。",
+    "children": []
+  },
+  {
+    "match": "Evernote",
+    "owner": "Evernote",
+    "purpose": "【推测】通常保存笔记应用的登录、配置或离线数据；主知识库位置可另选，不能据此认定该根可删。",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。",
+    "children": []
   }
 ]

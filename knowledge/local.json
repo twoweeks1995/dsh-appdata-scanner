@@ -2354,5 +2354,285 @@
         "ifDeleted": "删除会丢失配置、用户内容或破坏运行环境，不能保证恢复，请保留并按产品备份流程操作"
       }
     ]
+  },
+  {
+    "match": "Yandex",
+    "owner": "Yandex Browser",
+    "purpose": "【推测】通常保存 Yandex 浏览器安装及 Chromium 用户数据；YandexBrowser\\User Data 按 profile 隔离书签、登录态与缓存。",
+    "category": "browser-profile",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "不可整删；仅明确列出的纯缓存子目录可在退出应用后清理，其余需人工确认并先备份。",
+    "children": [
+      {
+        "match": "YandexBrowser\\User Data\\*\\Cache",
+        "safety": "safe",
+        "purpose": "【推测】通常保存 Chromium 网页资源缓存",
+        "ifDeleted": "退出应用后删除会按需重建，首次加载可能变慢；不应在应用运行时清理。"
+      },
+      {
+        "match": "YandexBrowser\\User Data\\*\\Code Cache",
+        "safety": "safe",
+        "purpose": "【推测】通常保存 Chromium 脚本编译缓存",
+        "ifDeleted": "退出应用后删除会按需重建，首次加载可能变慢；不应在应用运行时清理。"
+      },
+      {
+        "match": "YandexBrowser\\User Data\\*\\GPUCache",
+        "safety": "safe",
+        "purpose": "【推测】通常保存 Chromium GPU 渲染缓存",
+        "ifDeleted": "退出应用后删除会按需重建，首次加载可能变慢；不应在应用运行时清理。"
+      },
+      {
+        "match": "YandexBrowser\\User Data\\*",
+        "safety": "never",
+        "purpose": "【推测】通常profile 包含书签、登录态与用户设置",
+        "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "【推测】通常子目录可能含配置、凭据或用户内容，未确认用途前不可删除",
+        "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。"
+      }
+    ]
+  },
+  {
+    "match": "Figma",
+    "owner": "Figma Desktop",
+    "purpose": "【推测】通常是 Figma 桌面端用户级安装与更新目录，不能因采用 Chromium 容器而当作缓存。",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。",
+    "children": []
+  },
+  {
+    "match": "Postman",
+    "owner": "Postman",
+    "purpose": "【推测】通常是 Postman 用户级安装和更新目录，程序组件不能当缓存整删。",
+    "category": "dev-toolchain",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。",
+    "children": []
+  },
+  {
+    "match": "GitHubDesktop",
+    "owner": "GitHub Desktop",
+    "purpose": "【推测】通常保存 GitHub Desktop 用户级安装与更新组件，并非纯缓存目录。",
+    "category": "dev-toolchain",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。",
+    "children": []
+  },
+  {
+    "match": "Unity",
+    "owner": "Unity Technologies",
+    "purpose": "【推测】通常保存 Unity 编辑器本地辅助数据与缓存，具体结构随编辑器版本变化，需人工确认。",
+    "category": "dev-toolchain",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "不可整删；仅明确列出的纯缓存子目录可在退出应用后清理，其余需人工确认并先备份。",
+    "children": [
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "【推测】通常子目录可能含配置、凭据或用户内容，未确认用途前不可删除",
+        "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。"
+      }
+    ]
+  },
+  {
+    "match": "Programs\\Python",
+    "owner": "Python Software Foundation",
+    "purpose": "【推测】通常保存传统 Python 用户级安装的多版本解释器、标准库与第三方包，不是可整删缓存。",
+    "category": "dev-toolchain",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。",
+    "children": []
+  },
+  {
+    "match": "EpicGamesLauncher",
+    "owner": "Epic Games Launcher",
+    "purpose": "【推测】通常保存启动器 Saved 数据，包含设置与 CEF 网页缓存；不得整删账户和配置。",
+    "category": "game-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "不可整删；仅明确列出的纯缓存子目录可在退出应用后清理，其余需人工确认并先备份。",
+    "children": [
+      {
+        "match": "Saved\\webcache*\\Cache",
+        "safety": "safe",
+        "purpose": "【推测】通常保存 Chromium 网页资源缓存",
+        "ifDeleted": "退出应用后删除会按需重建，首次加载可能变慢；不应在应用运行时清理。"
+      },
+      {
+        "match": "Saved\\webcache*\\Code Cache",
+        "safety": "safe",
+        "purpose": "【推测】通常保存 Chromium 脚本编译缓存",
+        "ifDeleted": "退出应用后删除会按需重建，首次加载可能变慢；不应在应用运行时清理。"
+      },
+      {
+        "match": "Saved\\webcache*\\GPUCache",
+        "safety": "safe",
+        "purpose": "【推测】通常保存 Chromium GPU 渲染缓存",
+        "ifDeleted": "退出应用后删除会按需重建，首次加载可能变慢；不应在应用运行时清理。"
+      },
+      {
+        "match": "Saved",
+        "safety": "never",
+        "purpose": "【推测】通常保存启动器设置与运行数据，整体不可删除",
+        "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "【推测】通常子目录可能含配置、凭据或用户内容，未确认用途前不可删除",
+        "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。"
+      }
+    ]
+  },
+  {
+    "match": "Riot Games",
+    "owner": "Riot Games / Riot Client",
+    "purpose": "【推测】通常保存 Riot 客户端与游戏的本地配置、运行数据及日志，不同产品结构不同。",
+    "category": "game-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "不可整删；仅明确列出的纯缓存子目录可在退出应用后清理，其余需人工确认并先备份。",
+    "children": [
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "【推测】通常子目录可能含配置、凭据或用户内容，未确认用途前不可删除",
+        "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。"
+      }
+    ]
+  },
+  {
+    "match": "Origin",
+    "owner": "Electronic Arts Origin",
+    "purpose": "【推测】通常保存旧版 Origin 客户端本地数据，包含缓存及账户相关状态，不能整删。",
+    "category": "game-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "不可整删；仅明确列出的纯缓存子目录可在退出应用后清理，其余需人工确认并先备份。",
+    "children": [
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "【推测】通常子目录可能含配置、凭据或用户内容，未确认用途前不可删除",
+        "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。"
+      }
+    ]
+  },
+  {
+    "match": "GOG.com",
+    "owner": "GOG / Galaxy",
+    "purpose": "【推测】通常保存 GOG Galaxy 本地运行数据，可能混有客户端配置与缓存。",
+    "category": "game-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "不可整删；仅明确列出的纯缓存子目录可在退出应用后清理，其余需人工确认并先备份。",
+    "children": [
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "【推测】通常子目录可能含配置、凭据或用户内容，未确认用途前不可删除",
+        "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。"
+      }
+    ]
+  },
+  {
+    "match": "SumatraPDF",
+    "owner": "SumatraPDF",
+    "purpose": "【推测】通常保存非便携安装的阅读设置、历史与会话状态，不能把最近文件状态视为纯缓存。",
+    "category": "app-data",
+    "safety": "never",
+    "confidence": "medium",
+    "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。",
+    "children": []
+  },
+  {
+    "match": "AMD",
+    "owner": "AMD Radeon",
+    "purpose": "【推测】通常保存 Radeon 图形组件本地数据，其中 DxCache 与 GLCache 是可重建着色器缓存。",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "不可整删；仅明确列出的纯缓存子目录可在退出应用后清理，其余需人工确认并先备份。",
+    "children": [
+      {
+        "match": "DxCache",
+        "safety": "safe",
+        "purpose": "【推测】通常保存 AMD DirectX 着色器编译缓存",
+        "ifDeleted": "退出应用后删除会按需重建，首次加载可能变慢；不应在应用运行时清理。"
+      },
+      {
+        "match": "GLCache",
+        "safety": "safe",
+        "purpose": "【推测】通常保存 AMD OpenGL 着色器编译缓存",
+        "ifDeleted": "退出应用后删除会按需重建，首次加载可能变慢；不应在应用运行时清理。"
+      },
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "【推测】通常子目录可能含配置、凭据或用户内容，未确认用途前不可删除",
+        "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。"
+      }
+    ]
+  },
+  {
+    "match": "Intel",
+    "owner": "Intel",
+    "purpose": "【推测】通常保存 Intel 图形或硬件组件的本地配置与辅助数据，产品布局不同，需人工确认。",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "不可整删；仅明确列出的纯缓存子目录可在退出应用后清理，其余需人工确认并先备份。",
+    "children": [
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "【推测】通常子目录可能含配置、凭据或用户内容，未确认用途前不可删除",
+        "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。"
+      }
+    ]
+  },
+  {
+    "match": "Logi",
+    "owner": "Logitech",
+    "purpose": "【推测】通常保存 Logi Options+ 等外设软件的本地状态与设备配置，可能混有缓存。",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "不可整删；仅明确列出的纯缓存子目录可在退出应用后清理，其余需人工确认并先备份。",
+    "children": [
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "【推测】通常子目录可能含配置、凭据或用户内容，未确认用途前不可删除",
+        "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。"
+      }
+    ]
+  },
+  {
+    "match": "Razer",
+    "owner": "Razer Synapse",
+    "purpose": "【推测】通常保存 Razer 外设软件的设备配置、模块状态及运行数据，不能整删。",
+    "category": "app-data",
+    "safety": "mixed",
+    "confidence": "medium",
+    "ifDeleted": "不可整删；仅明确列出的纯缓存子目录可在退出应用后清理，其余需人工确认并先备份。",
+    "children": [
+      {
+        "match": "*",
+        "safety": "never",
+        "purpose": "【推测】通常子目录可能含配置、凭据或用户内容，未确认用途前不可删除",
+        "ifDeleted": "删除可能丢失用户内容、配置或授权状态，不能保证恢复；应保留并先备份。"
+      }
+    ]
   }
 ]

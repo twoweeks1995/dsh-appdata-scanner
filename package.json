@@ -1,6 +1,6 @@
 {
   "name": "dsh-appdata-scanner",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "AppData 目录分析插件：左侧栏图标按需打开，以资源管理器式逐层浏览，显示每个目录的递归体积/生成软件/用途/可删建议；只分析目录不检索文件；联网查询给出模型总结与带摘要来源（只读，不提供删除功能）",
   "type": "module",
   "main": "plugin/index.js",
